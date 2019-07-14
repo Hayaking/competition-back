@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface MenuChildMapper extends BaseMapper<MenuChild> {
     @Select("SELECT path,name,component,meta_id FROM menu_children " +
-            "join menu on menu_children.menu_child = menu.path " +
+            "join menu on menu_children.menu_child = menu.id " +
             "where menu_children.menu_father = #{fatherId}")
-    List<Menu> find(String fatherId);
+    List<Menu> find(int fatherId);
 }

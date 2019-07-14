@@ -9,12 +9,12 @@ import org.apache.ibatis.annotations.Select;
  * @author haya
  */
 public interface MenuMapper extends BaseMapper<Menu> {
-    @Select("SELECT path,name,component,meta_id FROM permission_menu " +
-            "join menu on permission_menu.menu_id = menu.path " +
+    @Select("SELECT menu.id,path,name,component,meta_id FROM permission_menu " +
+            "join menu on permission_menu.menu_id = menu.id " +
             "join permission on permission_menu.permission_id = permission.id " +
             "where permission.id = #{id}")
     Menu findMainMenu(@Param("id") int permissionId);
 
-    @Select("select path,name,component,meta_id from menu where path = #{path}")
+    @Select("select id,path,name,component,meta_id from menu where path = #{path}")
     Menu findMenu(@Param("path") String path);
 }

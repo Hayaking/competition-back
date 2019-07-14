@@ -16,4 +16,9 @@ public interface CompetitionService {
     boolean insertCompetition(Competition competition);
 
     IPage<Competition> findByGroupId(Page<Competition> page, int groupId);
+
+    IPage<Competition> findAll(Page<Competition> page);
+
+    boolean setState(int id, String state);
+
 }

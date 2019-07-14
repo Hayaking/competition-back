@@ -16,8 +16,8 @@ import java.util.List;
 @Data
 @TableName("menu")
 public class Menu implements Serializable {
-
     @TableId
+    private int id;
     private String path;
     private String name;
     private Meta meta;

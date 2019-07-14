@@ -38,9 +38,39 @@ public class CompetitionController {
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
 
+    /**
+     * 根据组id分页查询
+     * @param groupId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @RequestMapping(value = "/competition/{pageNum}/{pageSize}/{groupId}", method = RequestMethod.GET)
     public Object getByGroupId(@PathVariable int groupId, @PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<Competition> res = competitionService.findByGroupId( new Page<>( pageNum, pageSize ), groupId );
         return MessageFactory.message( SUCCESS, res );
+    }
+
+    /**
+     * 分页查询全部
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/competition/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    public Object getAll(@PathVariable int pageNum, @PathVariable int pageSize) {
+        IPage<Competition> res = competitionService.findAll( new Page<>( pageNum, pageSize ) );
+        return MessageFactory.message( SUCCESS, res );
+    }
+
+    /**
+     * 设置审核状态
+     * @param state
+     * @return
+     */
+    @RequestMapping(value = "/competition/state", method = RequestMethod.GET)
+    public Object setState(int id ,String state) {
+        competitionService.setState( id, state );
+        return MessageFactory.message( SUCCESS, "" );
     }
 }

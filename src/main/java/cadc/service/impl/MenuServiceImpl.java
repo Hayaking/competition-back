@@ -70,7 +70,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     public Menu buildMenu(Menu root) {
-        List<Menu> children = menuChildMapper.find( root.getPath() );
+        List<Menu> children = menuChildMapper.find( root.getId() );
         if (children != null) {
             for (Menu item : children) {
                 Menu menu = menuMapper.findMenu( item.getPath() );
