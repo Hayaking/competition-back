@@ -12,7 +12,7 @@ public interface MenuMapper extends BaseMapper<Menu> {
     @Select("SELECT menu.id,path,name,component,meta_id FROM permission_menu " +
             "join menu on permission_menu.menu_id = menu.id " +
             "join permission on permission_menu.permission_id = permission.id " +
-            "where permission.id = #{id}")
+            "where permission.id = #{id} and menu.component = 'Main' ")
     Menu findMainMenu(@Param("id") int permissionId);
 
     @Select("select id,path,name,component,meta_id from menu where path = #{path}")

@@ -40,4 +40,9 @@ public class MenuController {
         }
         return menuService.getMenu( account ,type);
     }
+
+    @RequestMapping(value = "/menu", method = RequestMethod.GET)
+    public Object menu( ) {
+        return menuService.list();
+    }
 }

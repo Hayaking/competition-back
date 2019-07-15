@@ -20,11 +20,13 @@ public class Menu implements Serializable {
     private int id;
     private String path;
     private String name;
+    @TableField(exist = false)
     private Meta meta;
     private String component;
     @TableField("meta_id")
-    @ToString.Exclude
     private Integer metaId;
+    @TableField(exist = false)
+
     private List<Menu> children;
 
     public void addChild(Menu child) {

@@ -6,6 +6,7 @@ import cadc.entity.Permission;
 import cadc.entity.Role;
 import cadc.mapper.*;
 import cadc.service.MenuService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ import java.util.List;
  */
 @Log4j2
 @Service
-public class MenuServiceImpl implements MenuService {
+public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
     @Resource
     private RoleMapper roleMapper;
@@ -50,7 +51,7 @@ public class MenuServiceImpl implements MenuService {
         for (Role item : roleList) {
             perList.addAll( permissionMapper.findList( item.getId() ) );
         }
-        log.info( perList);
+        log.info( perList );
         log.info( "获取菜单" );
         //获取菜单
         for (Permission item : perList) {
