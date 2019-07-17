@@ -1,6 +1,8 @@
 package cadc.service;
 
 import cadc.entity.Student;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -21,4 +23,6 @@ public interface StudentService extends IService<Student> {
      * @return
      */
     boolean insert(Student student);
+
+    IPage<Student> findAll(Page<Student> page);
 }

@@ -20,4 +20,11 @@ public class Teacher  implements Serializable {
     @TableId(type = IdType.AUTO)
     private String account;
     private String password;
+    private String teacherName;
+    private String teacherSex;
+    private String teacherPhone;
+    private String teacherMaster;
+    private String teacherLevel;
+    private String teacherBankCardNo;
+    private int picId;
 }
