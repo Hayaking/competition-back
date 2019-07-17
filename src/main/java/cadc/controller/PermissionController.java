@@ -2,6 +2,7 @@ package cadc.controller;
 
 import cadc.bean.message.MessageFactory;
 import cadc.entity.Permission;
+import cadc.entity.PermissionMenu;
 import cadc.entity.RolePermission;
 import cadc.service.PermissionService;
 import lombok.extern.log4j.Log4j2;
@@ -27,6 +28,7 @@ public class PermissionController {
 
     /**
      * 获取指定角色拥有的权限
+     *
      * @param roleId
      * @return
      */
@@ -38,6 +40,7 @@ public class PermissionController {
 
     /**
      * 获取所有权限
+     *
      * @return
      */
     @RequestMapping(value = "/permission", method = RequestMethod.GET)
@@ -48,6 +51,7 @@ public class PermissionController {
 
     /**
      * 给指定角色添加权限
+     *
      * @param roleId
      * @param permissionId
      * @return
@@ -61,6 +65,7 @@ public class PermissionController {
 
     /**
      * 删除指定的权限
+     *
      * @param permissionId
      * @return
      */
@@ -69,8 +74,10 @@ public class PermissionController {
         boolean flag = permissionService.removeById( permissionId );
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
+
     /**
      * 删除指定角色拥有的权限
+     *
      * @param roleId
      * @param permissionId
      * @return
@@ -81,6 +88,13 @@ public class PermissionController {
         boolean flag = permissionService.deletePermissionToRole( rolePermission );
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
+
+    /**
+     * 添加权限
+     *
+     * @param permissionName
+     * @return
+     */
     @RequestMapping(value = "/permission", method = RequestMethod.POST)
     public Object addPermission(String permissionName) {
         Permission permission = new Permission();
@@ -89,4 +103,28 @@ public class PermissionController {
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
 
+    /**
+     * 查询指定菜单对应的权限id
+     *
+     * @param menuId
+     * @return
+     */
+    @RequestMapping(value = "/permission/menu/{menuId}", method = RequestMethod.GET)
+    public Object getIdByMenuId(@PathVariable int menuId) {
+        int id = permissionService.getIdByMenuId( menuId );
+        return MessageFactory.message( SUCCESS, id );
+    }
+
+    /**
+     * 添加/更新 权限与菜单的关系
+     * @param menuId
+     * @param permissionId
+     * @return
+     */
+    @RequestMapping(value = "/permission/menu/{menuId}/{permissionId}", method = RequestMethod.POST)
+    public Object savePermissionMenu(@PathVariable int menuId, @PathVariable int permissionId) {
+        PermissionMenu permissionMenu = new PermissionMenu(  permissionId ,menuId);
+        boolean flag = permissionService.savePermissionMenu( permissionMenu );
+        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
+    }
 }

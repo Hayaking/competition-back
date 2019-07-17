@@ -1,6 +1,7 @@
 package cadc.service;
 
 import cadc.entity.Permission;
+import cadc.entity.PermissionMenu;
 import cadc.entity.RolePermission;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -20,4 +21,8 @@ public interface PermissionService extends IService<Permission> {
     boolean addPermissionToRole(RolePermission rolePermission);
 
     boolean deletePermissionToRole(RolePermission rolePermission);
+
+    int getIdByMenuId(int menuId);
+
+    boolean savePermissionMenu(PermissionMenu permissionMenu);
 }

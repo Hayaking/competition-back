@@ -1,14 +1,15 @@
 package cadc.service.impl;
 
 import cadc.entity.Permission;
+import cadc.entity.PermissionMenu;
 import cadc.entity.RolePermission;
 import cadc.mapper.PermissionMapper;
+import cadc.mapper.PermissionMenuMapper;
 import cadc.mapper.RolePermissionMapper;
 import cadc.service.PermissionService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,6 +24,8 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     private PermissionMapper permissionMapper;
     @Resource
     private RolePermissionMapper rolePermissionMapper;
+    @Resource
+    private PermissionMenuMapper permissionMenuMapper;
 
     @Override
 
@@ -43,5 +46,15 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         UpdateWrapper<RolePermission> wrapper = new UpdateWrapper<>();
         wrapper.eq( "id", rolePermission.getId() );
         return rolePermissionMapper.delete( wrapper ) > 0;
+    }
+
+    @Override
+    public int getIdByMenuId(int menuId) {
+        return permissionMenuMapper.selectOne( new QueryWrapper<PermissionMenu>().eq( "menu_id", menuId ) ).getPermissionId();
+    }
+
+    @Override
+    public boolean savePermissionMenu(PermissionMenu permissionMenu) {
+        return permissionMenuMapper.insert( permissionMenu ) > 0;
     }
 }
