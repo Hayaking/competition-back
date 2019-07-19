@@ -2,12 +2,14 @@ package cadc.mapper;
 
 import cadc.entity.Menu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 /**
  * @author haya
  */
+@Mapper
 public interface MenuMapper extends BaseMapper<Menu> {
     @Select("SELECT menu.id,path,name,component,meta_id FROM permission_menu " +
             "join menu on permission_menu.menu_id = menu.id " +

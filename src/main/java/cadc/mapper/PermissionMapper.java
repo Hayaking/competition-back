@@ -2,6 +2,7 @@ package cadc.mapper;
 
 import cadc.entity.Permission;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * @author haya
  */
-@Component
+@Mapper
 public interface PermissionMapper extends BaseMapper<Permission> {
     /**
      * 找到指定角色拥有的权限

@@ -24,5 +24,10 @@ public interface StudentService extends IService<Student> {
      */
     boolean insert(Student student);
 
+    /**
+     * 分页获取所有学生
+     * @param page
+     * @return
+     */
     IPage<Student> findAll(Page<Student> page);
 }

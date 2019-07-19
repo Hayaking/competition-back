@@ -13,13 +13,17 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * @author haya
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> implements StudentService {
-    @Autowired
+    @Resource
     private StudentMapper studentMapper;
 
     @Override
