@@ -15,4 +15,21 @@ public interface TeacherGroupService extends IService<TeacherGroup> {
      * @return
      */
     List<TeacherGroup> findByTeacherId(String account);
+
+    /**
+     * 邀请组员
+     * @param groupId
+     * @param account
+     * @return
+     */
+    boolean inviteTeacher(int groupId, String account);
+
+    /**
+     * 更新状态
+     * @param groupId
+     * @param account
+     * @param state
+     * @return
+     */
+    boolean updateState(int groupId, String account,String state);
 }

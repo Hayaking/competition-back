@@ -33,6 +33,11 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
     }
 
     @Override
+    public List<Teacher> getInvitingByGroupId(int groupId) {
+        return teacherMapper.getInvitingByGroupId( groupId );
+    }
+
+    @Override
     public IPage<Teacher> findAll(IPage<Teacher> page) {
         return teacherMapper.selectPage( page, new QueryWrapper<>() );
     }

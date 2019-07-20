@@ -20,5 +20,7 @@ public interface TeacherService extends IService<Teacher> {
 
     List<Teacher> getByGroupId(int groupId);
 
+    List<Teacher> getInvitingByGroupId(int groupId);
+
     IPage<Teacher> findAll(IPage<Teacher> page);
 }

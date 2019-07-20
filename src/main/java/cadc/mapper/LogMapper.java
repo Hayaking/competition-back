@@ -2,6 +2,7 @@ package cadc.mapper;
 
 import cadc.entity.Log;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author yyp
  * @since 2019-03-26
  */
+@Mapper
 public interface LogMapper extends BaseMapper<Log> {
 
 }

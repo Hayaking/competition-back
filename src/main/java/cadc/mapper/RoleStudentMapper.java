@@ -1,6 +1,6 @@
 package cadc.mapper;
 
-import cadc.entity.RolePermission;
+import cadc.entity.RoleStudent;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -8,6 +8,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @author haya
  */
 @Mapper
-public interface RolePermissionMapper extends BaseMapper<RolePermission> {
-
+public interface RoleStudentMapper extends BaseMapper<RoleStudent> {
 }

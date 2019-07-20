@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static cadc.bean.message.STATE.FAILED;
-import static cadc.bean.message.STATE.SUCCESS;
+import static cadc.bean.message.STATE.*;
 
 /**
  * @author haya
@@ -37,6 +36,10 @@ public class TeacherGroupController {
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
 
+    /**
+     * 获取所在的工作组
+     * @return
+     */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public Object list() {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
@@ -44,5 +47,41 @@ public class TeacherGroupController {
         List<TeacherGroup> list = teacherGroupService.findByTeacherId( account );
         log.info( list );
         return MessageFactory.message( SUCCESS, list );
+    }
+
+    /**
+     * 邀请工作组成员
+     * @param groupId
+     * @param account
+     * @return
+     */
+    @RequestMapping(value = "/invite/{groupId}/{account}", method = RequestMethod.POST)
+    public Object invite(@PathVariable int groupId, @PathVariable String account) {
+        boolean flag = teacherGroupService.inviteTeacher( groupId, account );
+        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
+    }
+
+    /**
+     * 同意邀请
+     * @param groupId
+     * @param account
+     * @return
+     */
+    @RequestMapping(value = "/agree/{groupId}/{account}", method = RequestMethod.POST)
+    public Object agree(@PathVariable int groupId, @PathVariable String account) {
+        boolean flag = teacherGroupService.updateState( groupId, account, STATE_INVITE_SUCCESS.toString() );
+        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
+    }
+
+    /**
+     * 拒绝邀请
+     * @param groupId
+     * @param account
+     * @return
+     */
+    @RequestMapping(value = "/refuse/{groupId}/{account}", method = RequestMethod.POST)
+    public Object refuse(@PathVariable int groupId, @PathVariable String account) {
+        boolean flag = teacherGroupService.updateState( groupId, account, STATE_INVITE_FAILED.toString() );
+        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
 }

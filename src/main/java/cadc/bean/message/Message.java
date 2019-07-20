@@ -19,4 +19,7 @@ public class Message<T>{
         this.state = state;
         this.body = body;
     }
+    public Message(STATE state) {
+        this.state = state;
+    }
 }

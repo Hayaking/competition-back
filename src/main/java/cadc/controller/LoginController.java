@@ -3,6 +3,7 @@ package cadc.controller;
 import cadc.bean.UserToken;
 import cadc.bean.message.Message;
 import cadc.bean.message.MessageFactory;
+import cadc.bean.message.STATE;
 import cadc.entity.Student;
 import cadc.entity.Teacher;
 import cadc.service.StudentService;
@@ -17,8 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import static cadc.bean.message.STATE.FAILED;
-import static cadc.bean.message.STATE.SUCCESS;
+import static cadc.bean.message.STATE.*;
 
 /**
  * @author haya
@@ -30,6 +30,7 @@ public class LoginController {
     private StudentService studentService;
     @Autowired
     private TeacherService teacherService;
+
     /**
      * 登录
      * @param account
@@ -39,7 +40,6 @@ public class LoginController {
      */
     @RequestMapping(value = "/login/{type}", method = RequestMethod.POST)
     public Object login(String account, String password, @PathVariable String type) {
-        log.info( "登录: " + account + "," + password + "," + type );
         Subject subject = SecurityUtils.getSubject();
         if (subject.isAuthenticated()) {
             return MessageFactory.message( SUCCESS, subject.getSession().getId() );
@@ -89,13 +89,14 @@ public class LoginController {
     public Object info(@PathVariable String type) {
         Subject subject = SecurityUtils.getSubject();
         Message res = MessageFactory.message( SUCCESS, "注册成功" );
-        switch (type) {
-            case "student":
+        type = type.toUpperCase();
+        switch (STATE.valueOf( type )) {
+            case STUDENT:
                 Student student = (Student) subject.getPrincipal();
                 student = studentService.getById( student.getAccount() );
                 res = MessageFactory.message( SUCCESS, student );
                 break;
-            case "teacher":
+            case TEACHER:
                 Teacher teacher = (Teacher) subject.getPrincipal();
                 teacher = teacherService.getById( teacher.getAccount() );
                 res = MessageFactory.message( SUCCESS, teacher );

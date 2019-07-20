@@ -21,4 +21,6 @@ public interface CompetitionService {
 
     boolean setState(int id, String state);
 
+    boolean setEnterState(int id, String state);
+
 }

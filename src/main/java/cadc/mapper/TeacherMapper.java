@@ -18,7 +18,9 @@ public interface TeacherMapper extends BaseMapper<Teacher> {
     @Select("select * from teacher where account = #{account} and password=#{password}")
     Teacher find(@Param("account") String account, @Param("password") String password);
 
-    @Select( "SELECT account,teacher.teacher_name FROM teacher JOIN teacher_in_group on teacher_in_group.teacher_id = teacher.account where teacher_in_group.group_id = #{groupId}" )
+    @Select( "SELECT account,teacher.teacher_name FROM teacher JOIN teacher_in_group on teacher_in_group.teacher_id = teacher.account where teacher_in_group.state = '邀请成功' AND teacher_in_group.group_id = #{groupId}" )
     List<Teacher> getByGroupId(int groupId);
 
+    @Select( "SELECT account,teacher.teacher_name FROM teacher JOIN teacher_in_group on teacher_in_group.teacher_id = teacher.account where teacher_in_group.state = '邀请中' AND teacher_in_group.group_id = #{groupId}" )
+    List<Teacher> getInvitingByGroupId(int groupId);
 }

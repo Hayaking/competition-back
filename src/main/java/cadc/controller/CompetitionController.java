@@ -11,8 +11,7 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import static cadc.bean.message.STATE.FAILED;
-import static cadc.bean.message.STATE.SUCCESS;
+import static cadc.bean.message.STATE.*;
 
 /**
  * @author haya
@@ -24,7 +23,7 @@ public class CompetitionController {
     private CompetitionService competitionService;
 
     /**
-     * 接收前端传来的competition对象
+     * 申请比赛立项
      *
      * @param competition
      * @return
@@ -32,7 +31,8 @@ public class CompetitionController {
     @RequestMapping(value = "/competition", method = RequestMethod.POST)
     public Object save(@RequestBody Competition competition) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
-        competition.setState( "申请中" );
+        competition.setState( STATE_COMPETITION_APPLYING.toString() );
+        competition.setEnterState( STATE_COMPETITION_NOT_START.toString() );
         competition.setCreater( teacher.getAccount() );
         boolean flag = competitionService.insertCompetition( competition );
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
@@ -65,12 +65,35 @@ public class CompetitionController {
 
     /**
      * 设置审核状态
-     * @param state
+     * @param id
+     * @param flag
      * @return
      */
-    @RequestMapping(value = "/competition/state", method = RequestMethod.GET)
-    public Object setState(int id ,String state) {
-        competitionService.setState( id, state );
+    @RequestMapping(value = "/competition/state/{id}/{flag}", method = RequestMethod.POST)
+    public Object setState(@PathVariable int id, @PathVariable boolean flag) {
+        // true同意, false拒绝
+        if (flag) {
+            competitionService.setState( id, STATE_COMPETITION_AGREE.toString() );
+        } else {
+            competitionService.setState( id, STATE_COMPETITION_REFUSE.toString() );
+        }
+        return MessageFactory.message( SUCCESS, "" );
+    }
+
+    /**
+     * 设置比赛开始状态
+     * @param id
+     * @param flag
+     * @return
+     */
+    @RequestMapping(value = "/competition/enterState/{id}/{flag}", method = RequestMethod.POST)
+    public Object setEnterState(@PathVariable int id, @PathVariable boolean flag) {
+        // true开始, false结束
+        if (flag) {
+            competitionService.setEnterState( id, STATE_COMPETITION_HAD_START.toString() );
+        } else {
+            competitionService.setEnterState( id, STATE_COMPETITION_END.toString() );
+        }
         return MessageFactory.message( SUCCESS, "" );
     }
 }
