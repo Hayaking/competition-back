@@ -31,7 +31,7 @@ public class CompetitionController {
     @RequestMapping(value = "/competition", method = RequestMethod.POST)
     public Object save(@RequestBody Competition competition) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
-        competition.setState( STATE_COMPETITION_APPLYING.toString() );
+        competition.setState( STATE_APPLYING.toString() );
         competition.setEnterState( STATE_COMPETITION_NOT_START.toString() );
         competition.setCreater( teacher.getAccount() );
         boolean flag = competitionService.insertCompetition( competition );
@@ -73,9 +73,9 @@ public class CompetitionController {
     public Object setState(@PathVariable int id, @PathVariable boolean flag) {
         // true同意, false拒绝
         if (flag) {
-            competitionService.setState( id, STATE_COMPETITION_AGREE.toString() );
+            competitionService.setState( id, STATE_AGREE.toString() );
         } else {
-            competitionService.setState( id, STATE_COMPETITION_REFUSE.toString() );
+            competitionService.setState( id, STATE_REFUSE.toString() );
         }
         return MessageFactory.message( SUCCESS, "" );
     }

@@ -16,10 +16,10 @@ public enum STATE {
     FAILED( "FAILED" ),
     TEACHER( "teacher" ),
     STUDENT( "student" ),
-    // 申请立项
-    STATE_COMPETITION_APPLYING("申请中"),
-    STATE_COMPETITION_AGREE("通过"),
-    STATE_COMPETITION_REFUSE("拒绝"),
+    // 申请
+    STATE_APPLYING("申请中"),
+    STATE_AGREE("通过"),
+    STATE_REFUSE("拒绝"),
     // 比赛开始结束。。。
     STATE_COMPETITION_NOT_START("未开始"),
     STATE_COMPETITION_HAD_START("已开始"),

@@ -21,4 +21,14 @@ public class TeacherGroup {
     private String groupState;
     @TableField("group_create_time")
     private String groupCreateTime;
+
+    public TeacherGroup() {
+    }
+
+    public TeacherGroup(String groupName, String groupCreater, String groupState, String groupCreateTime) {
+        this.groupName = groupName;
+        this.groupCreater = groupCreater;
+        this.groupState = groupState;
+        this.groupCreateTime = groupCreateTime;
+    }
 }

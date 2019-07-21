@@ -21,19 +21,21 @@ public class UserModularRealmAuthenticator extends ModularRealmAuthenticator {
     @Override
     protected AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken)
             throws AuthenticationException {
-        System.out.println("UserModularRealmAuthenticator:method doAuthenticate() execute ");
+        log.info("=========================UserModularRealmAuthenticator=========================");
         // 判断getRealms()是否返回为空
         assertRealmsConfigured();
         // 强制转换回自定义的CustomizedToken
         UserToken userToken = (UserToken) authenticationToken;
         // 登录类型
         String loginType = userToken.getLoginType();
+        log.info( "type:"+loginType );
         // 所有Realm
         Collection<Realm> realms = getRealms();
         // 登录类型对应的所有Realm
         List<Realm> typeRealms = new ArrayList<>();
         for (Realm realm : realms) {
-            if (realm.getName().contains(loginType)) {
+            log.info( realm.getName().toLowerCase().contains( loginType ));
+            if (realm.getName().toLowerCase().contains( loginType )) {
                 log.info( realm.getName() );
                 typeRealms.add(realm);
             }
@@ -41,11 +43,11 @@ public class UserModularRealmAuthenticator extends ModularRealmAuthenticator {
 
         // 判断是单Realm还是多Realm
         if (typeRealms.size() == 1){
-            log.info("doSingleRealmAuthentication() execute ");
+            log.info("单个");
             return doSingleRealmAuthentication(typeRealms.get(0), userToken);
         }
         else{
-            log.info("doMultiRealmAuthentication() execute ");
+            log.info("多个 ");
             return doMultiRealmAuthentication(typeRealms, userToken);
         }
     }

@@ -7,6 +7,7 @@ import cadc.mapper.TeacherGroupMapper;
 import cadc.mapper.TeacherInGroupMapper;
 import cadc.service.TeacherGroupService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,11 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     }
 
     @Override
+    public IPage<TeacherGroup> findAll(IPage<TeacherGroup> page) {
+        return teacherGroupMapper.selectPage( page, new QueryWrapper<>() );
+    }
+
+    @Override
     public boolean inviteTeacher(int groupId,String account) {
         return teacherInGroupMapper.insert( new TeacherInGroup( groupId, account, STATE_INVITING.toString() ) ) > 0;
     }
@@ -41,5 +47,10 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     @Override
     public boolean updateState(int groupId, String account, String state) {
         return teacherInGroupMapper.updateState( groupId, account, state ) > 0;
+    }
+
+    @Override
+    public boolean setState(int groupId, String state) {
+        return teacherGroupMapper.updateState( groupId, state ) > 0;
     }
 }

@@ -1,6 +1,7 @@
 package cadc.service;
 
 import cadc.entity.TeacherGroup;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -15,6 +16,8 @@ public interface TeacherGroupService extends IService<TeacherGroup> {
      * @return
      */
     List<TeacherGroup> findByTeacherId(String account);
+
+    IPage<TeacherGroup> findAll(IPage<TeacherGroup> page);
 
     /**
      * 邀请组员
@@ -32,4 +35,6 @@ public interface TeacherGroupService extends IService<TeacherGroup> {
      * @return
      */
     boolean updateState(int groupId, String account,String state);
+
+    boolean setState(int groupId, String state);
 }

@@ -3,6 +3,7 @@ package cadc.config.shiro;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
+import org.apache.shiro.authz.ModularRealmAuthorizer;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -24,7 +25,7 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
     @Bean
-    public ShiroFilterFactoryBean shirFilter(DefaultWebSecurityManager securityManager) {
+    public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager( securityManager );
         //拦截器.
@@ -56,14 +57,18 @@ public class ShiroConfig {
     public TeacherRealm teacherRealm() {
         return new TeacherRealm();
     }
+
     @Bean(name = "SecurityManager")
     public SecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        securityManager.setAuthenticator( modularRealmAuthenticator() );
+        securityManager.setAuthorizer(  modularRealmAuthorizer());
         LinkedList<Realm> list = new LinkedList<>();
         list.add( stuRealm() );
         list.add( teacherRealm() );
         securityManager.setRealms( list);
-        SecurityUtils.setSecurityManager( securityManager );
+
+
         return securityManager;
     }
     /**
@@ -84,11 +89,16 @@ public class ShiroConfig {
      * */
     @Bean
     public ModularRealmAuthenticator modularRealmAuthenticator(){
-        //自己重写的ModularRealmAuthenticator
         UserModularRealmAuthenticator modularRealmAuthenticator = new UserModularRealmAuthenticator();
-        modularRealmAuthenticator.setAuthenticationStrategy(new AtLeastOneSuccessfulStrategy());
         return modularRealmAuthenticator;
     }
+    @Bean
+    public ModularRealmAuthorizer modularRealmAuthorizer(){
+        UserModularRealmAuthorizer userModularRealmAuthorizer = new UserModularRealmAuthorizer();
+
+        return userModularRealmAuthorizer;
+    }
+
     @Bean
     public static LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
