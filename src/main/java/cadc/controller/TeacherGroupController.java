@@ -3,6 +3,7 @@ package cadc.controller;
 import cadc.bean.message.MessageFactory;
 import cadc.entity.Teacher;
 import cadc.entity.TeacherGroup;
+import cadc.entity.TeacherInGroup;
 import cadc.service.TeacherGroupService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -32,24 +33,31 @@ public class TeacherGroupController {
 
     /**
      * 创建工作组
+     *
      * @param groupName
      * @return
      */
-    @RequiresPermissions( "创建工作组" )
+    @RequiresPermissions("创建工作组")
     @RequestMapping(value = "/create/{groupName}", method = RequestMethod.POST)
     public Object create(@PathVariable String groupName) {
-        Subject subject = SecurityUtils.getSubject();
-        Teacher teacher = (Teacher) subject.getPrincipal();
+        // 获取创建者的账号
+        Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         String account = teacher.getAccount();
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        TeacherGroup teacherGroup = new TeacherGroup( groupName, account, STATE_APPLYING.toString(), sdf.format( date ) );
-        boolean flag = teacherGroupService.save( teacherGroup );
-        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
+        // 添加工作组
+        Integer id = teacherGroupService.add( groupName, account, STATE_APPLYING.toString());
+        boolean flag;
+        if (id != null) {
+            // 将创建者添加进工作组
+            flag = teacherGroupService.addGroupMember( id, account );
+        } else {
+            flag = false;
+        }
+        return MessageFactory.message( flag ? SUCCESS : FAILED );
     }
 
     /**
      * 获取所在的工作组
+     *
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -57,10 +65,15 @@ public class TeacherGroupController {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         String account = teacher.getAccount();
         List<TeacherGroup> list = teacherGroupService.findByTeacherId( account );
-        log.info( list );
         return MessageFactory.message( SUCCESS, list );
     }
 
+    /**
+     * 获取所有工作组
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @RequestMapping(value = "/all/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object all(@PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<TeacherGroup> res = teacherGroupService.findAll( new Page<>( pageNum, pageSize ) );
@@ -69,6 +82,7 @@ public class TeacherGroupController {
 
     /**
      * 邀请工作组成员
+     *
      * @param groupId
      * @param account
      * @return
@@ -81,6 +95,7 @@ public class TeacherGroupController {
 
     /**
      * 同意邀请
+     *
      * @param groupId
      * @param account
      * @return
@@ -93,6 +108,7 @@ public class TeacherGroupController {
 
     /**
      * 拒绝邀请
+     *
      * @param groupId
      * @param account
      * @return

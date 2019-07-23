@@ -10,6 +10,8 @@ import java.util.List;
  * @author haya
  */
 public interface TeacherGroupService extends IService<TeacherGroup> {
+
+    Integer add(String groupName, String account, String state);
     /**
      * 查找教师所在工作组
      * @param account
@@ -28,13 +30,15 @@ public interface TeacherGroupService extends IService<TeacherGroup> {
     boolean inviteTeacher(int groupId, String account);
 
     /**
-     * 更新状态
+     * 更新邀请状态
      * @param groupId
      * @param account
      * @param state
      * @return
      */
     boolean updateState(int groupId, String account,String state);
+
+    boolean addGroupMember(int groupId, String account);
 
     boolean setState(int groupId, String state);
 }

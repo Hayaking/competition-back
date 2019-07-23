@@ -1,5 +1,6 @@
 package cadc.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -13,7 +14,7 @@ import java.util.Date;
 @Data
 @TableName("competition")
 public class Competition {
-    @TableId
+    @TableId(type = IdType.AUTO)
     private int id;
     @TableField("cp_name")
     private String name;

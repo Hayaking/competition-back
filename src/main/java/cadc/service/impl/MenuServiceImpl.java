@@ -76,6 +76,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         List<Menu> children = menuChildMapper.find( root.getId() );
         if (children != null) {
             for (Menu item : children) {
+                log.info( item.getPath() );
                 Menu menu = menuMapper.findMenu( item.getPath() );
                 if (menu == null) {
                     continue;

@@ -7,15 +7,27 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.Version;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ClassUtils;
 
 import javax.annotation.Resource;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author haya
  */
 @Service
+@Log4j2
 @Transactional(rollbackFor = Exception.class)
 public class CompetitionImpl implements CompetitionService {
     @Resource
@@ -24,6 +36,14 @@ public class CompetitionImpl implements CompetitionService {
     @Override
     public boolean insertCompetition(Competition competition) {
         return competitionMapper.insert( competition ) > 0;
+    }
+
+    @Override
+    public Integer add(Competition competition) {
+        int insert = competitionMapper.insert( competition );
+
+        log.warn( competition.getId() );
+        return competition.getId();
     }
 
     @Override
@@ -46,5 +66,53 @@ public class CompetitionImpl implements CompetitionService {
     @Override
     public boolean setEnterState(int id, String state) {
         return competitionMapper.updateEnterState( id, state ) > 0;
+    }
+
+    @Override
+    public String generateWord(int id) {
+        Competition competition = competitionMapper.selectById( id );
+        return generateWord( competition );
+    }
+
+    @Override
+    public String generateWord(Competition competition) {
+        // targer路径
+        String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
+        // word模版路径
+        String templatePath = root + "template/";
+        // word输出路径
+        String outPath = root + "static/word/" + competition.getId() + ".doc";
+        // 获取属性
+        Field[] declaredFields = competition.getClass().getDeclaredFields();
+        Map<String, Object> res = new HashMap<>( 13 );
+        Object val;
+        String name;
+        try {
+            // 遍历属性
+            for (Field item : declaredFields) {
+                // 获取属性名
+                name = item.getName();
+                item.setAccessible( true );
+                // 取值
+                val = item.get( competition );
+                if (val != null) {
+                    res.put( name, val );
+                    item.setAccessible( false );
+                }
+            }
+            log.info( res );
+            Configuration configuration = new Configuration( new Version( "2.3.0" ) );
+            configuration.setDefaultEncoding( "utf-8" );
+            configuration.setDirectoryForTemplateLoading( new File( templatePath ) );
+            Template template = configuration.getTemplate( "word.ftl" );
+
+            File outFile = new File( outPath);
+            Writer writer = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( outFile ), StandardCharsets.UTF_8 ), 10240 );
+            template.process( res, writer );
+            writer.close();
+        } catch (IllegalAccessException | IOException | TemplateException e) {
+            e.printStackTrace();
+        }
+        return outPath;
     }
 }

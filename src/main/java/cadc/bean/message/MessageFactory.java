@@ -11,5 +11,7 @@ public class MessageFactory {
     public static <T> Message message(STATE state, T body) {
         return new Message<>( state, body );
     }
-
+    public static <T> Message message(STATE state) {
+        return new Message<>( state );
+    }
 }

@@ -3,6 +3,7 @@ package cadc.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 /**
@@ -10,7 +11,7 @@ import lombok.Data;
  */
 @Data
 @TableName("teacher_group")
-public class TeacherGroup {
+public class TeacherGroup extends Model<TeacherGroup> {
     @TableId
     private int id;
     @TableField("group_name")

@@ -34,8 +34,10 @@ public class CompetitionController {
         competition.setState( STATE_APPLYING.toString() );
         competition.setEnterState( STATE_COMPETITION_NOT_START.toString() );
         competition.setCreater( teacher.getAccount() );
-        boolean flag = competitionService.insertCompetition( competition );
-        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
+        int id = competitionService.add( competition );
+        competition.setId( id );
+        competitionService.generateWord( competition );
+        return MessageFactory.message(  SUCCESS );
     }
 
     /**

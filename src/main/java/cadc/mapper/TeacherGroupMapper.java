@@ -2,10 +2,7 @@ package cadc.mapper;
 
 import cadc.entity.TeacherGroup;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -14,12 +11,19 @@ import java.util.List;
  */
 @Mapper
 public interface TeacherGroupMapper extends BaseMapper<TeacherGroup> {
-    @Select("select teacher_group.id,group_name ,group_state,group_creater,group_create_time from teacher_in_group " +
-            "join teacher_group " +
-            "on teacher_in_group.group_id = teacher_group.id " +
-            "where teacher_in_group.teacher_id = #{account}")
+    /**
+     * 获取所在工作组
+     * @param account
+     * @return
+     */
+    @Select("SELECT teacher_group.id,group_name,group_state,group_creater,group_create_time FROM teacher_in_group JOIN teacher_group ON teacher_in_group.group_id = teacher_group.id WHERE teacher_group.group_state = '通过' AND teacher_in_group.state = '邀请成功' AND teacher_in_group.teacher_id = #{account}")
     List<TeacherGroup> findByTeacherId(String account);
 
     @Update("update teacher_group set group_state = #{state} where id=#{groupId}")
-    int updateState(@Param( "groupId" ) int groupId,@Param( "state" ) String state);
+    int updateState(@Param("groupId") int groupId, @Param("state") String state);
+
+
+    @Insert("insert into teacher_group (group_name,group_state,group_creater,group_create_time) values(#{g.groupName},#{g.groupState},#{g.groupCreater},#{g.groupCreateTime})")
+    @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="g.id", before=false, resultType=Integer.class)
+    int add(@Param( "g" ) TeacherGroup group);
 }

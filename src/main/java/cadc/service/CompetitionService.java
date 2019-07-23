@@ -4,6 +4,8 @@ import cadc.entity.Competition;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import java.util.Map;
+
 /**
  * @author haya
  */
@@ -15,6 +17,8 @@ public interface CompetitionService {
      */
     boolean insertCompetition(Competition competition);
 
+    Integer add(Competition competition);
+
     IPage<Competition> findByGroupId(Page<Competition> page, int groupId);
 
     IPage<Competition> findAll(Page<Competition> page);
@@ -23,4 +27,7 @@ public interface CompetitionService {
 
     boolean setEnterState(int id, String state);
 
+    String generateWord(int id);
+
+    String generateWord(Competition competition);
 }
