@@ -26,4 +26,8 @@ public interface TeacherGroupMapper extends BaseMapper<TeacherGroup> {
     @Insert("insert into teacher_group (group_name,group_state,group_creater,group_create_time) values(#{g.groupName},#{g.groupState},#{g.groupCreater},#{g.groupCreateTime})")
     @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="g.id", before=false, resultType=Integer.class)
     int add(@Param( "g" ) TeacherGroup group);
+
+
+    @Select( "SELECT teacher_group.group_name,teacher_group.group_state,teacher_group.group_creater,teacher_group.group_create_time,teacher_group.id FROM teacher_in_group JOIN teacher_group ON teacher_group.id = teacher_in_group.group_id WHERE teacher_in_group.state = '邀请中' AND teacher_in_group.teacher_id = #{account}" )
+    List<TeacherGroup> getInvitingByTeacherId(String account);
 }

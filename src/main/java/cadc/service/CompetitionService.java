@@ -4,6 +4,7 @@ import cadc.entity.Competition;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +25,12 @@ public interface CompetitionService {
     IPage<Competition> findAll(Page<Competition> page);
 
     boolean setState(int id, String state);
+
+    boolean setStartState(int id, String state);
+
+    List<Competition> getEnterNoEnd();
+
+    List<Competition> getStartNoEnd();
 
     boolean setEnterState(int id, String state);
 

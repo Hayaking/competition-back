@@ -29,6 +29,8 @@ public interface TeacherGroupService extends IService<TeacherGroup> {
      */
     boolean inviteTeacher(int groupId, String account);
 
+    List<TeacherGroup> getInviting(String account);
+
     /**
      * 更新邀请状态
      * @param groupId

@@ -93,6 +93,14 @@ public class TeacherGroupController {
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
 
+    @RequestMapping(value = "/inviting", method = RequestMethod.GET)
+    public Object getInviting() {
+        Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
+        List<TeacherGroup> list = teacherGroupService.getInviting( teacher.getAccount() );
+        return MessageFactory.message(SUCCESS, list );
+    }
+
+
     /**
      * 同意邀请
      *
@@ -119,8 +127,14 @@ public class TeacherGroupController {
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
 
+    /**
+     * 审核
+     * @param id
+     * @param flag
+     * @return
+     */
     @RequestMapping(value = "/state/{id}/{flag}", method = RequestMethod.POST)
-    public Object refuse(@PathVariable int id, @PathVariable boolean flag) {
+    public Object review(@PathVariable int id, @PathVariable boolean flag) {
         if (flag) {
             flag = teacherGroupService.setState( id, STATE_AGREE.toString() );
         } else {

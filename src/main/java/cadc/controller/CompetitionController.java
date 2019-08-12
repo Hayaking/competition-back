@@ -32,7 +32,7 @@ public class CompetitionController {
     public Object save(@RequestBody Competition competition) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         competition.setState( STATE_APPLYING.toString() );
-        competition.setEnterState( STATE_COMPETITION_NOT_START.toString() );
+        competition.setEnterState( STATE_NOT_START.toString() );
         competition.setCreater( teacher.getAccount() );
         int id = competitionService.add( competition );
         competition.setId( id );
@@ -92,9 +92,9 @@ public class CompetitionController {
     public Object setEnterState(@PathVariable int id, @PathVariable boolean flag) {
         // true开始, false结束
         if (flag) {
-            competitionService.setEnterState( id, STATE_COMPETITION_HAD_START.toString() );
+            competitionService.setEnterState( id, STATE_HAD_START.toString() );
         } else {
-            competitionService.setEnterState( id, STATE_COMPETITION_END.toString() );
+            competitionService.setEnterState( id, STATE_END.toString() );
         }
         return MessageFactory.message( SUCCESS, "" );
     }

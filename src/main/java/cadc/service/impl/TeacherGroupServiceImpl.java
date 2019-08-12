@@ -1,6 +1,5 @@
 package cadc.service.impl;
 
-import cadc.bean.message.STATE;
 import cadc.entity.TeacherGroup;
 import cadc.entity.TeacherInGroup;
 import cadc.mapper.TeacherGroupMapper;
@@ -9,7 +8,6 @@ import cadc.service.TeacherGroupService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.swagger.models.auth.In;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +51,11 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     @Override
     public boolean inviteTeacher(int groupId,String account) {
         return teacherInGroupMapper.insert( new TeacherInGroup( groupId, account, STATE_INVITING.toString() ) ) > 0;
+    }
+
+    @Override
+    public List<TeacherGroup> getInviting(String account) {
+        return teacherGroupMapper.getInvitingByTeacherId( account );
     }
 
     @Override

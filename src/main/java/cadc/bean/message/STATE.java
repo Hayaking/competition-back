@@ -20,6 +20,11 @@ public enum STATE {
     STATE_APPLYING("申请中"),
     STATE_AGREE("通过"),
     STATE_REFUSE("拒绝"),
+
+    STATE_NOT_START("未开始"),
+    STATE_HAD_START("已开始"),
+    STATE_END("结束"),
+
     // 比赛开始结束。。。
     STATE_COMPETITION_NOT_START("未开始"),
     STATE_COMPETITION_HAD_START("已开始"),

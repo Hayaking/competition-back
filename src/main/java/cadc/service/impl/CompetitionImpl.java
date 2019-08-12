@@ -4,7 +4,6 @@ import cadc.entity.Competition;
 import cadc.mapper.CompetitionMapper;
 import cadc.service.CompetitionService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import freemarker.template.Configuration;
@@ -21,7 +20,11 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static cadc.bean.message.STATE.STATE_HAD_START;
+import static cadc.bean.message.STATE.STATE_NOT_START;
 
 /**
  * @author haya
@@ -61,6 +64,26 @@ public class CompetitionImpl implements CompetitionService {
     @Override
     public boolean setState(int id, String state) {
         return competitionMapper.updateState( id, state ) > 0;
+    }
+
+    @Override
+    public boolean setStartState(int id, String state) {
+        return competitionMapper.updateStartState( id, state ) > 0;    }
+
+    @Override
+    public List<Competition> getStartNoEnd() {
+        QueryWrapper<Competition> wrapper = new QueryWrapper<>();
+        wrapper.eq( "cp_start_state", STATE_NOT_START.toString() ).or()
+                .eq( "cp_start_state", STATE_HAD_START.toString() );
+        return competitionMapper.selectList( wrapper );
+    }
+
+    @Override
+    public List<Competition> getEnterNoEnd() {
+        QueryWrapper<Competition> wrapper = new QueryWrapper<>();
+        wrapper.eq( "cp_enter_state", STATE_NOT_START.toString() ).or()
+                .eq( "cp_enter_state", STATE_HAD_START.toString() );
+        return competitionMapper.selectList( wrapper );
     }
 
     @Override

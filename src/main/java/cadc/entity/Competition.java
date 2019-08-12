@@ -18,8 +18,16 @@ public class Competition {
     private int id;
     @TableField("cp_name")
     private String name;
+
     @TableField("cp_start_time")
     private Date startTime;
+    @TableField("cp_end_time")
+    private Date endTime;
+    @TableField("cp_enter_start_time")
+    private Date enterStartTime;
+    @TableField("cp_enter_end_time")
+    private Date enterEndTime;
+
     @TableField("cp_group_num")
     private String groupNum;
     @TableField("cp_stu_num")
@@ -32,10 +40,14 @@ public class Competition {
     private String org;
     @TableField("cp_co_org")
     private String coOrg;
+
     @TableField("cp_state")
     private String state;
     @TableField("cp_enter_state")
     private String enterState;
+    @TableField("cp_start_state")
+    private String startState;
+
     @TableField("cp_person_in_charge")
     private String personInCharge;
     @TableField("cp_creater")
