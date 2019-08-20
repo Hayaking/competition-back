@@ -18,4 +18,6 @@ public interface MenuService extends IService<Menu> {
      */
     List<Menu> getMenu(String account, String type);
 
+    List<Menu> getAll();
+
 }

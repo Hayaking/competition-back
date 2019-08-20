@@ -13,4 +13,7 @@ import org.apache.ibatis.annotations.Select;
 public interface MetaMapper extends BaseMapper<Meta> {
     @Select( "select * from meta where id = #{id}" )
     Meta findMeta(@Param("id") int metaId);
+
+    @Select( "select * from meta where id = #{id}" )
+    Meta getMetaById(@Param("id") int metaId);
 }

@@ -43,6 +43,6 @@ public class MenuController {
 
     @RequestMapping(value = "/menu", method = RequestMethod.GET)
     public Object menu( ) {
-        return menuService.list();
+        return menuService.getAll();
     }
 }

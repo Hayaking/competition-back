@@ -25,5 +25,11 @@ public interface PermissionMapper extends BaseMapper<Permission> {
             "where role.id = #{roleId}")
     List<Permission> findList(int roleId);
 
+    @Select("SELECT permission_id as id,permission_name  " +
+            "FROM role_permission " +
+            "join role on role_permission.role_id = role.id " +
+            "join permission on role_permission.permission_id = permission.id " +
+            "where role.id = #{roleId}")
+    List<Permission> getList(int roleId);
 
 }

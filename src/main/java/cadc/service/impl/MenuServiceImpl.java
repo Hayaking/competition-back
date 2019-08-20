@@ -12,8 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
+import static java.util.Arrays.asList;
 
 /**
  * @author haya
@@ -46,50 +47,26 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
             return null;
         }
         List<Permission> perList = new LinkedList<>();
-
-        List<Menu> res = new LinkedList<>();
-        log.info( "获取权限" );
+        Set<Menu> res = new TreeSet<>( Comparator.comparingInt( Menu::getId ) );
         //获取权限
         for (Role item : roleList) {
-            perList.addAll( permissionMapper.findList( item.getId() ) );
+            perList.addAll( permissionMapper.getList( item.getId() ) );
         }
-        log.info( perList );
-        log.info( "获取菜单" );
+
         //获取菜单
         for (Permission item : perList) {
-            Menu menu = menuMapper.findMainMenu( item.getId() );
+            Menu menu = menuMapper.getMainMenu( item.getId() );
             if (null == menu) {
                 continue;
             }
-            menu = buildMenu( menu );
-            Meta meta = null;
-            if (menu.getMetaId() != null) {
-                meta = metaMapper.findMeta( menu.getMetaId() );
-            }
-            menu.setMeta( meta );
+            menu.setChildren( menuMapper.getChildList( menu.getId() ) );
             res.add( menu );
         }
-        return res;
+        return new LinkedList<>( res );
     }
 
-    public Menu buildMenu(Menu root) {
-        List<Menu> children = menuChildMapper.find( root.getId() );
-        if (children != null) {
-            for (Menu item : children) {
-                log.info( item.getPath() );
-                Menu menu = menuMapper.findMenu( item.getPath() );
-                if (menu == null) {
-                    continue;
-                }
-                menu = buildMenu( menu );
-                root.addChild( menu );
-                Meta meta = null;
-                if (menu.getMetaId() != null) {
-                    meta = metaMapper.findMeta( menu.getMetaId() );
-                }
-                menu.setMeta( meta );
-            }
-        }
-        return root;
+    @Override
+    public List<Menu> getAll() {
+        return menuMapper.getAll();
     }
 }
