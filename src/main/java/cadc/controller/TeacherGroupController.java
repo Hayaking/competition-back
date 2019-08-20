@@ -93,6 +93,10 @@ public class TeacherGroupController {
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
 
+    /**
+     * 获取工作组的邀请
+     * @return
+     */
     @RequestMapping(value = "/inviting", method = RequestMethod.GET)
     public Object getInviting() {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
@@ -100,16 +104,16 @@ public class TeacherGroupController {
         return MessageFactory.message(SUCCESS, list );
     }
 
-
     /**
      * 同意邀请
      *
      * @param groupId
-     * @param account
      * @return
      */
-    @RequestMapping(value = "/agree/{groupId}/{account}", method = RequestMethod.POST)
-    public Object agree(@PathVariable int groupId, @PathVariable String account) {
+    @RequestMapping(value = "/agree/{groupId}", method = RequestMethod.POST)
+    public Object agree(@PathVariable int groupId) {
+        Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
+        String account = teacher.getAccount();
         boolean flag = teacherGroupService.updateState( groupId, account, STATE_INVITE_SUCCESS.toString() );
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
@@ -118,11 +122,12 @@ public class TeacherGroupController {
      * 拒绝邀请
      *
      * @param groupId
-     * @param account
      * @return
      */
-    @RequestMapping(value = "/refuse/{groupId}/{account}", method = RequestMethod.POST)
-    public Object refuse(@PathVariable int groupId, @PathVariable String account) {
+    @RequestMapping(value = "/refuse/{groupId}", method = RequestMethod.POST)
+    public Object refuse(@PathVariable int groupId) {
+        Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
+        String account = teacher.getAccount();
         boolean flag = teacherGroupService.updateState( groupId, account, STATE_INVITE_FAILED.toString() );
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }

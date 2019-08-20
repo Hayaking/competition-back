@@ -79,6 +79,13 @@ public class CompetitionImpl implements CompetitionService {
     }
 
     @Override
+    public List<Competition> get5ByType(int typeId) {
+        QueryWrapper<Competition> wrapper = new QueryWrapper<>();
+        wrapper.eq( "type_id", typeId ).last("LIMIT 5");
+        return competitionMapper.selectList( wrapper );
+    }
+
+    @Override
     public List<Competition> getEnterNoEnd() {
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
         wrapper.eq( "cp_enter_state", STATE_NOT_START.toString() ).or()

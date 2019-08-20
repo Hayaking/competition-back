@@ -11,6 +11,8 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static cadc.bean.message.STATE.*;
 
 /**
@@ -62,6 +64,17 @@ public class CompetitionController {
     @RequestMapping(value = "/competition/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object getAll(@PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<Competition> res = competitionService.findAll( new Page<>( pageNum, pageSize ) );
+        return MessageFactory.message( SUCCESS, res );
+    }
+
+    /**
+     * 分页查询全部
+     * @param typeId
+     * @return
+     */
+    @RequestMapping(value = "/competition/{typeId}", method = RequestMethod.GET)
+    public Object get5ByType(@PathVariable int typeId) {
+        List<Competition> res = competitionService.get5ByType( typeId );
         return MessageFactory.message( SUCCESS, res );
     }
 

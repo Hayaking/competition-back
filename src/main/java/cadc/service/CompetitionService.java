@@ -32,6 +32,8 @@ public interface CompetitionService {
 
     List<Competition> getStartNoEnd();
 
+    List<Competition> get5ByType(int typeId);
+
     boolean setEnterState(int id, String state);
 
     String generateWord(int id);
