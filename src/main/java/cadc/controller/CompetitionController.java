@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,6 +81,18 @@ public class CompetitionController {
     }
 
     /**
+     * 参赛时学生根据竞赛id得到竞赛
+     * @param id
+     * @return
+     */
+    @RequiresRoles( "学生" )
+    @RequestMapping(value = "/competition/enter/{id}", method = RequestMethod.GET)
+    public Object getEnterCompetition(@PathVariable int id) {
+        Competition res = competitionService.getById( id );
+        return MessageFactory.message( SUCCESS, res );
+    }
+
+    /**
      * 设置审核状态
      * @param id
      * @param flag
@@ -111,4 +125,6 @@ public class CompetitionController {
         }
         return MessageFactory.message( SUCCESS, "" );
     }
+
+
 }

@@ -41,6 +41,16 @@ public class StudentController {
     }
 
     /**
+     * 根据账号查看学僧是否存在
+     * @return
+     */
+    @RequestMapping(value = "/student/{account}", method = RequestMethod.GET)
+    public Object get(@PathVariable String account) {
+        Student res = studentService.getById( account );
+        return MessageFactory.message( res != null ? SUCCESS : FAILED );
+    }
+
+    /**
      * 分页获取所有学生
      * @param pageNum
      * @param pageSize

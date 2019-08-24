@@ -3,9 +3,7 @@ package cadc.mapper;
 import cadc.entity.Student;
 import cadc.entity.Teacher;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,4 +21,16 @@ public interface TeacherMapper extends BaseMapper<Teacher> {
 
     @Select( "SELECT account,teacher.teacher_name FROM teacher JOIN teacher_in_group on teacher_in_group.teacher_id = teacher.account where teacher_in_group.state = '邀请中' AND teacher_in_group.group_id = #{groupId}" )
     List<Teacher> getInvitingByGroupId(int groupId);
+
+    @Results({
+            @Result(column = "account", property = "account"),
+            @Result(column = "password", property = "password"),
+            @Result(column = "teacher_name", property = "teacherName"),
+            @Result(column = "teacher_sex", property = "teacherSex"),
+            @Result(column = "teacher_phone", property = "teacherPhone"),
+            @Result(column = "teacher_master", property = "teacherMaster"),
+            @Result(column = "teacher_level", property = "teacherLevel"),
+    })
+    @Select( "SELECT * FROM teacher JOIN role_teacher on teacher.account = role_teacher.teacher_id WHERE role_teacher.role_id =#{roleId}" )
+    List<Teacher> getByRoleId(int roleId);
 }

@@ -1,5 +1,6 @@
 package cadc.controller;
 
+import cadc.bean.TEACHER_TYPE;
 import cadc.bean.message.MessageFactory;
 import cadc.entity.Role;
 import cadc.entity.Teacher;
@@ -100,5 +101,11 @@ public class TeacherController {
     public Object deleteRole(@PathVariable String account, @PathVariable int roleId) {
         boolean flag = roleService.deleteTeacher( account, roleId );
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
+    }
+
+    @RequestMapping(value = "/teacher/lead/", method = RequestMethod.GET)
+    public Object getLeadTeacherList() {
+        List<Teacher> res = teacherService.getByRole( TEACHER_TYPE.TEACHER_LEAD.getVal() );
+        return MessageFactory.message( SUCCESS, res );
     }
 }

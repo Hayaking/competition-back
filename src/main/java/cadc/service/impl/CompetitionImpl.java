@@ -6,6 +6,7 @@ import cadc.service.CompetitionService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -32,7 +33,7 @@ import static cadc.bean.message.STATE.STATE_NOT_START;
 @Service
 @Log4j2
 @Transactional(rollbackFor = Exception.class)
-public class CompetitionImpl implements CompetitionService {
+public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> implements CompetitionService {
     @Resource
     private CompetitionMapper competitionMapper;
 

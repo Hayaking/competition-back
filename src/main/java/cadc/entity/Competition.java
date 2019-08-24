@@ -62,4 +62,5 @@ public class Competition {
     private int type;
     @TableField("teacher_group_id")
     private int groupId;
+    private int typeJoinId;
 }

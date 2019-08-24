@@ -44,7 +44,9 @@ public class LoginController {
         if (subject.isAuthenticated()) {
             return MessageFactory.message( SUCCESS, subject.getSession().getId() );
         }
-        subject.login( new UserToken( account, password, type ) );
+        UserToken token = new UserToken( account, password, type );
+        token.setRememberMe( true );
+        subject.login( token );
         if (subject.isAuthenticated()) {
             return MessageFactory.message( SUCCESS, subject.getSession().getId() );
         }

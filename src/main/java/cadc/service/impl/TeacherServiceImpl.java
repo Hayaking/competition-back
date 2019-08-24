@@ -42,4 +42,9 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
         return teacherMapper.selectPage( page, new QueryWrapper<>() );
     }
 
+    @Override
+    public List<Teacher> getByRole(int roleId) {
+        return teacherMapper.getByRoleId( roleId );
+    }
+
 }

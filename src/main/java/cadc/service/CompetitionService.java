@@ -3,6 +3,7 @@ package cadc.service;
 import cadc.entity.Competition;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,7 @@ import java.util.Map;
 /**
  * @author haya
  */
-public interface CompetitionService {
+public interface CompetitionService extends IService<Competition> {
     /**
      * 增加一个竞赛
      * @param competition
