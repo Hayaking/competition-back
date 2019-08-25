@@ -73,7 +73,7 @@ public class TeacherController {
      * @param account
      * @return
      */
-    @RequestMapping(value = "/teacher/role/{account}", method = RequestMethod.GET)
+    @RequestMapping(value = "/teacher/{account}/role", method = RequestMethod.GET)
     public Object getRole(@PathVariable String account) {
         List<Role> res = roleService.findTeacher( account );
         return MessageFactory.message( SUCCESS, res );
@@ -103,7 +103,7 @@ public class TeacherController {
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
 
-    @RequestMapping(value = "/teacher/lead/", method = RequestMethod.GET)
+    @RequestMapping(value = "/teacher/role/lead", method = RequestMethod.GET)
     public Object getLeadTeacherList() {
         List<Teacher> res = teacherService.getByRole( TEACHER_TYPE.TEACHER_LEAD.getVal() );
         return MessageFactory.message( SUCCESS, res );

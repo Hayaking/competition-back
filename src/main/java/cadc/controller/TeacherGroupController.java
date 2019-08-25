@@ -37,7 +37,6 @@ public class TeacherGroupController {
      * @param groupName
      * @return
      */
-    @RequiresPermissions("创建工作组")
     @RequestMapping(value = "/create/{groupName}", method = RequestMethod.POST)
     public Object create(@PathVariable String groupName) {
         // 获取创建者的账号
