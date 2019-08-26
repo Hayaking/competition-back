@@ -5,6 +5,7 @@ import cadc.entity.Teacher;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.authz.Authorizer;
 import org.apache.shiro.authz.ModularRealmAuthorizer;
+import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
 
@@ -17,10 +18,7 @@ public class UserModularRealmAuthorizer extends ModularRealmAuthorizer {
     public boolean isPermitted(PrincipalCollection principals, String permission) {
         assertRealmsConfigured();
         Object primaryPrincipal = principals.getPrimaryPrincipal();
-        log.info( "=================UserModularRealmAuthorizer=================" );
         for (Realm realm : getRealms()) {
-            log.warn( realm.getName() );
-            log.warn( primaryPrincipal.getClass() );
             if (!(realm instanceof Authorizer)) {
                 continue;
             }
@@ -40,6 +38,23 @@ public class UserModularRealmAuthorizer extends ModularRealmAuthorizer {
 
     @Override
     public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
-        return super.hasRole( principals, roleIdentifier );
+        assertRealmsConfigured();
+        Object primaryPrincipal = principals.getPrimaryPrincipal();
+        for (Realm realm : getRealms()) {
+            if (!(realm instanceof Authorizer)) {
+                continue;
+            }
+            if (primaryPrincipal instanceof Student) {
+                if (realm instanceof StudentRealm) {
+                    return ((StudentRealm) realm).hasRole(principals, roleIdentifier);
+                }
+            }
+            if (primaryPrincipal instanceof Teacher) {
+                if (realm instanceof TeacherRealm) {
+                    return ((TeacherRealm) realm).hasRole(principals, roleIdentifier);
+                }
+            }
+        }
+        return false;
     }
 }

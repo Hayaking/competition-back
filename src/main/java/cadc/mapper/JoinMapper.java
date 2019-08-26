@@ -30,4 +30,17 @@ public interface JoinMapper extends BaseMapper<Join> {
             "JOIN works on works.stu_group_id = stu_group.id\n" +
             "JOIN `join` on `join`.works_id = works.id" )
     List<Join> getListByStudentAccount(String account);
+
+    @Results({
+            @Result(column = "id", property = "id"),
+            @Result(column = "works_id", property = "worksId"),
+            @Result(column = "competition_id", property = "competitionId"),
+            @Result(column = "teacher_id1", property = "teacherId1"),
+            @Result(column = "teacher_id2", property = "teacherId2"),
+            @Result(column = "apply_state", property = "applyState"),
+            @Result(column = "enter_state", property = "enterState"),
+            @Result(column = "join_state", property = "joinState"),
+    })
+    @Select( "SELECT * FROM join WHERE join.teacher_id1 = #{account} or join.teacher_id2 = #{account}" )
+    List<Join> getListByTeacherAccount(String account);
 }
