@@ -28,7 +28,6 @@ public class CompetitionController {
 
     /**
      * 申请比赛立项
-     *
      * @param competition
      * @return
      */
@@ -42,6 +41,13 @@ public class CompetitionController {
         competition.setId( id );
         competitionService.generateWord( competition );
         return MessageFactory.message(  SUCCESS );
+    }
+
+
+    @RequestMapping(value = "/competition/{id}", method = RequestMethod.DELETE)
+    public Object delete(@PathVariable int id) {
+        boolean flag = competitionService.deleteById( id );
+        return MessageFactory.message( flag ? SUCCESS : FAILED );
     }
 
     /**

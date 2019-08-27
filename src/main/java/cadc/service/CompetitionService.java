@@ -21,6 +21,8 @@ public interface CompetitionService extends IService<Competition> {
 
     Integer add(Competition competition);
 
+    boolean deleteById(int id);
+
     IPage<Competition> findByGroupId(Page<Competition> page, int groupId);
 
     IPage<Competition> findAll(Page<Competition> page);

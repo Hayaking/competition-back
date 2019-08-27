@@ -1,9 +1,12 @@
 package cadc.service.impl;
 
 import cadc.entity.Competition;
+import cadc.entity.Join;
 import cadc.mapper.CompetitionMapper;
+import cadc.mapper.JoinMapper;
 import cadc.service.CompetitionService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -37,6 +40,9 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     @Resource
     private CompetitionMapper competitionMapper;
 
+    @Resource
+    private JoinMapper joinMapper;
+
     @Override
     public boolean insertCompetition(Competition competition) {
         return competitionMapper.insert( competition ) > 0;
@@ -45,9 +51,16 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     @Override
     public Integer add(Competition competition) {
         int insert = competitionMapper.insert( competition );
-
-        log.warn( competition.getId() );
         return competition.getId();
+    }
+
+    @Override
+    public boolean deleteById(int id) {
+        //先删除join里引用外键的内容
+        UpdateWrapper<Join> joinWrapper = new UpdateWrapper<>();
+        joinWrapper.eq( "competition_id", id );
+        joinMapper.delete( joinWrapper );
+        return competitionMapper.deleteById( id ) > 0;
     }
 
     @Override
