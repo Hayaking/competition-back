@@ -1,5 +1,6 @@
 package cadc.service.impl;
 
+import cadc.bean.message.STATE;
 import cadc.entity.Competition;
 import cadc.entity.Join;
 import cadc.mapper.CompetitionMapper;
@@ -23,12 +24,9 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static cadc.bean.message.STATE.STATE_HAD_START;
-import static cadc.bean.message.STATE.STATE_NOT_START;
+import static cadc.bean.message.STATE.*;
 
 /**
  * @author haya
@@ -95,8 +93,40 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     @Override
     public List<Competition> get5ByType(int typeId) {
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
-        wrapper.eq( "type_id", typeId ).last("LIMIT 5");
-        return competitionMapper.selectList( wrapper );
+        // 查询已开始的
+        wrapper.eq( "type_id", typeId )
+                .eq( "cp_state",STATE_AGREE.toString() )
+                .eq( "cp_enter_state", STATE_HAD_START.toString() )
+                .last( "LIMIT 5" );
+        List<Competition> startList = competitionMapper.selectList( wrapper );
+        // 按结束时间升序排序
+        startList.sort( Comparator.comparing( Competition::getEnterEndTime ) );
+        //满5个返回
+        if (startList.size() == 5) {
+            return startList;
+        }
+        // 不满5个继续查询 未开始的
+        List<Competition> list = new LinkedList<>( startList );
+        wrapper = new QueryWrapper<>();
+        wrapper.eq( "type_id", typeId )
+                .eq( "cp_state",STATE_AGREE.toString() )
+                .eq( "cp_enter_state", STATE_NOT_START.toString() )
+                .last( "LIMIT 5" );
+        List<Competition> noStartList = competitionMapper.selectList( wrapper );
+        // 按开始报名时间升序排序
+        noStartList.sort( Comparator.comparing( Competition::getEnterStartTime ) );
+        list.addAll( noStartList );
+        // 满5个
+        if (list.size() >= 5) {
+            return list.subList( 0,4 );
+        }
+        wrapper = new QueryWrapper<>();
+        wrapper.eq( "type_id", typeId )
+                .eq( "cp_state",STATE_AGREE.toString() )
+                .eq( "cp_enter_state", STATE_END )
+                .last( "LIMIT 5" );
+        list.addAll( competitionMapper.selectList( wrapper ) );
+        return list;
     }
 
     @Override

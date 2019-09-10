@@ -44,6 +44,11 @@ public class CompetitionController {
     }
 
 
+    /**
+     * 删除
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/competition/{id}", method = RequestMethod.DELETE)
     public Object delete(@PathVariable int id) {
         boolean flag = competitionService.deleteById( id );
@@ -76,7 +81,7 @@ public class CompetitionController {
     }
 
     /**
-     * 分页查询全部
+     * 获得5个
      * @param typeId
      * @return
      */
