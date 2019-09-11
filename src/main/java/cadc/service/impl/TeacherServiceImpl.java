@@ -1,5 +1,6 @@
 package cadc.service.impl;
 
+import cadc.entity.Student;
 import cadc.entity.Teacher;
 import cadc.mapper.TeacherMapper;
 import cadc.service.TeacherService;
@@ -40,6 +41,14 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherMapper, Teacher> impl
     @Override
     public IPage<Teacher> findAll(IPage<Teacher> page) {
         return teacherMapper.selectPage( page, new QueryWrapper<>() );
+    }
+
+    @Override
+    public IPage<Teacher> find(IPage<Teacher> page, String key) {
+        QueryWrapper<Teacher> wrapper = new QueryWrapper<>();
+        wrapper.like( "account", key ).or()
+                .like( "teacher_name", key );
+        return teacherMapper.selectPage( page, wrapper );
     }
 
     @Override

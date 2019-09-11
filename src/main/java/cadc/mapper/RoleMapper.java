@@ -13,9 +13,15 @@ import java.util.List;
  */
 @Mapper
 public interface RoleMapper extends BaseMapper<Role> {
-    @Select("select role.id,role.role_name from role_stu join role on role_stu.role_id = role.id join student on student.account = role_stu.stu_id where account=#{account}")
-    List<Role> findStudentRoles(String account);
+    @Select("select role.id,role.role_name from role_stu " +
+            "join role on role_stu.role_id = role.id " +
+            "join student on student.id = role_stu.stu_id " +
+            "where student.id=#{id}")
+    List<Role> findStudentRoles(int id);
 
-    @Select("select role.id,role.role_name from role_teacher join role on role_teacher.role_id = role.id join teacher on teacher.account = role_teacher.teacher_id where account=#{account}")
-    List<Role> findTeacherRoles(String account);
+    @Select("select role.id,role.role_name from role_teacher " +
+            "join role on role_teacher.role_id = role.id " +
+            "join teacher on teacher.id = role_teacher.teacher_id " +
+            "where teacher.id=#{id}")
+    List<Role> findTeacherRoles(int  id);
 }

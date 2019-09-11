@@ -30,15 +30,17 @@ public class MenuController {
     @RequestMapping(value = "/menu/{type}", method = RequestMethod.GET)
     public Object menu( @PathVariable String type) {
         Subject subject = SecurityUtils.getSubject();
-        String account = null;
+//        String account = null;
+        int id;
         if ("student".equals( type )) {
             Student stu = (Student) subject.getPrincipal();
-            account = stu.getAccount();
+            id = stu.getId();
         } else {
             Teacher teacher = (Teacher) subject.getPrincipal();
-            account = teacher.getAccount();
+            log.warn( teacher );
+            id = teacher.getId();
         }
-        return menuService.getMenu( account ,type);
+        return menuService.getMenu( id ,type);
     }
 
     @RequestMapping(value = "/menu", method = RequestMethod.GET)

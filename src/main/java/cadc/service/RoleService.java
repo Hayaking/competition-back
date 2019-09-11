@@ -11,47 +11,47 @@ import java.util.List;
 public interface RoleService extends IService<Role> {
     /**
      * 找到指定学生拥有的角色
-     * @param account
+     * @param id
      * @return
      */
-    List<Role> findStudent(String account);
+    List<Role> findStudent(int id);
 
     /**
      * 找到指定老师拥有的角色
-     * @param account
+     * @param id
      * @return
      */
-    List<Role> findTeacher(String account);
+    List<Role> findTeacher(int id);
 
     /**
      * 删除指定学生的角色
-     * @param account
+     * @param id
      * @param roleId
      * @return
      */
-    boolean deleteStudent(String account, int roleId);
+    boolean deleteStudent(int id, int roleId);
 
     /**
      * 添加指定学生的指定角色
-     * @param account
+     * @param id
      * @param roleId
      * @return
      */
-    boolean addStudent(String account, int roleId);
+    boolean addStudent(int id, int roleId);
 
     /**
      * 添加指定教师的指定角色
-     * @param account
+     * @param id
      * @param roleId
      * @return
      */
-    boolean addTeacher(String account, int roleId);
+    boolean addTeacher(int id, int roleId);
 
     /**
      * 删除指定教师的指定角色
-     * @param account
+     * @param id
      * @param roleId
      * @return
      */
-    boolean deleteTeacher(String account, int roleId);
+    boolean deleteTeacher(int id, int roleId);
 }

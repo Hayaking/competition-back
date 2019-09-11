@@ -10,13 +10,13 @@ import lombok.Data;
 @TableName("role_stu")
 public class RoleStudent {
     private int id;
-    private String stuId;
+    private int stuId;
     private int roleId;
 
     public RoleStudent() {
     }
 
-    public RoleStudent(String stuId, int roleId) {
+    public RoleStudent(int stuId, int roleId) {
         this.stuId = stuId;
         this.roleId = roleId;
     }

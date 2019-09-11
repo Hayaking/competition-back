@@ -31,38 +31,38 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     private RoleTeacherMapper roleTeacherMapper;
 
     @Override
-    public List<Role> findStudent(String account) {
-        return roleMapper.findStudentRoles( account );
+    public List<Role> findStudent(int id) {
+        return roleMapper.findStudentRoles( id );
     }
 
     @Override
-    public List<Role> findTeacher(String account) {
-        return roleMapper.findTeacherRoles( account );
+    public List<Role> findTeacher(int id) {
+        return roleMapper.findTeacherRoles( id );
     }
 
     @Override
-    public boolean deleteStudent(String account, int roleId) {
+    public boolean deleteStudent(int id, int roleId) {
         UpdateWrapper<RoleStudent> wrapper = new UpdateWrapper<>();
-        wrapper.eq( "stu_id", account ).eq( "role_id", roleId );
+        wrapper.eq( "stu_id", id ).eq( "role_id", roleId );
         return roleStudentMapper.delete( wrapper ) > 0;
     }
 
     @Override
-    public boolean addStudent(String account, int roleId) {
-        RoleStudent roleStudent = new RoleStudent( account, roleId );
+    public boolean addStudent(int id, int roleId) {
+        RoleStudent roleStudent = new RoleStudent( id, roleId );
         return roleStudentMapper.insert( roleStudent ) > 0;
     }
 
     @Override
-    public boolean addTeacher(String account, int roleId) {
-        RoleTeacher roleTeacher = new RoleTeacher( account, roleId );
+    public boolean addTeacher(int id, int roleId) {
+        RoleTeacher roleTeacher = new RoleTeacher( id, roleId );
         return roleTeacherMapper.insert( roleTeacher ) > 0;
     }
 
     @Override
-    public boolean deleteTeacher(String account, int roleId) {
+    public boolean deleteTeacher(int id, int roleId) {
         UpdateWrapper<RoleTeacher> wrapper = new UpdateWrapper<>();
-        wrapper.eq( "teacher_id", account ).eq( "role_id", roleId );
+        wrapper.eq( "teacher_id", id ).eq( "role_id", roleId );
         return roleTeacherMapper.delete( wrapper ) > 0;
     }
 }

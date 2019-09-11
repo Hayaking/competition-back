@@ -41,4 +41,12 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
     public IPage<Student> findAll(Page<Student> page) {
         return studentMapper.selectPage( page, new QueryWrapper<>() );
     }
+
+    @Override
+    public IPage<Student> find(Page<Student> page, String key) {
+        QueryWrapper<Student> wrapper = new QueryWrapper<>();
+        wrapper.like( "account", key ).or()
+                .like( "stu_name", key );
+        return studentMapper.selectPage( page, wrapper );
+    }
 }

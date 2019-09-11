@@ -12,11 +12,11 @@ import java.util.List;
 public interface MenuService extends IService<Menu> {
     /**
      * 获取路由菜单
-     * @param account
+     * @param id
      * @param type
      * @return
      */
-    List<Menu> getMenu(String account, String type);
+    List<Menu> getMenu(int id, String type);
 
     List<Menu> getAll();
 

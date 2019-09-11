@@ -33,11 +33,10 @@ public class StudentController {
      * @param student
      * @return
      */
-    @RequestMapping(value = "/student/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/student", method = RequestMethod.POST)
     public Object update(@RequestBody Student student) {
-        boolean flag = studentService.updateById( student );
-        log.info( student );
-        return MessageFactory.message( flag?SUCCESS:FAILED, "" );
+        boolean flag = studentService.saveOrUpdate( student );
+        return MessageFactory.message( flag ? SUCCESS : FAILED );
     }
 
     /**
@@ -64,36 +63,42 @@ public class StudentController {
 
     /**
      * 获取指定学生的角色
-     * @param account
+     * @param id
      * @return
      */
-    @RequestMapping(value = "/student/role/{account}", method = RequestMethod.GET)
-    public Object getRole(@PathVariable String account) {
-        List<Role> res = roleService.findStudent( account );
+    @RequestMapping(value = "/student/role/{id}", method = RequestMethod.GET)
+    public Object getRole(@PathVariable int id) {
+        List<Role> res = roleService.findStudent( id );
         return MessageFactory.message( SUCCESS, res );
     }
 
     /**
      * 添加角色到指定学生
-     * @param account
+     * @param id
      * @param roleId
      * @return
      */
-    @RequestMapping(value = "/student/role/{account}/{roleId}", method = RequestMethod.POST)
-    public Object addRole(@PathVariable String account, @PathVariable int roleId) {
-        boolean flag = roleService.addStudent( account, roleId );
-        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
+    @RequestMapping(value = "/student/role/{id}/{roleId}", method = RequestMethod.POST)
+    public Object addRole(@PathVariable int id, @PathVariable int roleId) {
+        boolean flag = roleService.addStudent( id, roleId );
+        return MessageFactory.message( flag ? SUCCESS : FAILED);
     }
 
     /**
      * 删除指定学生的指定角色
-     * @param account
+     * @param id
      * @param roleId
      * @return
      */
-    @RequestMapping(value = "/student/role/{account}/{roleId}", method = RequestMethod.DELETE)
-    public Object deleteRole(@PathVariable String account, @PathVariable int roleId) {
-        boolean flag = roleService.deleteStudent( account, roleId );
-        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
+    @RequestMapping(value = "/student/role/{id}/{roleId}", method = RequestMethod.DELETE)
+    public Object deleteRole(@PathVariable int id, @PathVariable int roleId) {
+        boolean flag = roleService.deleteStudent( id, roleId );
+        return MessageFactory.message( flag ? SUCCESS : FAILED);
+    }
+
+    @RequestMapping(value = "/student/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    public Object getAll(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
+        IPage<Student> res = studentService.find( new Page<>( pageNum, pageSize ), key );
+        return MessageFactory.message( SUCCESS, res );
     }
 }

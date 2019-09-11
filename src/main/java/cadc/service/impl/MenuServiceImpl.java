@@ -36,13 +36,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     private MenuChildMapper menuChildMapper;
 
     @Override
-    public List<Menu> getMenu(String account, String type) {
+    public List<Menu> getMenu(int id, String type) {
         //获取角色
-        List<Role> roleList = null;
+        List<Role> roleList;
         if ("student".equals( type )) {
-            roleList = roleMapper.findStudentRoles( account );
+            roleList = roleMapper.findStudentRoles( id );
         } else if ("teacher".equals( type )) {
-            roleList = roleMapper.findTeacherRoles( account );
+            roleList = roleMapper.findTeacherRoles( id );
         } else {
             return null;
         }

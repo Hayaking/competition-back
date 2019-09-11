@@ -44,7 +44,7 @@ public class TeacherRealm extends AuthorizingRealm {
         Teacher teacher = (Teacher) getAvailablePrincipal( principalCollection );
         Set<String> roles = new HashSet<>();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        List<Role> roleList = roleService.findTeacher( teacher.getAccount() );
+        List<Role> roleList = roleService.findTeacher( teacher.getId() );
         for (Role item : roleList) {
             roles.add( item.getRoleName() );
             List<Permission> permissionList = permissionService.findPermissionList( item.getId() );
@@ -76,7 +76,7 @@ public class TeacherRealm extends AuthorizingRealm {
             throw new UnknownAccountException();
         }
         teacher.setPassword( "" );
-        SecurityUtils.getSubject();
+//        SecurityUtils.getSubject();
         return new SimpleAuthenticationInfo( teacher, passWord, getName() );
     }
 }

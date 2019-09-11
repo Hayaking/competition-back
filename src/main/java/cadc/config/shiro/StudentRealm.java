@@ -41,9 +41,9 @@ public class StudentRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         Student student = (Student) getAvailablePrincipal( principalCollection );
-        Set<String> roles = new HashSet<>();
+        Set<String> roles = new HashSet<>(10);
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        List<Role> roleList = roleService.findStudent( student.getAccount() );
+        List<Role> roleList = roleService.findStudent( student.getId() );
         for (Role item : roleList) {
             roles.add( item.getRoleName() );
             List<Permission> permissionList = permissionService.findPermissionList( item.getId() );
@@ -72,7 +72,7 @@ public class StudentRealm extends AuthorizingRealm {
             throw new UnknownAccountException();
         }
         user.setPassword( "" );
-        SecurityUtils.getSubject().getSession().setAttribute("userInfo", user);
+//        SecurityUtils.getSubject().getSession().setAttribute("userInfo", user);
         return new SimpleAuthenticationInfo( user, passWord, getName() );
     }
 }

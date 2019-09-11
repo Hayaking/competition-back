@@ -26,8 +26,12 @@ public interface StudentService extends IService<Student> {
 
     /**
      * 分页获取所有学生
+     *
      * @param page
      * @return
      */
     IPage<Student> findAll(Page<Student> page);
+
+    IPage<Student> find(Page<Student> page, String key);
+
 }

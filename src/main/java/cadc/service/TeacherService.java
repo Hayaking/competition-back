@@ -24,5 +24,7 @@ public interface TeacherService extends IService<Teacher> {
 
     IPage<Teacher> findAll(IPage<Teacher> page);
 
+    IPage<Teacher> find(IPage<Teacher> page, String key);
+
     List<Teacher> getByRole(int roleId);
 }
