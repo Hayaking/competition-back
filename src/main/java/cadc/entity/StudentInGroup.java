@@ -14,14 +14,14 @@ import lombok.Data;
 public class StudentInGroup extends Model<StudentInGroup> {
     @TableId(type = IdType.AUTO)
     private int id;
-    private String stuId;
+    private int stuId;
     private int groupId;
     private String state;
 
     public StudentInGroup() {
     }
 
-    public StudentInGroup(String stuId, int groupId, String state) {
+    public StudentInGroup(int stuId, int groupId, String state) {
         this.stuId = stuId;
         this.groupId = groupId;
         this.state = state;

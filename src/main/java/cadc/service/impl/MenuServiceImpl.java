@@ -6,6 +6,7 @@ import cadc.entity.Permission;
 import cadc.entity.Role;
 import cadc.mapper.*;
 import cadc.service.MenuService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;

@@ -44,9 +44,15 @@ public class StudentController {
      * @return
      */
     @RequestMapping(value = "/student/{account}", method = RequestMethod.GET)
-    public Object get(@PathVariable String account) {
-        Student res = studentService.getById( account );
+    public Object exist(@PathVariable String account) {
+        Student res = studentService.find( account );
         return MessageFactory.message( res != null ? SUCCESS : FAILED );
+    }
+
+    @RequestMapping(value = "/student/exist", method = RequestMethod.POST)
+    public Object exist(@RequestBody List<String> list) {
+        List<String> res = studentService.exist( list );
+        return MessageFactory.message( SUCCESS, res );
     }
 
     /**

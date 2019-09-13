@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author haya
@@ -29,6 +31,29 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
     @Override
     public Student find(String account, String password) {
         return studentMapper.find( account, password );
+    }
+
+    @Override
+    public Student find(String account) {
+        QueryWrapper<Student> wrapper = new QueryWrapper<>();
+        wrapper.eq( "account", account );
+        return studentMapper.selectOne( wrapper );
+    }
+
+    @Override
+    public List<String> exist(List<String> list) {
+        QueryWrapper<Student> wrapper;
+        Student student;
+        List<String> res = new LinkedList<>();
+        for (String item: list) {
+            wrapper = new QueryWrapper<>();
+            wrapper.eq( "account", item );
+            student = studentMapper.selectOne( wrapper );
+            if (student == null) {
+                res.add( item );
+            }
+        }
+        return res;
     }
 
     @Override

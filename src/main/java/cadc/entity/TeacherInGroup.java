@@ -12,14 +12,14 @@ import lombok.Data;
 public class TeacherInGroup {
     @TableId
     private int id;
-    private String teacherId;
+    private int teacherId;
     private int groupId;
     private String state;
 
     public TeacherInGroup() {
     }
 
-    public TeacherInGroup(int groupId, String teacherId, String state) {
+    public TeacherInGroup(int groupId, int teacherId, String state) {
         this.teacherId = teacherId;
         this.groupId = groupId;
         this.state = state;

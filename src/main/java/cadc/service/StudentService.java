@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * @author haya
  */
@@ -16,6 +18,10 @@ public interface StudentService extends IService<Student> {
      * @return
      */
     Student find(String account,String password);
+
+    Student find(String account);
+
+    List<String> exist(List<String> list);
 
     /**
      * 增加学生

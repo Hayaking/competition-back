@@ -16,7 +16,7 @@ import java.io.Serializable;
  */
 @Data
 @TableName("teacher")
-public class Teacher  implements Serializable {
+public class Teacher  extends Model<Teacher>  implements Serializable {
     private static final long serialVersionUID = 1L;
     @TableId(type = IdType.AUTO)
     private int id;

@@ -20,9 +20,9 @@ public class StudentInGroupServiceImpl extends ServiceImpl<StudentInGroupMapper,
     private StudentInGroupMapper studentInGroupMapper;
     @Override
     public boolean addList(List<String> list, int groupId) {
-        for (String str:list) {
-            studentInGroupMapper.insert( new StudentInGroup( str, groupId, STATE_INVITING.toString() ) );
-        }
+//        for (String str:list) {
+//            studentInGroupMapper.insert( new StudentInGroup( str, groupId, STATE_INVITING.toString() ) );
+//        }
         return true;
     }
 }

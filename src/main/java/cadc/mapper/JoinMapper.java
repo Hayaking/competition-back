@@ -24,12 +24,20 @@ public interface JoinMapper extends BaseMapper<Join> {
             @Result(column = "enter_state", property = "enterState"),
             @Result(column = "join_state", property = "joinState"),
     })
-    @Select( "SELECT * FROM student\n" +
-            "JOIN stu_in_group on stu_in_group.stu_id = student.account\n" +
+    @Select("SELECT join.id, works_id," +
+            "competition_id, teacher_id1," +
+            "teacher_id2, apply_state," +
+            "enter_state, join_state  " +
+            "FROM student\n" +
+            "JOIN stu_in_group on stu_in_group.stu_id = student.id\n" +
             "JOIN stu_group on stu_group.id = stu_in_group.group_id\n" +
             "JOIN works on works.stu_group_id = stu_group.id\n" +
-            "JOIN `join` on `join`.works_id = works.id" )
+            "JOIN `join` on `join`.works_id = works.id\n" +
+            "where student.account = #{account}"
+    )
     List<Join> getListByStudentAccount(String account);
+
+
 
     @Results({
             @Result(column = "id", property = "id"),

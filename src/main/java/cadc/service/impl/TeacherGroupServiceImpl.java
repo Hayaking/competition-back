@@ -1,9 +1,11 @@
 package cadc.service.impl;
 
+import cadc.entity.Teacher;
 import cadc.entity.TeacherGroup;
 import cadc.entity.TeacherInGroup;
 import cadc.mapper.TeacherGroupMapper;
 import cadc.mapper.TeacherInGroupMapper;
+import cadc.mapper.TeacherMapper;
 import cadc.service.TeacherGroupService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -29,6 +31,8 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     private TeacherGroupMapper teacherGroupMapper;
     @Resource
     private TeacherInGroupMapper teacherInGroupMapper;
+    @Resource
+    private TeacherMapper teacherMapper;
 
     @Override
     public Integer add(String groupName, String account, String state) {
@@ -50,7 +54,10 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
 
     @Override
     public boolean inviteTeacher(int groupId,String account) {
-        return teacherInGroupMapper.insert( new TeacherInGroup( groupId, account, STATE_INVITING.toString() ) ) > 0;
+        QueryWrapper<Teacher> wrapper = new QueryWrapper<>();
+        wrapper.eq( "account", account );
+        Teacher teacher = teacherMapper.selectOne( wrapper );
+        return teacherInGroupMapper.insert( new TeacherInGroup( groupId, teacher.getId(), STATE_INVITING.toString() ) ) > 0;
     }
 
     @Override
@@ -65,7 +72,10 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
 
     @Override
     public boolean addGroupMember(int groupId, String account) {
-        TeacherInGroup teacherInGroup = new TeacherInGroup(groupId, account,STATE_INVITE_SUCCESS.toString());
+        QueryWrapper<Teacher> wrapper = new QueryWrapper<>();
+        wrapper.eq( "account", account );
+        Teacher teacher = teacherMapper.selectOne( wrapper );
+        TeacherInGroup teacherInGroup = new TeacherInGroup(groupId, teacher.getId(),STATE_INVITE_SUCCESS.toString());
         return teacherInGroupMapper.insert( teacherInGroup ) > 0;
     }
 
