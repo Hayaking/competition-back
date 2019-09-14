@@ -10,14 +10,16 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 public interface CompetitionMapper extends BaseMapper<Competition> {
 
-    @Update( "update competition set cp_state = #{state} where id=#{id}" )
+    @Update( "update competition set state = #{state} where id=#{id}" )
     int updateState(int id, String state);
 
-    @Update( "update competition set cp_start_state = #{state} where id=#{id}" )
+    @Update( "update competition set start_state = #{state} where id=#{id}" )
     int updateStartState(int id, String state);
 
 
-    @Update( "update competition set cp_enter_state = #{state} where id=#{id}" )
+    @Update( "update competition set enter_state = #{state} where id=#{id}" )
     int updateEnterState(int id, String state);
 
+    @Select("select * from competition where id =#{id}")
+    Competition getById(@Param( "id" )int id);
 }

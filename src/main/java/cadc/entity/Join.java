@@ -21,4 +21,10 @@ public class Join extends Model<Join> {
     private String applyState;
     private String enterState;
     private String joinState;
+
+    private Works works;
+    private Competition competition;
+    private Teacher teacher1;
+    private Teacher teacher2;
+
 }

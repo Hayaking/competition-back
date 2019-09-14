@@ -80,13 +80,14 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
 
     @Override
     public boolean setStartState(int id, String state) {
-        return competitionMapper.updateStartState( id, state ) > 0;    }
+        return competitionMapper.updateStartState( id, state ) > 0;
+    }
 
     @Override
     public List<Competition> getStartNoEnd() {
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
-        wrapper.eq( "cp_start_state", STATE_NOT_START.toString() ).or()
-                .eq( "cp_start_state", STATE_HAD_START.toString() );
+        wrapper.eq( "start_state", STATE_NOT_START.toString() ).or()
+                .eq( "start_state", STATE_HAD_START.toString() );
         return competitionMapper.selectList( wrapper );
     }
 
@@ -95,8 +96,8 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
         // 查询已开始的
         wrapper.eq( "type_id", typeId )
-                .eq( "cp_state",STATE_AGREE.toString() )
-                .eq( "cp_enter_state", STATE_HAD_START.toString() )
+                .eq( "state",STATE_AGREE.toString() )
+                .eq( "enter_state", STATE_HAD_START.toString() )
                 .last( "LIMIT 5" );
         List<Competition> startList = competitionMapper.selectList( wrapper );
         // 按结束时间升序排序
@@ -109,8 +110,8 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
         List<Competition> list = new LinkedList<>( startList );
         wrapper = new QueryWrapper<>();
         wrapper.eq( "type_id", typeId )
-                .eq( "cp_state",STATE_AGREE.toString() )
-                .eq( "cp_enter_state", STATE_NOT_START.toString() )
+                .eq( "state",STATE_AGREE.toString() )
+                .eq( "enter_state", STATE_NOT_START.toString() )
                 .last( "LIMIT 5" );
         List<Competition> noStartList = competitionMapper.selectList( wrapper );
         // 按开始报名时间升序排序
@@ -122,8 +123,8 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
         }
         wrapper = new QueryWrapper<>();
         wrapper.eq( "type_id", typeId )
-                .eq( "cp_state",STATE_AGREE.toString() )
-                .eq( "cp_enter_state", STATE_END )
+                .eq( "state",STATE_AGREE.toString() )
+                .eq( "enter_state", STATE_END )
                 .last( "LIMIT 5" );
         list.addAll( competitionMapper.selectList( wrapper ) );
         return list;
@@ -132,8 +133,8 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     @Override
     public List<Competition> getEnterNoEnd() {
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
-        wrapper.eq( "cp_enter_state", STATE_NOT_START.toString() ).or()
-                .eq( "cp_enter_state", STATE_HAD_START.toString() );
+        wrapper.eq( "enter_state", STATE_NOT_START.toString() ).or()
+                .eq( "enter_state", STATE_HAD_START.toString() );
         return competitionMapper.selectList( wrapper );
     }
 

@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +35,7 @@ public class CompetitionController {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         competition.setState( STATE_APPLYING.toString() );
         competition.setEnterState( STATE_NOT_START.toString() );
-        competition.setCreater( teacher.getAccount() );
+        competition.setCreator( teacher.getAccount() );
         int id = competitionService.add( competition );
         competition.setId( id );
         competitionService.generateWord( competition );

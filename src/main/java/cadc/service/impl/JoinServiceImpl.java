@@ -5,6 +5,7 @@ import cadc.entity.*;
 import cadc.mapper.JoinMapper;
 import cadc.mapper.StudentGroupMapper;
 import cadc.mapper.StudentMapper;
+import cadc.mapper.WorksMapper;
 import cadc.service.JoinService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -33,6 +34,8 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     private JoinMapper joinMapper;
     @Resource
     private StudentMapper studentMapper;
+    @Resource
+    private WorksMapper worksMapper;
 
     @Override
     public boolean create(Student student, StudentGroup group, List<String> list, Works works, Join join) {
@@ -57,7 +60,8 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         }
         // 创建作品
         works.setStuGroupId( group.getId() );
-        works.insert();
+//        works.insert();
+        worksMapper.insert( works );
         // 参赛
         join.setWorksId( works.getId() );
         join.setApplyState( STATE_APPLYING.toString() );
@@ -70,6 +74,7 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     @Override
     public IPage<Join> getByStudentAccount(Page<Join> page,String account) {
         List<Join> list = joinMapper.getListByStudentAccount( account );
+        System.out.println(list);
         page.setRecords( list );
         return page;
     }
