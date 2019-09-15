@@ -58,6 +58,5 @@ public class MenuController {
         menu.setMetaId( meta.getId() );
         boolean flag2 = menu.insertOrUpdate();
         return MessageFactory.message( flag1 && flag2 ? SUCCESS : FAILED );
-//        return MessageFactory.message( SUCCESS  );
     }
 }

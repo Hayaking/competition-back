@@ -12,4 +12,6 @@ import org.apache.ibatis.annotations.Select;
 public interface StudentGroupMapper extends BaseMapper<StudentGroup> {
     @Select("select * from stu_group where id = #{id}")
     StudentGroup getById(int id);
+
+
 }
