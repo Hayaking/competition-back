@@ -1,9 +1,7 @@
 package cadc.service.impl;
 
-import cadc.bean.message.STATE;
 import cadc.entity.*;
 import cadc.mapper.JoinMapper;
-import cadc.mapper.StudentGroupMapper;
 import cadc.mapper.StudentMapper;
 import cadc.mapper.WorksMapper;
 import cadc.service.JoinService;
@@ -11,8 +9,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.apache.shiro.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +39,7 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
             throw new NullPointerException();
         }
         // 创建参赛小组
-        group.setCreater( student.getAccount() );
+        group.setCreator( student.getAccount() );
         group.setCreateTime( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() ) );
         group.insert();
         if (group.getId() == 0) {

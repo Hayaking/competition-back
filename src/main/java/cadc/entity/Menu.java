@@ -26,9 +26,11 @@ public class Menu extends Model<Menu> implements Serializable {
     private int id;
     private String path;
     private String name;
-    private Meta meta;
+    private int  metaId;
     private String component;
 
     @TableField(exist = false)
     private List<Menu> children;
+    @TableField(exist = false)
+    private Meta meta;
 }

@@ -15,4 +15,6 @@ public class Works{
     private int id;
     private String worksName;
     private int stuGroupId;
+
+    private StudentGroup studentGroup;
 }
