@@ -1,7 +1,6 @@
 package cadc.controller;
 
 import cadc.bean.message.MessageFactory;
-import cadc.bean.message.STATE;
 import cadc.entity.Menu;
 import cadc.entity.Meta;
 import cadc.entity.Student;
@@ -33,16 +32,21 @@ public class MenuController {
     @RequestMapping(value = "/menu/{type}", method = RequestMethod.GET)
     public Object menu( @PathVariable String type) {
         Subject subject = SecurityUtils.getSubject();
-        int id;
-        if ("student".equals( type )) {
-            Student stu = (Student) subject.getPrincipal();
-            id = stu.getId();
-        } else {
-            Teacher teacher = (Teacher) subject.getPrincipal();
-            log.warn( teacher );
-            id = teacher.getId();
+        if (subject == null) {
+            return MessageFactory.message( FAILED );
         }
-        return menuService.getMenu( id ,type);
+        Object obj = subject.getPrincipal();
+        int id;
+        if (obj instanceof Student) {
+            Student stu = (Student) obj;
+            id = stu.getId();
+        } else if (obj instanceof Teacher) {
+            Teacher teacher = (Teacher) obj;
+            id = teacher.getId();
+        } else {
+            return MessageFactory.message( FAILED );
+        }
+        return MessageFactory.message( SUCCESS, menuService.getMenu( id, type ) );
     }
 
     @RequestMapping(value = "/menu", method = RequestMethod.GET)
