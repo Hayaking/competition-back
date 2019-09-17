@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author haya
@@ -26,6 +25,10 @@ public interface CompetitionService extends IService<Competition> {
     IPage<Competition> findByGroupId(Page<Competition> page, int groupId);
 
     IPage<Competition> findAll(Page<Competition> page);
+
+    IPage<Competition> find(IPage<Competition> page, String key);
+
+    IPage<Competition> findpass(IPage<Competition> page, String key);
 
     boolean setState(int id, String state);
 

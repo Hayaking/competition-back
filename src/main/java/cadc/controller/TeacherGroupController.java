@@ -152,7 +152,7 @@ public class TeacherGroupController {
      * @return
      */
     @RequestMapping(value = "/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
-    public Object getAll(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
+    public Object search(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<TeacherGroup> res = teacherGroupService.find( new Page<>( pageNum, pageSize ) , key );
         return MessageFactory.message( SUCCESS, res );
     }

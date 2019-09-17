@@ -136,5 +136,16 @@ public class CompetitionController {
         return MessageFactory.message( SUCCESS, "" );
     }
 
+    @RequestMapping(value = "/judge/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    public Object searchjudge(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
+        IPage<Competition> res = competitionService.find(new Page<>(pageNum, pageSize), key);
+        return MessageFactory.message(SUCCESS, res);
+    }
+
+    @RequestMapping(value = "/pass/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    public Object searchpass(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
+        IPage<Competition> res = competitionService.findpass(new Page<>(pageNum, pageSize), key);
+        return MessageFactory.message(SUCCESS, res);
+    }
 
 }

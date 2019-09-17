@@ -1,6 +1,5 @@
 package cadc.service.impl;
 
-import cadc.bean.message.STATE;
 import cadc.entity.Competition;
 import cadc.entity.Join;
 import cadc.mapper.CompetitionMapper;
@@ -71,6 +70,22 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     @Override
     public IPage<Competition> findAll(Page<Competition> page) {
         return competitionMapper.selectPage( page, new QueryWrapper<>() );
+    }
+
+    @Override
+    public IPage<Competition> find(IPage<Competition> page, String key) {
+        QueryWrapper<Competition> wrapper = new QueryWrapper<>();
+        wrapper.like("id", key).or()
+                .like("name", key);
+        return competitionMapper.selectPage(page, wrapper);
+    }
+
+    @Override
+    public IPage<Competition> findpass(IPage<Competition> page, String key) {
+        QueryWrapper<Competition> wrapper = new QueryWrapper<>();
+        wrapper.eq("state", STATE_AGREE).like("id", key).or()
+                .like("name", key);
+        return competitionMapper.selectPage(page, wrapper);
     }
 
     @Override
