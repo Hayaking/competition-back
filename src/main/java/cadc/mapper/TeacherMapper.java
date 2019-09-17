@@ -1,10 +1,8 @@
 package cadc.mapper;
 
-import cadc.entity.Student;
 import cadc.entity.Teacher;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.*;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -33,4 +31,5 @@ public interface TeacherMapper extends BaseMapper<Teacher> {
     })
     @Select( "SELECT * FROM teacher JOIN role_teacher on teacher.account = role_teacher.teacher_id WHERE role_teacher.role_id =#{roleId}" )
     List<Teacher> getByRoleId(int roleId);
+
 }

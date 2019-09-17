@@ -53,6 +53,14 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     }
 
     @Override
+    public IPage<TeacherGroup> find(IPage<TeacherGroup> page, String key) {
+        QueryWrapper<TeacherGroup> wrapper = new QueryWrapper<>();
+        wrapper.like( "id", key ).or()
+                .like( "group_name", key );
+        return teacherGroupMapper.selectPage( page, wrapper );
+    }
+
+    @Override
     public boolean inviteTeacher(int groupId,String account) {
         QueryWrapper<Teacher> wrapper = new QueryWrapper<>();
         wrapper.eq( "account", account );

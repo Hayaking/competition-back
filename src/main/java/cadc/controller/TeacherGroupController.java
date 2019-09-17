@@ -3,20 +3,17 @@ package cadc.controller;
 import cadc.bean.message.MessageFactory;
 import cadc.entity.Teacher;
 import cadc.entity.TeacherGroup;
-import cadc.entity.TeacherInGroup;
 import cadc.service.TeacherGroupService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import static cadc.bean.message.STATE.*;
@@ -146,4 +143,19 @@ public class TeacherGroupController {
         }
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
+
+    /**
+     * 搜索
+     * @param key
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    public Object getAll(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
+        IPage<TeacherGroup> res = teacherGroupService.find( new Page<>( pageNum, pageSize ) , key );
+        return MessageFactory.message( SUCCESS, res );
+    }
+
+
 }

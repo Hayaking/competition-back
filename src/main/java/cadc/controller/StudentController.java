@@ -40,7 +40,7 @@ public class StudentController {
     }
 
     /**
-     * 根据账号查看学僧是否存在
+     * 根据账号查看学生是否存在
      * @return
      */
     @RequestMapping(value = "/student/{account}", method = RequestMethod.GET)

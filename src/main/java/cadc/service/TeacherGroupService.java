@@ -21,6 +21,7 @@ public interface TeacherGroupService extends IService<TeacherGroup> {
 
     IPage<TeacherGroup> findAll(IPage<TeacherGroup> page);
 
+    IPage<TeacherGroup> find(IPage<TeacherGroup> page, String key);
     /**
      * 邀请组员
      * @param groupId
