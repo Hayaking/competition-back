@@ -136,16 +136,27 @@ public class CompetitionController {
         return MessageFactory.message( SUCCESS, "" );
     }
 
-    @RequestMapping(value = "/judge/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
-    public Object searchjudge(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
+    @RequestMapping(value = "/competition/judge/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    public Object searchJudge(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<Competition> res = competitionService.find(new Page<>(pageNum, pageSize), key);
         return MessageFactory.message(SUCCESS, res);
     }
 
-    @RequestMapping(value = "/pass/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
-    public Object searchpass(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
-        IPage<Competition> res = competitionService.findpass(new Page<>(pageNum, pageSize), key);
+    @RequestMapping(value = "/competition/pass/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    public Object searchPass(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
+        IPage<Competition> res = competitionService.findPassByKey(new Page<>(pageNum, pageSize), key);
         return MessageFactory.message(SUCCESS, res);
     }
-
+    
+    /**
+     * 分获取所有审核通过的比赛
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/competition/pass/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    public Object getAllPass(@PathVariable int pageNum, @PathVariable int pageSize) {
+        IPage<Competition> res = competitionService.findPassAll( new Page<>( pageNum, pageSize ) );
+        return MessageFactory.message( SUCCESS, res );
+    }
 }

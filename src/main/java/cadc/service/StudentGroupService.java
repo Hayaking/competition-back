@@ -11,5 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface StudentGroupService extends IService<StudentGroup> {
 
-    IPage<StudentInGroup> getGroupByStudentId(Page<StudentInGroup> page, int id);
+    IPage<StudentGroup> getByStudentId(Page<StudentGroup> page, int id);
 }

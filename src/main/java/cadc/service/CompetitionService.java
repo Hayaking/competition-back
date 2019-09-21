@@ -28,7 +28,9 @@ public interface CompetitionService extends IService<Competition> {
 
     IPage<Competition> find(IPage<Competition> page, String key);
 
-    IPage<Competition> findpass(IPage<Competition> page, String key);
+    IPage<Competition> findPassByKey(IPage<Competition> page, String key);
+
+    IPage<Competition> findPassAll(IPage<Competition> page);
 
     boolean setState(int id, String state);
 

@@ -23,7 +23,6 @@ import static cadc.bean.message.STATE.*;
  */
 @Log4j2
 @RestController
-@RequestMapping("/teacherGroup")
 public class TeacherGroupController {
     @Autowired
     private TeacherGroupService teacherGroupService;
@@ -34,7 +33,7 @@ public class TeacherGroupController {
      * @param groupName
      * @return
      */
-    @RequestMapping(value = "/create/{groupName}", method = RequestMethod.POST)
+    @RequestMapping(value = "/teacherGroup/create/{groupName}", method = RequestMethod.POST)
     public Object create(@PathVariable String groupName) {
         // 获取创建者的账号
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
@@ -56,7 +55,7 @@ public class TeacherGroupController {
      *
      * @return
      */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/teacherGroup/list", method = RequestMethod.GET)
     public Object list() {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         String account = teacher.getAccount();
@@ -70,7 +69,7 @@ public class TeacherGroupController {
      * @param pageSize
      * @return
      */
-    @RequestMapping(value = "/all/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    @RequestMapping(value = "/teacherGroup/all/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object all(@PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<TeacherGroup> res = teacherGroupService.findAll( new Page<>( pageNum, pageSize ) );
         return MessageFactory.message( SUCCESS, res );
@@ -83,7 +82,7 @@ public class TeacherGroupController {
      * @param account
      * @return
      */
-    @RequestMapping(value = "/invite/{groupId}/{account}", method = RequestMethod.POST)
+    @RequestMapping(value = "/teacherGroup/invite/{groupId}/{account}", method = RequestMethod.POST)
     public Object invite(@PathVariable int groupId, @PathVariable String account) {
         boolean flag = teacherGroupService.inviteTeacher( groupId, account );
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
@@ -93,7 +92,7 @@ public class TeacherGroupController {
      * 获取工作组的邀请
      * @return
      */
-    @RequestMapping(value = "/inviting", method = RequestMethod.GET)
+    @RequestMapping(value = "/teacherGroup/inviting", method = RequestMethod.GET)
     public Object getInviting() {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         List<TeacherGroup> list = teacherGroupService.getInviting( teacher.getAccount() );
@@ -106,7 +105,7 @@ public class TeacherGroupController {
      * @param groupId
      * @return
      */
-    @RequestMapping(value = "/agree/{groupId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/teacherGroup/agree/{groupId}", method = RequestMethod.POST)
     public Object agree(@PathVariable int groupId) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         String account = teacher.getAccount();
@@ -120,7 +119,7 @@ public class TeacherGroupController {
      * @param groupId
      * @return
      */
-    @RequestMapping(value = "/refuse/{groupId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/teacherGroup/refuse/{groupId}", method = RequestMethod.POST)
     public Object refuse(@PathVariable int groupId) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         String account = teacher.getAccount();
@@ -134,7 +133,7 @@ public class TeacherGroupController {
      * @param flag
      * @return
      */
-    @RequestMapping(value = "/state/{id}/{flag}", method = RequestMethod.POST)
+    @RequestMapping(value = "/teacherGroup/state/{id}/{flag}", method = RequestMethod.POST)
     public Object review(@PathVariable int id, @PathVariable boolean flag) {
         if (flag) {
             flag = teacherGroupService.setState( id, STATE_AGREE.toString() );
@@ -151,11 +150,9 @@ public class TeacherGroupController {
      * @param pageSize
      * @return
      */
-    @RequestMapping(value = "/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    @RequestMapping(value = "/teacherGroup/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object search(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<TeacherGroup> res = teacherGroupService.find( new Page<>( pageNum, pageSize ) , key );
         return MessageFactory.message( SUCCESS, res );
     }
-
-
 }

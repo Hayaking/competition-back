@@ -38,7 +38,7 @@ public class StudentGroupController {
     @RequestMapping(value = "/studentGroup/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object getByPage(@PathVariable int pageNum, @PathVariable int pageSize) {
         Student student = (Student) SecurityUtils.getSubject().getPrincipal();
-        IPage<StudentInGroup> res = studentGroupService.getGroupByStudentId( new Page<>( pageNum, pageSize ), student.getId() );
+        IPage<StudentGroup> res = studentGroupService.getByStudentId( new Page<>( pageNum, pageSize ), student.getId() );
         return MessageFactory.message( SUCCESS, res );
     }
 

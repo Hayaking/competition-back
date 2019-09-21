@@ -26,12 +26,7 @@ public class StudentGroupServiceImpl extends ServiceImpl<StudentGroupMapper, Stu
     private StudentInGroupMapper studentInGroupMapper;
 
     @Override
-    public IPage<StudentInGroup> getGroupByStudentId(Page<StudentInGroup> page, int id) {
-        List<StudentInGroup> list = studentInGroupMapper.getByStudentId( id );
-        page.setRecords( list );
-        QueryWrapper<StudentInGroup> wrapper = new QueryWrapper<>();
-        wrapper.eq( "stu_id", id );
-        page.setTotal( Long.valueOf( studentInGroupMapper.selectCount( wrapper ) ) );
-        return page;
+    public IPage<StudentGroup> getByStudentId(Page<StudentGroup> page, int id) {
+        return page.setRecords( studentGroupMapper.getWithWorksByStudentId( page, id ) );
     }
 }

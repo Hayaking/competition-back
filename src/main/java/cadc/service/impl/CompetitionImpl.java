@@ -81,12 +81,21 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     }
 
     @Override
-    public IPage<Competition> findpass(IPage<Competition> page, String key) {
+    public IPage<Competition> findPassByKey(IPage<Competition> page, String key) {
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
-        wrapper.eq("state", STATE_AGREE).like("id", key).or()
+        wrapper.eq("state", STATE_AGREE.toString())
+                .like("id", key).or()
                 .like("name", key);
         return competitionMapper.selectPage(page, wrapper);
     }
+
+    @Override
+    public IPage<Competition> findPassAll(IPage<Competition> page) {
+        QueryWrapper<Competition> wrapper = new QueryWrapper<>();
+        wrapper.eq( "state", STATE_AGREE.toString() );
+        return competitionMapper.selectPage(page, wrapper);
+    }
+
 
     @Override
     public boolean setState(int id, String state) {
