@@ -17,4 +17,8 @@ public interface JoinService extends IService<Join> {
     boolean create(Student student,StudentGroup group, List<String> list, Works works, Join join);
 
     IPage<Join> getByStudentAccount(Page<Join> page, String account);
+
+    IPage<Join> getByLead(Page<Join> page, int teacherId);
+
+    Boolean setApplyState(Boolean flag, int joinId, int teacherId);
 }

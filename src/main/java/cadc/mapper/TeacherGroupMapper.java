@@ -22,7 +22,7 @@ public interface TeacherGroupMapper extends BaseMapper<TeacherGroup> {
             "AND teacher_in_group.teacher_id = #{id}")
     List<TeacherGroup> findByTeacherId(int id);
 
-    @Update("update teacher_group set group_state = #{state} where id=#{groupId}")
+    @Update("update teacher_group set state = #{state} where id=#{groupId}")
     int updateState(@Param("groupId") int groupId, @Param("state") String state);
 
 

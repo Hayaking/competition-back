@@ -1,11 +1,13 @@
 package cadc.service.impl;
 
+import cadc.bean.message.STATE;
 import cadc.entity.*;
 import cadc.mapper.JoinMapper;
 import cadc.mapper.StudentMapper;
 import cadc.mapper.WorksMapper;
 import cadc.service.JoinService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -73,5 +75,21 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         System.out.println(list);
         page.setRecords( list );
         return page;
+    }
+
+    @Override
+    public IPage<Join> getByLead(Page<Join> page, int teacherId) {
+        QueryWrapper<Join> wrapper = new QueryWrapper<>();
+        wrapper.eq( "teacher_id1", teacherId ).or()
+                .eq( "teacher_id2", teacherId );
+        return joinMapper.selectPage( page, wrapper );
+    }
+
+    @Override
+    public Boolean setApplyState(Boolean flag, int joinId, int teacherId) {
+        Join join = joinMapper.selectById( joinId );
+        UpdateWrapper<Join> wrapper = new UpdateWrapper<>();
+        wrapper.set( "apply_state", flag ? STATE_AGREE.toString() : STATE_REFUSE.toString() );
+        return joinMapper.update( join, wrapper ) > 0;
     }
 }

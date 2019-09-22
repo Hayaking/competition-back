@@ -1,6 +1,7 @@
 package cadc.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -22,9 +23,13 @@ public class Join extends Model<Join> {
     private String enterState;
     private String joinState;
 
+    @TableField(exist = false)
     private Works works;
+    @TableField(exist = false)
     private Competition competition;
+    @TableField(exist = false)
     private Teacher teacher1;
+    @TableField(exist = false)
     private Teacher teacher2;
 
 }
