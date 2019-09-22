@@ -1,5 +1,6 @@
 package cadc.service.impl;
 
+import cadc.bean.message.STATE;
 import cadc.entity.Teacher;
 import cadc.entity.TeacherGroup;
 import cadc.entity.TeacherInGroup;
@@ -10,11 +11,16 @@ import cadc.service.TeacherGroupService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -36,15 +42,33 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
 
     @Override
     public Integer add(String groupName, String account, String state) {
-        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-        TeacherGroup teacherGroup = new TeacherGroup( groupName, account, STATE_APPLYING.toString(), sdf.format( new Date() ) );
-        boolean flag = teacherGroupMapper.add( teacherGroup ) > 0;
-        return flag ? teacherGroup.getId() : null;
+//        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
+//        TeacherGroup teacherGroup = new TeacherGroup( groupName, account, STATE_APPLYING.toString(), sdf.format( new Date() ) );
+//        boolean flag = teacherGroupMapper.add( teacherGroup ) > 0;
+//        return flag ? teacherGroup.getId() : null;
+        return 1;
     }
 
     @Override
-    public List<TeacherGroup> findByTeacherId(String account) {
-        return teacherGroupMapper.findByTeacherId( account );
+    public Boolean create(String groupName, int teacherId) {
+        if (StringUtils.isBlank( groupName )) {
+            throw new IllegalArgumentException( "字符串空" );
+        }
+        TeacherGroup group = new TeacherGroup( groupName );
+        group.setState( STATE_APPLYING.toString() );
+        group.setCreator( teacherId );
+        group.setCreateTime( LocalDateTime.now().toString() );
+        boolean flag = group.insert();
+        if (flag) {
+            return new TeacherInGroup( group.getId(), teacherId, STATE_INVITE_SUCCESS.toString() ).insert();
+        }
+        return false;
+    }
+
+
+    @Override
+    public List<TeacherGroup> findByTeacherId(int id) {
+        return teacherGroupMapper.findByTeacherId( id );
     }
 
     @Override
@@ -56,7 +80,7 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     public IPage<TeacherGroup> find(IPage<TeacherGroup> page, String key) {
         QueryWrapper<TeacherGroup> wrapper = new QueryWrapper<>();
         wrapper.like( "id", key ).or()
-                .like( "group_name", key );
+                .like( "name", key );
         return teacherGroupMapper.selectPage( page, wrapper );
     }
 
@@ -69,8 +93,8 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     }
 
     @Override
-    public List<TeacherGroup> getInviting(String account) {
-        return teacherGroupMapper.getInvitingByTeacherId( account );
+    public List<TeacherGroup> getInviting(int id) {
+        return teacherGroupMapper.getInvitingByTeacherId( id );
     }
 
     @Override
@@ -79,11 +103,8 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     }
 
     @Override
-    public boolean addGroupMember(int groupId, String account) {
-        QueryWrapper<Teacher> wrapper = new QueryWrapper<>();
-        wrapper.eq( "account", account );
-        Teacher teacher = teacherMapper.selectOne( wrapper );
-        TeacherInGroup teacherInGroup = new TeacherInGroup(groupId, teacher.getId(),STATE_INVITE_SUCCESS.toString());
+    public boolean addGroupMember(int groupId, int id) {
+        TeacherInGroup teacherInGroup = new TeacherInGroup( groupId, id, STATE_INVITE_SUCCESS.toString() );
         return teacherInGroupMapper.insert( teacherInGroup ) > 0;
     }
 

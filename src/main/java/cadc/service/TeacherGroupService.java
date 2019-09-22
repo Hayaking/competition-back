@@ -3,6 +3,7 @@ package cadc.service;
 import cadc.entity.TeacherGroup;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.shiro.subject.Subject;
 
 import java.util.List;
 
@@ -12,12 +13,12 @@ import java.util.List;
 public interface TeacherGroupService extends IService<TeacherGroup> {
 
     Integer add(String groupName, String account, String state);
+
+    Boolean create(String groupName, int teacherId);
     /**
      * 查找教师所在工作组
-     * @param account
-     * @return
      */
-    List<TeacherGroup> findByTeacherId(String account);
+    List<TeacherGroup> findByTeacherId(int id);
 
     IPage<TeacherGroup> findAll(IPage<TeacherGroup> page);
 
@@ -30,7 +31,7 @@ public interface TeacherGroupService extends IService<TeacherGroup> {
      */
     boolean inviteTeacher(int groupId, String account);
 
-    List<TeacherGroup> getInviting(String account);
+    List<TeacherGroup> getInviting(int id);
 
     /**
      * 更新邀请状态
@@ -41,7 +42,7 @@ public interface TeacherGroupService extends IService<TeacherGroup> {
      */
     boolean updateState(int groupId, String account,String state);
 
-    boolean addGroupMember(int groupId, String account);
+    boolean addGroupMember(int groupId, int id);
 
     boolean setState(int groupId, String state);
 }

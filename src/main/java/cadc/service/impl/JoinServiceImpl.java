@@ -39,7 +39,7 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
             throw new NullPointerException();
         }
         // 创建参赛小组
-        group.setCreator( student.getAccount() );
+        group.setCreator( student.getId() );
         group.setCreateTime( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() ) );
         group.insert();
         if (group.getId() == 0) {

@@ -52,10 +52,10 @@ public class StudentGroupController {
     public Object create(@PathVariable String groupName) {
         // 获取创建者的账号
         Student student = (Student) SecurityUtils.getSubject().getPrincipal();
-        String account = student.getAccount();
-        StudentGroup studentGroup = new StudentGroup( groupName, account, new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() ) );
+        int id = student.getId();
+        StudentGroup studentGroup = new StudentGroup( groupName, id, new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() ) );
         boolean flag = studentGroup.insert();
-        return MessageFactory.message( SUCCESS, studentGroup.getId() );
+        return MessageFactory.message( flag, studentGroup.getId() );
     }
 
     /**

@@ -35,13 +35,7 @@ public class MessageController {
     @RequestMapping(value = "/message", method = RequestMethod.GET)
     public Object getMessage() {
         Subject subject = SecurityUtils.getSubject();
-        Object obj = subject.getPrincipal();
-        Map<String, Object> res = null;
-        if (obj instanceof Student) {
-            res = messageService.getStudentMessage( ((Teacher) obj).getAccount() );
-        } else if ( obj instanceof Teacher) {
-            res = messageService.getTeacherMessage(subject);
-        }
-        return MessageFactory.message(SUCCESS, res );
+        Map<String, Object> res = messageService.getMessage(subject);
+        return MessageFactory.message( res != null, res );
     }
 }

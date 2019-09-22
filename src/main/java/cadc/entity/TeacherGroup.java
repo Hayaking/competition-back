@@ -1,35 +1,37 @@
 package cadc.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author haya
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("teacher_group")
 public class TeacherGroup extends Model<TeacherGroup> {
-    @TableId
+    @TableId(type = IdType.AUTO)
     private int id;
-    @TableField("group_name")
-    private String groupName;
-    @TableField("group_creater")
-    private String groupCreater;
-    @TableField("group_state")
-    private String groupState;
-    @TableField("group_create_time")
-    private String groupCreateTime;
+    private String name;
+    private int creator;
+    private String state;
+    private String createTime;
 
     public TeacherGroup() {
     }
 
-    public TeacherGroup(String groupName, String groupCreater, String groupState, String groupCreateTime) {
-        this.groupName = groupName;
-        this.groupCreater = groupCreater;
-        this.groupState = groupState;
-        this.groupCreateTime = groupCreateTime;
+    public TeacherGroup(String name) {
+        this.name = name;
+    }
+
+    public TeacherGroup(String name, int creator, String state, String createTime) {
+        this.name = name;
+        this.creator = creator;
+        this.state = state;
+        this.createTime = createTime;
     }
 }

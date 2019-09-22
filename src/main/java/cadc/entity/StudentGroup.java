@@ -18,7 +18,7 @@ public class StudentGroup extends Model<StudentGroup> {
     @TableId(type = IdType.AUTO)
     private int id;
     private String name;
-    private String creator;
+    private int creator;
     private String createTime;
 
     @TableField(exist = false)
@@ -27,7 +27,7 @@ public class StudentGroup extends Model<StudentGroup> {
     public StudentGroup() {
     }
 
-    public StudentGroup(String name, String creator, String createTime) {
+    public StudentGroup(String name, int creator, String createTime) {
         this.name = name;
         this.creator = creator;
         this.createTime = createTime;
