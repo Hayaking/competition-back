@@ -32,4 +32,7 @@ public interface TeacherMapper extends BaseMapper<Teacher> {
     @Select( "SELECT * FROM teacher JOIN role_teacher on teacher.account = role_teacher.teacher_id WHERE role_teacher.role_id =#{roleId}" )
     List<Teacher> getByRoleId(int roleId);
 
+    @Select("Select * from teacher where id = #{id}")
+    Teacher getById(int id);
+
 }

@@ -50,15 +50,19 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     }
 
     @Override
-    public Boolean create(String groupName, int teacherId) {
-        if (StringUtils.isBlank( groupName )) {
+    public Boolean create(TeacherGroup group, int teacherId) {
+        if (group == null) {
+            throw new IllegalArgumentException( "空" );
+        }
+        if (StringUtils.isBlank( group.getName() )) {
             throw new IllegalArgumentException( "字符串空" );
         }
-        TeacherGroup group = new TeacherGroup( groupName );
+        // 创建小组
         group.setState( STATE_APPLYING.toString() );
-        group.setCreator( teacherId );
+        group.setCreatorId( teacherId );
         group.setCreateTime( LocalDateTime.now().toString() );
         boolean flag = group.insert();
+        // 将创建人添加进入小组
         if (flag) {
             return new TeacherInGroup( group.getId(), teacherId, STATE_INVITE_SUCCESS.toString() ).insert();
         }
@@ -72,8 +76,17 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     }
 
     @Override
+    public IPage<TeacherGroup> findPageByTeacherId(IPage<TeacherGroup> page, int id) {
+        List<TeacherGroup> list = teacherGroupMapper.findByTeacherIdByPage( page, id );
+        page.setRecords( list );
+        return page;
+    }
+
+    @Override
     public IPage<TeacherGroup> findAll(IPage<TeacherGroup> page) {
-        return teacherGroupMapper.selectPage( page, new QueryWrapper<>() );
+        List<TeacherGroup> list = teacherGroupMapper.getAllByPage( page );
+        page.setRecords( list );
+        return page;
     }
 
     @Override

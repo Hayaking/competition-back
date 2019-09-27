@@ -8,12 +8,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,13 +29,14 @@ public class TeacherGroupController {
     /**
      * 创建工作组
      *
-     * @param groupName
+     * @param group
      * @return
      */
-    @RequestMapping(value = "/teacherGroup/create/{groupName}", method = RequestMethod.POST)
-    public Object create(@PathVariable String groupName) {
+    @RequiresRoles("教师")
+    @RequestMapping(value = "/teacherGroup/create", method = RequestMethod.POST)
+    public Object create(@RequestBody TeacherGroup group) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
-        Boolean flag = teacherGroupService.create( groupName, teacher.getId() );
+        Boolean flag = teacherGroupService.create( group, teacher.getId() );
         return MessageFactory.message( flag );
     }
 
@@ -46,6 +45,7 @@ public class TeacherGroupController {
      *
      * @return
      */
+    @RequiresRoles("教师")
     @RequestMapping(value = "/teacherGroup/list", method = RequestMethod.GET)
     public Object list() {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
@@ -55,11 +55,27 @@ public class TeacherGroupController {
     }
 
     /**
+     * 分页获取所在的工作组
+     *
+     * @return
+     */
+    @RequiresRoles("教师")
+    @RequestMapping(value = "/teacherGroup/list/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    public Object listByPage(@PathVariable int pageNum, @PathVariable int pageSize) {
+        Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
+        int id = teacher.getId();
+        IPage<TeacherGroup> res = teacherGroupService.findPageByTeacherId( new Page<>( pageNum, pageSize ), id );
+        return MessageFactory.message( res != null, res );
+    }
+
+    /**
      * 获取所有工作组
+     *
      * @param pageNum
      * @param pageSize
      * @return
      */
+    @RequiresRoles("管理员")
     @RequestMapping(value = "/teacherGroup/all/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object all(@PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<TeacherGroup> res = teacherGroupService.findAll( new Page<>( pageNum, pageSize ) );

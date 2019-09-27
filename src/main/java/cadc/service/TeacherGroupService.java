@@ -14,11 +14,13 @@ public interface TeacherGroupService extends IService<TeacherGroup> {
 
     Integer add(String groupName, String account, String state);
 
-    Boolean create(String groupName, int teacherId);
+    Boolean create(TeacherGroup group, int teacherId);
     /**
      * 查找教师所在工作组
      */
     List<TeacherGroup> findByTeacherId(int id);
+
+    IPage<TeacherGroup> findPageByTeacherId(IPage<TeacherGroup> page, int id);
 
     IPage<TeacherGroup> findAll(IPage<TeacherGroup> page);
 
