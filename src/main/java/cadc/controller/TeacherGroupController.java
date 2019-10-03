@@ -6,6 +6,7 @@ import cadc.entity.TeacherGroup;
 import cadc.entity.TeacherInGroup;
 import cadc.service.TeacherGroupService;
 import cadc.service.TeacherService;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.log4j.Log4j2;
@@ -69,10 +70,6 @@ public class TeacherGroupController {
     @RequestMapping(value = "/teacherGroup/{groupId}/teachers", method = RequestMethod.GET)
     public Object getByGroupId(@PathVariable int groupId) {
         List<Teacher> list = teacherService.getByGroupId(groupId);
-//        List<Teacher> list2 = teacherService.getInvitingByGroupId( groupId );
-//        list2.forEach( item -> item.setState( STATE_INVITING.toString() ));
-//        list1.forEach( item -> item.setState( STATE_INVITE_SUCCESS.toString() ));
-//        list2.addAll( list1 );
         return MessageFactory.message( SUCCESS, list );
     }
 
@@ -199,6 +196,22 @@ public class TeacherGroupController {
         Teacher teacher = (Teacher) subject.getPrincipal();
         int teacherId = teacher.getId();
         boolean flag = teacherGroupService.exit( groupId, teacherId );
+        return MessageFactory.message( flag );
+    }
+
+    /**
+     * 组长将组员移除工作组
+     * @param groupId
+     * @param teacherId
+     * @return
+     */
+    @RequestMapping(value = "teacherGroup/{groupId}/{teacherId}", method = RequestMethod.DELETE)
+    public Object exit(@PathVariable int groupId, @PathVariable int teacherId) {
+        TeacherInGroup teacherInGroup = new TeacherInGroup();
+        UpdateWrapper<TeacherInGroup> wrapper = new UpdateWrapper<>();
+        wrapper.eq( "group_id", groupId )
+                .eq( "teacher_id", teacherId );
+        boolean flag = teacherInGroup.delete( wrapper );
         return MessageFactory.message( flag );
     }
 }

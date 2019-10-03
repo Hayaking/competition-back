@@ -55,7 +55,7 @@ public class CompetitionController {
     }
 
     /**
-     * 根据组id分页查询
+     * 根据工作组id 分页查询竞赛
      * @param groupId
      * @param pageNum
      * @param pageSize
@@ -147,7 +147,7 @@ public class CompetitionController {
         IPage<Competition> res = competitionService.findPassByKey(new Page<>(pageNum, pageSize), key);
         return MessageFactory.message(SUCCESS, res);
     }
-    
+
     /**
      * 分获取所有审核通过的比赛
      * @param pageNum
