@@ -20,6 +20,11 @@ public class TeacherInGroup extends Model<TeacherInGroup> {
     public TeacherInGroup() {
     }
 
+    public TeacherInGroup(int groupId, int teacherId) {
+        this.teacherId = teacherId;
+        this.groupId = groupId;
+    }
+
     public TeacherInGroup(int groupId, int teacherId, String state) {
         this.teacherId = teacherId;
         this.groupId = groupId;

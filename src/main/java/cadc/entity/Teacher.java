@@ -29,6 +29,7 @@ public class Teacher  extends Model<Teacher>  implements Serializable {
     private String teacherLevel;
     private String teacherBankCardNo;
     private int picId;
+
     @TableField(exist = false)
     private String state;
 }

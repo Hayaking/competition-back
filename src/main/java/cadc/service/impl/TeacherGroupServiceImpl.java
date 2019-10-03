@@ -1,6 +1,5 @@
 package cadc.service.impl;
 
-import cadc.bean.message.STATE;
 import cadc.entity.Teacher;
 import cadc.entity.TeacherGroup;
 import cadc.entity.TeacherInGroup;
@@ -12,16 +11,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang.StringUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import static cadc.bean.message.STATE.*;
@@ -98,11 +93,9 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     }
 
     @Override
-    public boolean inviteTeacher(int groupId,String account) {
-        QueryWrapper<Teacher> wrapper = new QueryWrapper<>();
-        wrapper.eq( "account", account );
-        Teacher teacher = teacherMapper.selectOne( wrapper );
-        return teacherInGroupMapper.insert( new TeacherInGroup( groupId, teacher.getId(), STATE_INVITING.toString() ) ) > 0;
+    public boolean inviteTeacher(int groupId, int teacherId) {
+        return teacherInGroupMapper
+                .insert( new TeacherInGroup( groupId, teacherId, STATE_INVITING.toString() ) ) > 0;
     }
 
     @Override
@@ -111,8 +104,8 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     }
 
     @Override
-    public boolean updateState(int groupId, String account, String state) {
-        return teacherInGroupMapper.updateState( groupId, account, state ) > 0;
+    public boolean updateState(int groupId,  int teacherId, String state) {
+        return teacherInGroupMapper.updateState( groupId, teacherId, state ) > 0;
     }
 
     @Override
@@ -124,5 +117,17 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     @Override
     public boolean setState(int groupId, String state) {
         return teacherGroupMapper.updateState( groupId, state ) > 0;
+    }
+
+    @Override
+    public boolean exit(int groupId, int teacherId) {
+        TeacherGroup teacherGroup = teacherGroupMapper.selectById( groupId );
+        if (teacherId == teacherGroup.getCreatorId()) {
+            return false;
+        }
+        HashMap<String, Object> map = new HashMap<>( 2 );
+        map.put( "group_id", groupId );
+        map.put( "teacher_id", teacherId );
+        return teacherInGroupMapper.deleteByMap( map ) > 0;
     }
 }

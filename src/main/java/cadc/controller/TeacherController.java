@@ -57,20 +57,7 @@ public class TeacherController {
         return MessageFactory.message( SUCCESS, list );
     }
 
-    /**
-     * 获取指定工作组里的所有教师
-     * @param groupId
-     * @return
-     */
-    @RequestMapping(value = "/teacher/{groupId}", method = RequestMethod.GET)
-    public Object getByGroupId(@PathVariable int groupId) {
-        List<Teacher> list1 = teacherService.getByGroupId(groupId);
-        List<Teacher> list2 = teacherService.getInvitingByGroupId( groupId );
-        list2.forEach( item -> item.setState( STATE_INVITING.toString() ));
-        list1.forEach( item -> item.setState( STATE_INVITE_SUCCESS.toString() ));
-        list2.addAll( list1 );
-        return MessageFactory.message( SUCCESS, list2 );
-    }
+
 
     /**
      * 获取指定教师的角色

@@ -31,20 +31,23 @@ public interface TeacherGroupService extends IService<TeacherGroup> {
      * @param account
      * @return
      */
-    boolean inviteTeacher(int groupId, String account);
+    boolean inviteTeacher(int groupId, int account);
 
     List<TeacherGroup> getInviting(int id);
 
     /**
      * 更新邀请状态
      * @param groupId
-     * @param account
+     * @param teacherId
      * @param state
      * @return
      */
-    boolean updateState(int groupId, String account,String state);
+    boolean updateState(int groupId, int teacherId,String state);
 
     boolean addGroupMember(int groupId, int id);
 
     boolean setState(int groupId, String state);
+
+    boolean exit(int groupId, int teacherId);
+
 }

@@ -3,7 +3,9 @@ package cadc.controller;
 import cadc.bean.message.MessageFactory;
 import cadc.entity.Teacher;
 import cadc.entity.TeacherGroup;
+import cadc.entity.TeacherInGroup;
 import cadc.service.TeacherGroupService;
+import cadc.service.TeacherService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.log4j.Log4j2;
@@ -13,7 +15,9 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static cadc.bean.message.STATE.*;
 
@@ -24,7 +28,10 @@ import static cadc.bean.message.STATE.*;
 @RestController
 public class TeacherGroupController {
     @Autowired
+    private TeacherService teacherService;
+    @Autowired
     private TeacherGroupService teacherGroupService;
+
 
     /**
      * 创建工作组
@@ -51,6 +58,21 @@ public class TeacherGroupController {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         int id = teacher.getId();
         List<TeacherGroup> list = teacherGroupService.findByTeacherId( id );
+        return MessageFactory.message( SUCCESS, list );
+    }
+
+    /**
+     * 获取指定工作组里的所有教师
+     * @param groupId
+     * @return
+     */
+    @RequestMapping(value = "/teacherGroup/{groupId}/teachers", method = RequestMethod.GET)
+    public Object getByGroupId(@PathVariable int groupId) {
+        List<Teacher> list = teacherService.getByGroupId(groupId);
+//        List<Teacher> list2 = teacherService.getInvitingByGroupId( groupId );
+//        list2.forEach( item -> item.setState( STATE_INVITING.toString() ));
+//        list1.forEach( item -> item.setState( STATE_INVITE_SUCCESS.toString() ));
+//        list2.addAll( list1 );
         return MessageFactory.message( SUCCESS, list );
     }
 
@@ -86,24 +108,25 @@ public class TeacherGroupController {
      * 邀请工作组成员
      *
      * @param groupId
-     * @param account
+     * @param teacherId
      * @return
      */
-    @RequestMapping(value = "/teacherGroup/invite/{groupId}/{account}", method = RequestMethod.POST)
-    public Object invite(@PathVariable int groupId, @PathVariable String account) {
-        boolean flag = teacherGroupService.inviteTeacher( groupId, account );
+    @RequestMapping(value = "/teacherGroup/invite/{groupId}/{teacherId}", method = RequestMethod.POST)
+    public Object invite(@PathVariable int groupId, @PathVariable int teacherId) {
+        boolean flag = teacherGroupService.inviteTeacher( groupId, teacherId );
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
 
     /**
      * 获取工作组的邀请
+     *
      * @return
      */
     @RequestMapping(value = "/teacherGroup/inviting", method = RequestMethod.GET)
     public Object getInviting() {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         List<TeacherGroup> list = teacherGroupService.getInviting( teacher.getId() );
-        return MessageFactory.message(SUCCESS, list );
+        return MessageFactory.message( SUCCESS, list );
     }
 
     /**
@@ -115,8 +138,8 @@ public class TeacherGroupController {
     @RequestMapping(value = "/teacherGroup/agree/{groupId}", method = RequestMethod.POST)
     public Object agree(@PathVariable int groupId) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
-        String account = teacher.getAccount();
-        boolean flag = teacherGroupService.updateState( groupId, account, STATE_INVITE_SUCCESS.toString() );
+        int id = teacher.getId();
+        boolean flag = teacherGroupService.updateState( groupId, id, STATE_INVITE_SUCCESS.toString() );
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
 
@@ -129,13 +152,14 @@ public class TeacherGroupController {
     @RequestMapping(value = "/teacherGroup/refuse/{groupId}", method = RequestMethod.POST)
     public Object refuse(@PathVariable int groupId) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
-        String account = teacher.getAccount();
-        boolean flag = teacherGroupService.updateState( groupId, account, STATE_INVITE_FAILED.toString() );
+        int id = teacher.getId();
+        boolean flag = teacherGroupService.updateState( groupId, id, STATE_INVITE_FAILED.toString() );
         return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
     }
 
     /**
      * 审核
+     *
      * @param id
      * @param flag
      * @return
@@ -152,6 +176,7 @@ public class TeacherGroupController {
 
     /**
      * 搜索
+     *
      * @param key
      * @param pageNum
      * @param pageSize
@@ -159,7 +184,21 @@ public class TeacherGroupController {
      */
     @RequestMapping(value = "/teacherGroup/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object search(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
-        IPage<TeacherGroup> res = teacherGroupService.find( new Page<>( pageNum, pageSize ) , key );
+        IPage<TeacherGroup> res = teacherGroupService.find( new Page<>( pageNum, pageSize ), key );
         return MessageFactory.message( SUCCESS, res );
+    }
+
+    /**
+     * 退出工作组
+     * @param groupId
+     * @return
+     */
+    @RequestMapping(value = "teacherGroup/{groupId}", method = RequestMethod.DELETE)
+    public Object exit(@PathVariable int groupId) {
+        Subject subject = SecurityUtils.getSubject();
+        Teacher teacher = (Teacher) subject.getPrincipal();
+        int teacherId = teacher.getId();
+        boolean flag = teacherGroupService.exit( groupId, teacherId );
+        return MessageFactory.message( flag );
     }
 }
