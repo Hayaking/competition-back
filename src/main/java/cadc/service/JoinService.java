@@ -20,5 +20,7 @@ public interface JoinService extends IService<Join> {
 
     IPage<Join> getByLead(Page<Join> page, int teacherId);
 
+    IPage<Join> getByCompetitionId(Page<Join> page, int competitionId);
+
     Boolean setApplyState(Boolean flag, int joinId, int teacherId);
 }

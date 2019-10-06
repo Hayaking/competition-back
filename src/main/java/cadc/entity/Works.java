@@ -1,6 +1,7 @@
 package cadc.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -16,5 +17,6 @@ public class Works{
     private String worksName;
     private int stuGroupId;
 
+    @TableField(exist = false)
     private StudentGroup studentGroup;
 }

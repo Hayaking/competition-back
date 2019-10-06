@@ -1,6 +1,5 @@
 package cadc.service.impl;
 
-import cadc.bean.message.STATE;
 import cadc.entity.*;
 import cadc.mapper.JoinMapper;
 import cadc.mapper.StudentMapper;
@@ -20,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 
 import static cadc.bean.message.STATE.*;
-import static cadc.bean.message.STATE.STATE_INVITING;
 
 /**
  * @author haya
@@ -83,6 +81,13 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         wrapper.eq( "teacher_id1", teacherId ).or()
                 .eq( "teacher_id2", teacherId );
         return joinMapper.selectPage( page, wrapper );
+    }
+
+    @Override
+    public IPage<Join> getByCompetitionId(Page<Join> page, int competitionId) {
+        List<Join> list = joinMapper.getListByCompetitionId( page, competitionId );
+        page.setRecords( list );
+        return page;
     }
 
     @Override

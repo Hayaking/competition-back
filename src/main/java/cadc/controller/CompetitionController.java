@@ -84,7 +84,7 @@ public class CompetitionController {
      * @param typeId
      * @return
      */
-    @RequestMapping(value = "/competition/{typeId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/competition/rank/{typeId}", method = RequestMethod.GET)
     public Object get5ByType(@PathVariable int typeId) {
         List<Competition> res = competitionService.get5ByType( typeId );
         return MessageFactory.message( SUCCESS, res );
@@ -100,6 +100,12 @@ public class CompetitionController {
     public Object getEnterCompetition(@PathVariable int id) {
         Competition res = competitionService.getById( id );
         return MessageFactory.message( SUCCESS, res );
+    }
+
+    @RequestMapping(value = "/competition/{id}", method = RequestMethod.GET)
+    public Object getCompetitionById(@PathVariable int id) {
+        Competition res = competitionService.getById( id );
+        return MessageFactory.message( res );
     }
 
     /**

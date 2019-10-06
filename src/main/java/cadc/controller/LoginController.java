@@ -1,9 +1,7 @@
 package cadc.controller;
 
 import cadc.bean.UserToken;
-import cadc.bean.message.Message;
 import cadc.bean.message.MessageFactory;
-import cadc.bean.message.STATE;
 import cadc.entity.Student;
 import cadc.entity.Teacher;
 import cadc.service.StudentService;
@@ -18,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import static cadc.bean.message.STATE.*;
+import static cadc.bean.message.STATE.FAILED;
+import static cadc.bean.message.STATE.SUCCESS;
 
 /**
  * @author haya
@@ -33,6 +32,7 @@ public class LoginController {
 
     /**
      * 登录
+     *
      * @param account
      * @param password
      * @param type
@@ -42,6 +42,7 @@ public class LoginController {
     public Object login(String account, String password, @PathVariable String type) {
         Subject subject = SecurityUtils.getSubject();
         if (subject.isAuthenticated()) {
+            // 已经登录
             return MessageFactory.message( SUCCESS, subject.getSession().getId() );
         }
         UserToken token = new UserToken( account, password, type );
@@ -50,7 +51,7 @@ public class LoginController {
         if (subject.isAuthenticated()) {
             return MessageFactory.message( SUCCESS, subject.getSession().getId() );
         }
-        return MessageFactory.message( SUCCESS, "" );
+        return MessageFactory.message( false );
     }
 
     /**
@@ -87,25 +88,19 @@ public class LoginController {
     }
 
     @RequiresAuthentication
-    @RequestMapping(value = "/info/{type}", method = RequestMethod.GET)
-    public Object info(@PathVariable String type) {
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    public Object info() {
         Subject subject = SecurityUtils.getSubject();
-        Message res = MessageFactory.message( SUCCESS, "注册成功" );
-        type = type.toUpperCase();
-        switch (STATE.valueOf( type )) {
-            case STUDENT:
-                Student student = (Student) subject.getPrincipal();
-                student = studentService.getById( student.getAccount() );
-                res = MessageFactory.message( SUCCESS, student );
-                break;
-            case TEACHER:
-                Teacher teacher = (Teacher) subject.getPrincipal();
-                teacher = teacherService.getById( teacher.getAccount() );
-                res = MessageFactory.message( SUCCESS, teacher );
-                break;
-            default:
-                break;
+        Object principal = subject.getPrincipal();
+        if (principal instanceof Teacher) {
+            Teacher teacher = (Teacher) principal;
+            teacher = teacherService.getById( teacher.getId() );
+            return MessageFactory.message( teacher );
+        } else if (principal instanceof Student) {
+            Student student = (Student) principal;
+            student = studentService.getById( student.getId() );
+            return MessageFactory.message( student );
         }
-        return res;
+        return MessageFactory.message( false );
     }
 }

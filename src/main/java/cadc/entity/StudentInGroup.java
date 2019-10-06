@@ -22,6 +22,8 @@ public class StudentInGroup extends Model<StudentInGroup> {
     private String state;
 
     @TableField(exist = false)
+    private Student student;
+    @TableField(exist = false)
     private StudentGroup group;
 
     public StudentInGroup() {

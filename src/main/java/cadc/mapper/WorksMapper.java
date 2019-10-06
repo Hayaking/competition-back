@@ -12,7 +12,7 @@ public interface WorksMapper extends BaseMapper<Works> {
         @Result(column = "id", property = "id"),
         @Result(column = "works_name", property = "worksName"),
         @Result(column = "stu_group_id", property = "studentGroup",
-                one = @One(select = "cadc.mapper.StudentGroupMapper.getById"))
+                one = @One(select = "cadc.mapper.StudentGroupMapper.getStudentGroupWithMemberById"))
     })
     @Select("select * from works where id = #{id}")
     Works getById(@Param( "id" ) int id);

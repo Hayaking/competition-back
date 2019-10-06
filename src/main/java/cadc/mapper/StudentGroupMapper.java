@@ -18,6 +18,21 @@ public interface StudentGroupMapper extends BaseMapper<StudentGroup> {
     StudentGroup getById(int id);
 
 
+    /**
+     * 查询学生组是 顺带查询组员
+     * @param id
+     * @return
+     */
+    @Results({
+            @Result(column = "id", property = "members", one = @One(select = "cadc.mapper.StudentInGroupMapper.getStudentInGroupByGroupId")),
+            @Result(column = "id", property = "id"),
+            @Result(column = "name", property = "name"),
+            @Result(column = "creator", property = "creator"),
+            @Result(column = "works_name", property = "worksName"),
+    })
+    @Select("select * from stu_group where id = #{id}")
+    StudentGroup getStudentGroupWithMemberById(int id);
+
     @Results({
             @Result(column = "id", property = "id"),
             @Result(column = "name", property = "name"),

@@ -28,13 +28,13 @@ public class JoinController {
     public Object addJoin(@RequestBody Enter enter) {
         Student student = (Student) SecurityUtils.getSubject().getPrincipal();
         boolean flag = joinService.create( student,enter.getGroup(), enter.getList(), enter.getWorks(), enter.getJoin() );
-        return MessageFactory.message( flag ? SUCCESS : FAILED );
+        return MessageFactory.message( flag);
     }
 
     @RequestMapping(value = "/join/{id}", method = RequestMethod.DELETE)
     public Object deleteJoin(@PathVariable int id) {
         boolean flag = joinService.removeById( id );
-        return MessageFactory.message( flag ? SUCCESS : FAILED );
+        return MessageFactory.message( flag );
     }
 
     @RequestMapping(value = "/join/{pageNum}/{pageSize}", method = RequestMethod.GET)

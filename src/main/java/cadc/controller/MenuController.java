@@ -25,31 +25,28 @@ public class MenuController {
     private MenuService menuService;
 
     /**
-     * 接收前端传来的type 返回路由菜单
-     * @param type
+     * e 返回路由菜单
      * @return
      */
-    @RequestMapping(value = "/menu/{type}", method = RequestMethod.GET)
-    public Object menu( @PathVariable String type) {
+    @RequestMapping(value = "/menu", method = RequestMethod.GET)
+    public Object menu() {
         Subject subject = SecurityUtils.getSubject();
         if (subject == null) {
-            return MessageFactory.message( FAILED );
+            return MessageFactory.message( false );
         }
         Object obj = subject.getPrincipal();
-        int id;
         if (obj instanceof Student) {
             Student stu = (Student) obj;
-            id = stu.getId();
+            return MessageFactory.message(  menuService.getMenu( stu.getId(), "student" ) );
         } else if (obj instanceof Teacher) {
             Teacher teacher = (Teacher) obj;
-            id = teacher.getId();
+            return MessageFactory.message(  menuService.getMenu(  teacher.getId(), "teacher" ) );
         } else {
-            return MessageFactory.message( FAILED );
+            return MessageFactory.message( false );
         }
-        return MessageFactory.message( SUCCESS, menuService.getMenu( id, type ) );
     }
 
-    @RequestMapping(value = "/menu", method = RequestMethod.GET)
+    @RequestMapping(value = "/menu/all", method = RequestMethod.GET)
     public Object getAll( ) {
         return menuService.getAll();
     }

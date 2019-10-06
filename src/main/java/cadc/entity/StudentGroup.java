@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 /**
  * @author haya
  */
@@ -21,6 +23,8 @@ public class StudentGroup extends Model<StudentGroup> {
     private int creator;
     private String createTime;
 
+    @TableField(exist = false)
+    private List<Student> members;
     @TableField(exist = false)
     private String worksName;
 
