@@ -20,7 +20,20 @@ public interface JoinService extends IService<Join> {
 
     IPage<Join> getByLead(Page<Join> page, int teacherId);
 
+    /**
+     * 根据competitionId获取参赛列表
+     * @param page
+     * @param competitionId
+     * @return
+     */
     IPage<Join> getByCompetitionId(Page<Join> page, int competitionId);
 
     Boolean setApplyState(Boolean flag, int joinId, int teacherId);
+
+    /**
+     * 生成参赛excel
+     * @param competitionId
+     * @return
+     */
+    boolean generateEnterListExcel(int competitionId);
 }

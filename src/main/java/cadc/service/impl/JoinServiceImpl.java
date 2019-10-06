@@ -1,10 +1,13 @@
 package cadc.service.impl;
 
+import cadc.bean.Enter;
+import cadc.bean.excel.EnterExcel;
 import cadc.entity.*;
 import cadc.mapper.JoinMapper;
 import cadc.mapper.StudentMapper;
 import cadc.mapper.WorksMapper;
 import cadc.service.JoinService;
+import cadc.util.ExcelUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -15,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import static cadc.bean.message.STATE.*;
@@ -68,9 +73,9 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     }
 
     @Override
-    public IPage<Join> getByStudentAccount(Page<Join> page,String account) {
+    public IPage<Join> getByStudentAccount(Page<Join> page, String account) {
         List<Join> list = joinMapper.getListByStudentAccount( account );
-        System.out.println(list);
+        System.out.println( list );
         page.setRecords( list );
         return page;
     }
@@ -96,5 +101,23 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         UpdateWrapper<Join> wrapper = new UpdateWrapper<>();
         wrapper.set( "apply_state", flag ? STATE_AGREE.toString() : STATE_REFUSE.toString() );
         return joinMapper.update( join, wrapper ) > 0;
+    }
+
+    @Override
+    public boolean generateEnterListExcel(int competitionId) {
+        List<Join> list = joinMapper.getListByCompetitionId( competitionId );
+        List<EnterExcel> data = new LinkedList<>();
+        list.spliterator().forEachRemaining( item -> {
+//            List<String> members = new LinkedList<>();
+            StringBuilder members = new StringBuilder();
+
+            item.getWorks().getStudentGroup().getMembers().spliterator().forEachRemaining( member -> {
+                members.append( member.getStudent().getStuName() + "," );
+            } );
+            data.add( new EnterExcel( item.getId(), item.getWorks().getWorksName(), members.toString(), "" ) );
+
+        } );
+        ExcelUtils.generateExcel( LocalDate.now().toString() + competitionId, "", data, EnterExcel.class );
+        return true;
     }
 }

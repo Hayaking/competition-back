@@ -26,4 +26,11 @@ public class EnterController {
         IPage<Join> res = joinService.getByCompetitionId( new Page<>( pageNum, pageSize ), competitionId );
         return MessageFactory.message( res );
     }
+
+    @RequestMapping(value = "/enter/{competitionId}/export", method = RequestMethod.GET)
+    public Object getEnterListExcel(@PathVariable int competitionId) {
+        boolean flag = joinService.generateEnterListExcel( competitionId );
+        return MessageFactory.message( flag );
+    }
+
 }

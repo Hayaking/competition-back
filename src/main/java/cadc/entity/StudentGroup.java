@@ -24,7 +24,7 @@ public class StudentGroup extends Model<StudentGroup> {
     private String createTime;
 
     @TableField(exist = false)
-    private List<Student> members;
+    private List<StudentInGroup> members;
     @TableField(exist = false)
     private String worksName;
 
