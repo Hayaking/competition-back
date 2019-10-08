@@ -35,6 +35,7 @@ public class CompetitionController {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         competition.setState( STATE_APPLYING.toString() );
         competition.setEnterState( STATE_NOT_START.toString() );
+        competition.setStartState( STATE_NOT_START.toString() );
         competition.setCreator( teacher.getAccount() );
         int id = competitionService.add( competition );
         competition.setId( id );
