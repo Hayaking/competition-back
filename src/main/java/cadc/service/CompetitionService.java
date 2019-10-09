@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -47,4 +49,6 @@ public interface CompetitionService extends IService<Competition> {
     String generateWord(int id);
 
     String generateWord(Competition competition);
+
+    FileInputStream getWord(int competitionId);
 }

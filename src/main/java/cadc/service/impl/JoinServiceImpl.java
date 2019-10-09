@@ -1,6 +1,5 @@
 package cadc.service.impl;
 
-import cadc.bean.Enter;
 import cadc.bean.excel.EnterExcel;
 import cadc.entity.*;
 import cadc.mapper.JoinMapper;
@@ -104,11 +103,10 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     }
 
     @Override
-    public boolean generateEnterListExcel(int competitionId) {
+    public String generateEnterListExcel(int competitionId) {
         List<Join> list = joinMapper.getListByCompetitionId( competitionId );
         List<EnterExcel> data = new LinkedList<>();
         list.spliterator().forEachRemaining( item -> {
-//            List<String> members = new LinkedList<>();
             StringBuilder members = new StringBuilder();
 
             item.getWorks().getStudentGroup().getMembers().spliterator().forEachRemaining( member -> {
@@ -117,7 +115,8 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
             data.add( new EnterExcel( item.getId(), item.getWorks().getWorksName(), members.toString(), "" ) );
 
         } );
-        ExcelUtils.generateExcel( LocalDate.now().toString() + competitionId, "", data, EnterExcel.class );
-        return true;
+        String fileName = LocalDate.now().toString() + competitionId;
+        ExcelUtils.generateExcel( fileName, "", data, EnterExcel.class );
+        return fileName;
     }
 }

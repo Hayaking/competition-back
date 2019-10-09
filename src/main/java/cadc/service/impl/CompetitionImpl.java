@@ -5,24 +5,21 @@ import cadc.entity.Join;
 import cadc.mapper.CompetitionMapper;
 import cadc.mapper.JoinMapper;
 import cadc.service.CompetitionService;
+import cadc.util.WordUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.Version;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Resource;
 import java.io.*;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import static cadc.bean.message.STATE.*;
@@ -175,43 +172,33 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
 
     @Override
     public String generateWord(Competition competition) {
-        // targer路径
         String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
         // word模版路径
         String templatePath = root + "template/";
         // word输出路径
         String outPath = root + "static/word/" + competition.getId() + ".doc";
-        // 获取属性
-        Field[] declaredFields = competition.getClass().getDeclaredFields();
-        Map<String, Object> res = new HashMap<>( 13 );
-        Object val;
-        String name;
         try {
-            // 遍历属性
-            for (Field item : declaredFields) {
-                // 获取属性名
-                name = item.getName();
-                item.setAccessible( true );
-                // 取值
-                val = item.get( competition );
-                if (val != null) {
-                    res.put( name, val );
-                    item.setAccessible( false );
-                }
-            }
-            log.info( res );
-            Configuration configuration = new Configuration( new Version( "2.3.0" ) );
-            configuration.setDefaultEncoding( "utf-8" );
-            configuration.setDirectoryForTemplateLoading( new File( templatePath ) );
-            Template template = configuration.getTemplate( "word.ftl" );
-
-            File outFile = new File( outPath);
-            Writer writer = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( outFile ), StandardCharsets.UTF_8 ), 10240 );
-            template.process( res, writer );
-            writer.close();
-        } catch (IllegalAccessException | IOException | TemplateException e) {
+            Map<String, String> res = BeanUtils.describe( competition );
+            log.warn( res );
+            WordUtils.generateWord( templatePath, outPath, res );
+        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         }
         return outPath;
+    }
+
+    @Override
+    public FileInputStream getWord(int competitionId) {
+        String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
+        // word输出路径
+        String outPath = root + "static/word/" + competitionId + ".doc";
+        File file = new File( outPath );
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream( file );
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return in;
     }
 }
