@@ -119,4 +119,12 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         ExcelUtils.generateExcel( fileName, "", data, EnterExcel.class );
         return fileName;
     }
+
+    @Override
+    public boolean setEnterState(Boolean flag, int joinId) {
+        Join join = joinMapper.selectById( joinId );
+        UpdateWrapper<Join> wrapper = new UpdateWrapper<>();
+        wrapper.set( "enter_state", flag ? STATE_AGREE.toString() : STATE_REFUSE.toString() );
+        return joinMapper.update( join, wrapper ) > 0;
+    }
 }

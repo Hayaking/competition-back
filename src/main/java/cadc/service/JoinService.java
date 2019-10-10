@@ -36,4 +36,6 @@ public interface JoinService extends IService<Join> {
      * @return
      */
     String generateEnterListExcel(int competitionId);
+
+    boolean setEnterState(Boolean flag, int joinId);
 }
