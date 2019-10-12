@@ -9,12 +9,10 @@ import cadc.service.TeacherService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static cadc.bean.message.STATE.FAILED;
 import static cadc.bean.message.STATE.SUCCESS;
@@ -32,25 +30,26 @@ public class LoginController {
 
     /**
      * 登录
-     *
-     * @param account
-     * @param password
-     * @param type
+     * @param token
      * @return
      */
-    @RequestMapping(value = "/login/{type}", method = RequestMethod.POST)
-    public Object login(String account, String password, @PathVariable String type) {
+    @RequiresGuest
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public Object login(@RequestBody UserToken token) {
         Subject subject = SecurityUtils.getSubject();
+        // 已经登录
         if (subject.isAuthenticated()) {
-            // 已经登录
-            return MessageFactory.message( SUCCESS, subject.getSession().getId() );
+            return MessageFactory.message( subject.getSession().getId() );
         }
-        UserToken token = new UserToken( account, password, type );
-        token.setRememberMe( true );
+        // 记住
+        if (token.isRemember()) {
+            token.setRememberMe( true );
+        }
         subject.login( token );
         if (subject.isAuthenticated()) {
-            return MessageFactory.message( SUCCESS, subject.getSession().getId() );
+            return MessageFactory.message( subject.getSession().getId() );
         }
+        // 失败
         return MessageFactory.message( false );
     }
 
@@ -63,30 +62,32 @@ public class LoginController {
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public Object logout() {
         Subject subject = SecurityUtils.getSubject();
-        if (subject.isAuthenticated()) {
-            Object principal = subject.getPrincipal();
-            log.info( principal );
-            subject.logout();
-            return MessageFactory.message( SUCCESS, "登出成功" );
-        }
-        return MessageFactory.message( FAILED, "登出失败" );
+        subject.logout();
+        return MessageFactory.message( "登出成功" );
     }
 
     /**
      * 注册
      *
-     * @param account
-     * @param password
+     * @param student
      * @return
      */
+    @RequiresGuest
     @RequestMapping(value = "/sign", method = RequestMethod.POST)
-    public Object sign(String account, String password) {
-        log.info( "注册: " + account + "," + password );
-        Student student = new Student( account, password );
-        boolean insert = studentService.insert( student );
-        return MessageFactory.message( SUCCESS, "注册成功" );
+    public Object sign(@RequestBody Student student) {
+        boolean isExist = studentService.isExistByAccount( student.getAccount() );
+        if (!isExist) {
+            boolean flag = student.insert();
+            return MessageFactory.message( flag, flag ? "登录成功" : "登录失败" );
+        } else {
+            return MessageFactory.message( false, "帐号已存在" );
+        }
     }
 
+    /**
+     * 用户获取信息
+     * @return
+     */
     @RequiresAuthentication
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public Object info() {
@@ -101,6 +102,6 @@ public class LoginController {
             student = studentService.getById( student.getId() );
             return MessageFactory.message( student );
         }
-        return MessageFactory.message( false );
+        return MessageFactory.message( false, "获取失败" );
     }
 }

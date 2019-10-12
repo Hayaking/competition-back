@@ -74,4 +74,12 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
                 .like( "stu_name", key );
         return studentMapper.selectPage( page, wrapper );
     }
+
+    @Override
+    public boolean isExistByAccount(String account) {
+        QueryWrapper<Student> wrapper = new QueryWrapper<>();
+        wrapper.eq( "account", account );
+        Student student = studentMapper.selectOne( wrapper );
+        return student != null;
+    }
 }

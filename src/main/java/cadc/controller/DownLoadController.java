@@ -29,7 +29,7 @@ public class DownLoadController {
     private JoinService joinService;
 
     @RequestMapping(value = "/download/{competitionId}", method = RequestMethod.POST)
-    public Object xxx(HttpServletResponse response, @PathVariable int competitionId) throws IOException {
+    public Object getCompetitionWord(HttpServletResponse response, @PathVariable int competitionId) throws IOException {
         FileInputStream in = competitionService.getWord( competitionId );
         response.setHeader( "Access-Control-Expose-Headers", "Content-Disposition" );
         response.setHeader( "Content-Disposition", "attachment;filename=" + competitionId + ".doc" );

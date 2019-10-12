@@ -40,4 +40,11 @@ public interface StudentService extends IService<Student> {
 
     IPage<Student> find(Page<Student> page, String key);
 
+    /**
+     * 根据账号查看学生存在否
+     * @param account
+     * @return
+     */
+    boolean isExistByAccount(String account);
+
 }

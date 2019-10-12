@@ -29,7 +29,8 @@ public class MessageFactory {
         return new Message<>( flag ? SUCCESS : FAILED, body );
     }
 
-    public static <T> Message message( T body) {
+    public static <T> Message message(T body) {
         return message( body != null, body );
     }
+
 }

@@ -1,23 +1,30 @@
 package cadc.bean;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
-public class UserToken extends UsernamePasswordToken {
-    private String loginType;
+import java.io.Serializable;
 
-    public UserToken() {}
+/**
+ * @author haya
+ */
+@EqualsAndHashCode(callSuper = true)
+@Data
+public class UserToken extends UsernamePasswordToken implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    public UserToken(final String username, final String password,
-                     final String loginType) {
-        super(username, password);
-        this.loginType = loginType;
+    private String type;
+    private boolean isRemember;
+
+    public UserToken() {
     }
 
-    public String getLoginType() {
-        return loginType;
+
+    public UserToken(final String username, final String password,  boolean isRemember,  String type) {
+        super( username, password );
+        this.type = type;
+        this.isRemember = isRemember;
     }
 
-    public void setLoginType(String loginType) {
-        this.loginType = loginType;
-    }
 }
