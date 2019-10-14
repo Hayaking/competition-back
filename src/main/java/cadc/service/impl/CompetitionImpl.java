@@ -116,7 +116,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     public List<Competition> get5ByType(int typeId) {
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
         // 查询已开始的
-        wrapper.eq( "type_id", typeId )
+        wrapper.eq( "min_level_id", typeId )
                 .eq( "state",STATE_AGREE.toString() )
                 .eq( "enter_state", STATE_HAD_START.toString() )
                 .last( "LIMIT 5" );
@@ -130,7 +130,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
         // 不满5个继续查询 未开始的
         List<Competition> list = new LinkedList<>( startList );
         wrapper = new QueryWrapper<>();
-        wrapper.eq( "type_id", typeId )
+        wrapper.eq( "min_level_id", typeId )
                 .eq( "state",STATE_AGREE.toString() )
                 .eq( "enter_state", STATE_NOT_START.toString() )
                 .last( "LIMIT 5" );
@@ -143,7 +143,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
             return list.subList( 0,4 );
         }
         wrapper = new QueryWrapper<>();
-        wrapper.eq( "type_id", typeId )
+        wrapper.eq( "min_level_id", typeId )
                 .eq( "state",STATE_AGREE.toString() )
                 .eq( "enter_state", STATE_END )
                 .last( "LIMIT 5" );
