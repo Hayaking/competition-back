@@ -11,11 +11,31 @@
  Target Server Version : 80011
  File Encoding         : 65001
 
- Date: 14/10/2019 22:12:04
+ Date: 15/10/2019 19:20:28
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for budget
+-- ----------------------------
+DROP TABLE IF EXISTS `budget`;
+CREATE TABLE `budget`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '预算表',
+  `enter` decimal(11, 0) NULL DEFAULT NULL COMMENT '报名费',
+  `travel` decimal(11, 0) NULL DEFAULT NULL COMMENT '差旅费',
+  `thing` decimal(11, 0) NULL DEFAULT NULL COMMENT '物料费',
+  `reason` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '原因',
+  `other` decimal(11, 0) NULL DEFAULT NULL COMMENT '其它费用',
+  `competition_id` int(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of budget
+-- ----------------------------
+INSERT INTO `budget` VALUES (2, 123, 123, 123, '123', 123, 65);
 
 -- ----------------------------
 -- Table structure for certificate
@@ -73,6 +93,9 @@ CREATE TABLE `competition`  (
 -- Records of competition
 -- ----------------------------
 INSERT INTO `competition` VALUES (43, '蓝桥杯', '2019-10-01 00:00:00', '2019-11-30 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', '通过', '已开始', '已开始', 1, 1, '', '1', '1', '1', '1', 't2', '1', '123', 4, 1, 37, 1);
+INSERT INTO `competition` VALUES (63, '123', '2019-10-02 00:00:00', '2019-11-17 00:00:00', '2019-10-12 00:00:00', '2019-11-10 00:00:00', '申请中', '已开始', '已开始', 123, 123, '123', '123', '123', '123', '123', 't2', '123', '123', 1, 1, 37, 1);
+INSERT INTO `competition` VALUES (64, '123', '2019-10-01 00:00:00', '2019-10-31 00:00:00', '2019-10-17 00:00:00', '2019-11-13 00:00:00', '申请中', '未开始', '已开始', 123, 123, '123', '123', '123', '123', '123', 't2', '123', '123', 2, 1, 37, 1);
+INSERT INTO `competition` VALUES (65, '1', '2019-10-08 00:00:00', '2019-11-11 00:00:00', '2019-10-04 00:00:00', '2019-11-11 00:00:00', '申请中', '已开始', '已开始', 123, 123, '', '1', '2', '3', '123', 't2', '123', '123', 1, 1, 37, 1);
 
 -- ----------------------------
 -- Table structure for cost
