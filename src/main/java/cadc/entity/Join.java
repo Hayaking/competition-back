@@ -6,10 +6,12 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author haya
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("`join`")
 public class Join extends Model<Join> {
@@ -19,7 +21,9 @@ public class Join extends Model<Join> {
     private int competitionId;
     private int teacherId1;
     private int teacherId2;
+    private int groupId;
     private String applyState;
+    private String applyState2;
     private String enterState;
     private String joinState;
 

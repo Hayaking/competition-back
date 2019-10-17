@@ -21,6 +21,15 @@ public interface JoinService extends IService<Join> {
     IPage<Join> getByLead(Page<Join> page, int teacherId);
 
     /**
+     * 搜索指导申请
+     * @param page
+     * @param key
+     * @param teacherId
+     * @return
+     */
+    IPage<Join> searchByLead(Page<Join> page, String key, int teacherId);
+
+    /**
      * 根据competitionId获取参赛列表
      * @param page
      * @param competitionId

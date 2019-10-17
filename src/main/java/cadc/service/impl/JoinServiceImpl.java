@@ -2,9 +2,7 @@ package cadc.service.impl;
 
 import cadc.bean.excel.EnterExcel;
 import cadc.entity.*;
-import cadc.mapper.JoinMapper;
-import cadc.mapper.StudentMapper;
-import cadc.mapper.WorksMapper;
+import cadc.mapper.*;
 import cadc.service.JoinService;
 import cadc.util.ExcelUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -36,6 +34,10 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     private StudentMapper studentMapper;
     @Resource
     private WorksMapper worksMapper;
+    @Resource
+    private CompetitionMapper competitionMapper;
+    @Resource
+    private StudentGroupMapper studentGroupMapper;
 
     @Override
     public boolean create(Student student, StudentGroup group, List<String> list, Works works, Join join) {
@@ -81,10 +83,27 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
 
     @Override
     public IPage<Join> getByLead(Page<Join> page, int teacherId) {
-        QueryWrapper<Join> wrapper = new QueryWrapper<>();
-        wrapper.eq( "teacher_id1", teacherId ).or()
-                .eq( "teacher_id2", teacherId );
-        return joinMapper.selectPage( page, wrapper );
+
+        List<Join> list = joinMapper.getListByTeacherId( page, teacherId );
+        page.setRecords( list );
+        return page;
+    }
+
+    @Override
+    public IPage<Join> searchByLead(Page<Join> page, String key, int teacherId) {
+        QueryWrapper<Works> worksQueryWrapper = new QueryWrapper<>();
+        QueryWrapper<Competition> competitionQueryWrapper = new QueryWrapper<>();
+        QueryWrapper<StudentGroup> studentGroupQueryWrapper = new QueryWrapper<>();
+        Competition competition = competitionMapper.selectOne( competitionQueryWrapper.eq( "name", key ) );
+        Works works = worksMapper.selectOne( worksQueryWrapper.eq( "works_name", key ) );
+        StudentGroup group = studentGroupMapper.selectOne( studentGroupQueryWrapper.eq( "name", key ) );
+        List<Join> list = joinMapper.searchListByOtherId( page,
+                works == null ? 0 : works.getId(),
+                competition == null ? 0 : competition.getId(),
+                group == null ? 0 : group.getId(),
+                teacherId );
+        page.setRecords( list );
+        return page;
     }
 
     @Override
