@@ -1,21 +1,18 @@
 package cadc.service.impl;
 
-import cadc.entity.Menu;
-import cadc.entity.Meta;
-import cadc.entity.Permission;
-import cadc.entity.Role;
+import cadc.entity.*;
 import cadc.mapper.*;
+import cadc.service.Menu1Service;
 import cadc.service.MenuService;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import cadc.service.RoleMenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
-
-import static java.util.Arrays.asList;
 
 /**
  * @author haya
@@ -25,6 +22,10 @@ import static java.util.Arrays.asList;
 @Transactional(rollbackFor = Exception.class)
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
+    @Autowired
+    public Menu1Service menu1Service;
+    @Resource
+    private RoleMenuService roleMenuService;
     @Resource
     private RoleMapper roleMapper;
     @Resource
@@ -62,6 +63,28 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
             }
             menu.setChildren( menuMapper.getChildList( menu.getId() ) );
             res.add( menu );
+        }
+        return new LinkedList<>( res );
+    }
+
+    @Override
+    public List<Menu1> getMenuByUser(Object obj) {
+        //获取角色
+        List<Role> roleList;
+        if (obj instanceof Student) {
+            roleList = roleMapper.findStudentRoles( ((Student) obj).getId() );
+        } else {
+            roleList = roleMapper.findTeacherRoles( ((Teacher) obj).getId() );
+        }
+        Set<RoleMenu> set = new HashSet<>();
+        for (Role item : roleList) {
+            List<RoleMenu> list = roleMenuService.getListByRoleId( item.getId() );
+            set.addAll( list );
+        }
+        Set<Menu1> res = new HashSet<>();
+        for (RoleMenu item:set) {
+            Menu1 menu1 = menu1Service.getById( item.getMenuId() );
+            res.add( menu1 );
         }
         return new LinkedList<>( res );
     }

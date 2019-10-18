@@ -2,6 +2,7 @@ package cadc.service;
 
 
 import cadc.entity.Menu;
+import cadc.entity.Menu1;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public interface MenuService extends IService<Menu> {
      * @return
      */
     List<Menu> getMenu(int id, String type);
+
+    List<Menu1> getMenuByUser(Object object);
 
     List<Menu> getAll();
 

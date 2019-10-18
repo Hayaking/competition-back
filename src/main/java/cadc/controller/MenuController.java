@@ -1,16 +1,15 @@
 package cadc.controller;
 
 import cadc.bean.message.MessageFactory;
-import cadc.entity.Menu;
-import cadc.entity.Meta;
-import cadc.entity.Student;
-import cadc.entity.Teacher;
+import cadc.entity.*;
 import cadc.service.MenuService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static cadc.bean.message.STATE.FAILED;
 import static cadc.bean.message.STATE.SUCCESS;
@@ -25,25 +24,35 @@ public class MenuController {
     private MenuService menuService;
 
     /**
-     * e 返回路由菜单
+     * 返回路由菜单
      * @return
      */
+//    @RequestMapping(value = "/menu", method = RequestMethod.GET)
+//    public Object menu() {
+//        Subject subject = SecurityUtils.getSubject();
+//        if (subject == null) {
+//            return MessageFactory.message( false );
+//        }
+//        Object obj = subject.getPrincipal();
+//        if (obj instanceof Student) {
+//            Student stu = (Student) obj;
+//            return MessageFactory.message(  menuService.getMenu( stu.getId(), "student" ) );
+//        } else if (obj instanceof Teacher) {
+//            Teacher teacher = (Teacher) obj;
+//            return MessageFactory.message(  menuService.getMenu(  teacher.getId(), "teacher" ) );
+//        } else {
+//            return MessageFactory.message( false );
+//        }
+//    }
+
     @RequestMapping(value = "/menu", method = RequestMethod.GET)
-    public Object menu() {
+    public Object getMenu() {
         Subject subject = SecurityUtils.getSubject();
         if (subject == null) {
             return MessageFactory.message( false );
         }
-        Object obj = subject.getPrincipal();
-        if (obj instanceof Student) {
-            Student stu = (Student) obj;
-            return MessageFactory.message(  menuService.getMenu( stu.getId(), "student" ) );
-        } else if (obj instanceof Teacher) {
-            Teacher teacher = (Teacher) obj;
-            return MessageFactory.message(  menuService.getMenu(  teacher.getId(), "teacher" ) );
-        } else {
-            return MessageFactory.message( false );
-        }
+        List<Menu1> res = menuService.getMenuByUser( subject.getPrincipal() );
+        return MessageFactory.message( res );
     }
 
     @RequestMapping(value = "/menu/all", method = RequestMethod.GET)
