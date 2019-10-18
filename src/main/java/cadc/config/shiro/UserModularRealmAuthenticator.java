@@ -21,22 +21,18 @@ public class UserModularRealmAuthenticator extends ModularRealmAuthenticator {
     @Override
     protected AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken)
             throws AuthenticationException {
-        log.info("=========================UserModularRealmAuthenticator=========================");
         // 判断getRealms()是否返回为空
         assertRealmsConfigured();
         // 强制转换回自定义的CustomizedToken
         UserToken userToken = (UserToken) authenticationToken;
         // 登录类型
         String loginType = userToken.getType();
-        log.info( "type:"+loginType );
         // 所有Realm
         Collection<Realm> realms = getRealms();
         // 登录类型对应的所有Realm
         List<Realm> typeRealms = new ArrayList<>();
         for (Realm realm : realms) {
-            log.info( realm.getName().toLowerCase().contains( loginType ));
             if (realm.getName().toLowerCase().contains( loginType )) {
-                log.info( realm.getName() );
                 typeRealms.add(realm);
             }
         }

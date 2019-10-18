@@ -9,11 +9,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
  * @author haya
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("teacher")
 public class Teacher  extends Model<Teacher>  implements Serializable {
@@ -29,6 +31,7 @@ public class Teacher  extends Model<Teacher>  implements Serializable {
     private String teacherLevel;
     private String teacherBankCardNo;
     private int picId;
+    private Date signTime;
 
     @TableField(exist = false)
     private String state;

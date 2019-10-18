@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -29,6 +30,7 @@ public class Student extends Model<Student> implements Serializable {
     private String stuSex;
     private String stuBankCardNo;
     private int picId;
+    private Date signTime;
 
     public Student() {
     }

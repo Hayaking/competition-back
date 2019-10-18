@@ -10,6 +10,8 @@ import java.util.List;
  * @author haya
  */
 public interface TeacherService extends IService<Teacher> {
+    boolean sign(Teacher teacher);
+
     /**
      * 根据帐号密码查找
      * @param account
@@ -17,6 +19,8 @@ public interface TeacherService extends IService<Teacher> {
      * @return
      */
     Teacher find(String account, String password);
+
+    Teacher find(String account);
 
     List<Teacher> getByGroupId(int groupId);
 

@@ -8,12 +8,12 @@ import cadc.service.PermissionService;
 import cadc.service.RoleService;
 import cadc.service.TeacherService;
 import lombok.extern.log4j.Log4j2;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
@@ -40,7 +40,6 @@ public class TeacherRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        log.info( "角色权限验证" );
         Teacher teacher = (Teacher) getAvailablePrincipal( principalCollection );
         Set<String> roles = new HashSet<>();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
@@ -53,7 +52,7 @@ public class TeacherRealm extends AuthorizingRealm {
             }
         }
         info.setRoles( roles );
-        log.info( "角色："+roles );
+        log.info( "角色：" + roles );
         return info;
     }
 
@@ -66,17 +65,13 @@ public class TeacherRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        log.info( "登录验证" );
         //拿到账号
         String account = (String) token.getPrincipal();
-        //拿到密码
-        String passWord = new String( (char[]) token.getCredentials() );
-        Teacher teacher = teacherService.find( account, passWord );
-        if (teacher == null || teacher.getAccount() == null) {
+        Teacher teacher = teacherService.find( account );
+        if (teacher == null ) {
             throw new UnknownAccountException();
         }
-        teacher.setPassword( "" );
-//        SecurityUtils.getSubject();
-        return new SimpleAuthenticationInfo( teacher, passWord, getName() );
+        ByteSource salt = ByteSource.Util.bytes( Long.toString( teacher.getSignTime().getTime() ) );
+        return new SimpleAuthenticationInfo( teacher, teacher.getPassword(), salt, getName() );
     }
 }

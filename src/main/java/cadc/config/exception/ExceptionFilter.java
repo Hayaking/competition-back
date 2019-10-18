@@ -21,6 +21,7 @@ public class ExceptionFilter {
 
     /**
      * 拦截shiro抛出的无权限异常
+     *
      * @return
      */
     @ExceptionHandler(UnauthorizedException.class)
@@ -31,6 +32,7 @@ public class ExceptionFilter {
     /**
      * 未登录报错拦截
      * 在请求需要权限的接口,而连登录都还没登录的时候,会报此错
+     *
      * @return
      */
     @ExceptionHandler(UnauthenticatedException.class)
@@ -42,9 +44,11 @@ public class ExceptionFilter {
     public Object unknownAccountException() {
         return MessageFactory.message( FAILED, "账号密码错误" );
     }
+
     /**
      * 拦截所有优先级比自己低的异常
      * 同一个类下 拦截的异常越准确 优先级越高
+     *
      * @param e
      * @return
      */

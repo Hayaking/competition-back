@@ -11,6 +11,9 @@ import java.util.List;
  * @author haya
  */
 public interface StudentService extends IService<Student> {
+
+    boolean sign(Student student);
+
     /**
      * 根据帐号密码找到学生
      * @param account
