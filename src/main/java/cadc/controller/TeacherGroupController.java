@@ -40,7 +40,7 @@ public class TeacherGroupController {
      * @param group
      * @return
      */
-    @RequiresRoles("教师")
+    @RequiresRoles("老师")
     @RequestMapping(value = "/teacherGroup/create", method = RequestMethod.POST)
     public Object create(@RequestBody TeacherGroup group) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
@@ -53,7 +53,7 @@ public class TeacherGroupController {
      *
      * @return
      */
-    @RequiresRoles("教师")
+    @RequiresRoles("老师")
     @RequestMapping(value = "/teacherGroup/list", method = RequestMethod.GET)
     public Object list() {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
@@ -78,7 +78,7 @@ public class TeacherGroupController {
      *
      * @return
      */
-    @RequiresRoles("教师")
+    @RequiresRoles("老师")
     @RequestMapping(value = "/teacherGroup/list/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object listByPage(@PathVariable int pageNum, @PathVariable int pageSize) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();

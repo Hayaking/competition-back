@@ -11,7 +11,7 @@
  Target Server Version : 80011
  File Encoding         : 65001
 
- Date: 19/10/2019 18:57:41
+ Date: 19/10/2019 19:23:20
 */
 
 SET NAMES utf8mb4;
@@ -189,23 +189,25 @@ CREATE TABLE `menu2`  (
 -- ----------------------------
 -- Records of menu2
 -- ----------------------------
-INSERT INTO `menu2` VALUES (1, '/student/join', 'stu_join', 'stu_join', 7, 5, NULL);
-INSERT INTO `menu2` VALUES (2, '/admin/teacher/group', 'admin_teacher_group', 'admin_teacher_group', 2, 2, NULL);
-INSERT INTO `menu2` VALUES (3, '/admin/post', 'post', 'admin_post', 2, 2, NULL);
-INSERT INTO `menu2` VALUES (4, '/admin/menu', 'admin_menu', 'admin_menu', 2, 2, NULL);
-INSERT INTO `menu2` VALUES (5, '/admin/permission', 'admin_permission', 'admin_permission', 2, 2, NULL);
-INSERT INTO `menu2` VALUES (6, '/admin/user', 'admin_user', 'admin_user', 2, 2, NULL);
-INSERT INTO `menu2` VALUES (7, '/admin/competition/', 'admin_competition', 'admin_competition', 2, 2, NULL);
-INSERT INTO `menu2` VALUES (8, '/admin/competition/result', 'admin_competition_result', 'admin_competition_result', 2, 2, NULL);
-INSERT INTO `menu2` VALUES (9, '/group/post', 'group_post', 'group_post', 1, 1, NULL);
-INSERT INTO `menu2` VALUES (10, '/lead/review', 'review', 'lead_review', 2, 4, NULL);
-INSERT INTO `menu2` VALUES (11, '/student/join/list', 'stu_join_list', 'stu_join_list', 4, 5, NULL);
-INSERT INTO `menu2` VALUES (12, '/student/group', 'stu_group', 'stu_group', 2, 5, NULL);
-INSERT INTO `menu2` VALUES (13, '/group', 'group', 'test', 2, 1, NULL);
-INSERT INTO `menu2` VALUES (14, '/common/competition', 'common_competition', 'common_competition', 2, 6, NULL);
-INSERT INTO `menu2` VALUES (15, '/common/edit', 'common_edit_self', 'common_edit_self', 2, 6, NULL);
-INSERT INTO `menu2` VALUES (16, '/common/message', 'common_message', 'common_message', 2, 6, NULL);
-INSERT INTO `menu2` VALUES (17, '/common/post/page', 'common-post-page', 'common-post-page', 1, 6, NULL);
+INSERT INTO `menu2` VALUES (1, '/student/join', 'stu_join', 'student/stu_join', 7, 5, NULL);
+INSERT INTO `menu2` VALUES (2, '/admin/teacher/group', 'admin_teacher_group', 'admin/admin_teacher_group', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (3, '/admin/post', 'post', 'admin/admin_post', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (4, '/admin/menu', 'admin_menu', 'admin/admin_menu', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (5, '/admin/permission', 'admin_permission', 'admin/admin_permission', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (6, '/admin/user', 'admin_user', 'admin/admin_user', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (7, '/admin/competition/', 'admin_competition', 'admin/admin_competition', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (8, '/admin/competition/result', 'admin_competition_result', 'admin/admin_competition_result', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (9, '/group/post', 'group_post', 'group/group_post', 1, 1, NULL);
+INSERT INTO `menu2` VALUES (10, '/lead/review', 'review', 'lead/lead_review', 2, 4, NULL);
+INSERT INTO `menu2` VALUES (11, '/student/join/list', 'stu_join_list', 'student/stu_join_list', 4, 5, NULL);
+INSERT INTO `menu2` VALUES (12, '/student/group', 'stu_group', 'student/stu_group', 2, 5, NULL);
+INSERT INTO `menu2` VALUES (13, '/group', 'group', 'group/test', 2, 1, NULL);
+INSERT INTO `menu2` VALUES (14, '/common/competition', 'common_competition', 'common/common_competition', 2, 6, NULL);
+INSERT INTO `menu2` VALUES (15, '/common/edit', 'common_edit_self', 'common/common_edit_self', 2, 6, NULL);
+INSERT INTO `menu2` VALUES (16, '/common/message', 'common_message', 'common/common_message', 2, 6, NULL);
+INSERT INTO `menu2` VALUES (17, '/common/post/page', 'common-post-page', 'common/common-post-page', 1, 6, NULL);
+INSERT INTO `menu2` VALUES (18, '/group/competition/enter', 'competition_enter_list', 'group/competition_enter_list', 1, 1, NULL);
+INSERT INTO `menu2` VALUES (19, '/group/competition', 'group_competition_list', 'group/group_competition_list', 1, 1, NULL);
 
 -- ----------------------------
 -- Table structure for meta
@@ -367,6 +369,8 @@ INSERT INTO `role_menu` VALUES (28, 6, 6, 16);
 INSERT INTO `role_menu` VALUES (29, 6, 6, 17);
 INSERT INTO `role_menu` VALUES (30, 2, 6, 14);
 INSERT INTO `role_menu` VALUES (31, 2, 6, 17);
+INSERT INTO `role_menu` VALUES (46, 1, 1, 18);
+INSERT INTO `role_menu` VALUES (47, 1, 1, 19);
 
 -- ----------------------------
 -- Table structure for role_stu
