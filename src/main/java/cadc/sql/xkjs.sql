@@ -11,7 +11,7 @@
  Target Server Version : 80011
  File Encoding         : 65001
 
- Date: 18/10/2019 17:45:48
+ Date: 19/10/2019 10:04:55
 */
 
 SET NAMES utf8mb4;
@@ -29,7 +29,9 @@ CREATE TABLE `budget`  (
   `reason` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '原因',
   `other` decimal(11, 0) NULL DEFAULT NULL COMMENT '其它费用',
   `competition_id` int(11) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `competition_id`(`competition_id`) USING BTREE,
+  CONSTRAINT `budget_ibfk_1` FOREIGN KEY (`competition_id`) REFERENCES `competition` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -141,97 +143,70 @@ CREATE TABLE `join`  (
 INSERT INTO `join` VALUES (19, 24, 43, NULL, '17', '0', '通过', '申请中', '通过', '未开始');
 
 -- ----------------------------
--- Table structure for menu
+-- Table structure for menu1
 -- ----------------------------
-DROP TABLE IF EXISTS `menu`;
-CREATE TABLE `menu`  (
+DROP TABLE IF EXISTS `menu1`;
+CREATE TABLE `menu1`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `path` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `path` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `component` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `meta_id` int(11) NULL DEFAULT NULL,
+  `des` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '描述',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `meta_id`(`meta_id`) USING BTREE,
-  INDEX `path`(`path`) USING BTREE,
-  CONSTRAINT `menu_ibfk_1` FOREIGN KEY (`meta_id`) REFERENCES `meta` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  CONSTRAINT `menu1_ibfk_1` FOREIGN KEY (`meta_id`) REFERENCES `meta` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of menu
+-- Records of menu1
 -- ----------------------------
-INSERT INTO `menu` VALUES (1, '/student', 'student', 'Main', 3);
-INSERT INTO `menu` VALUES (2, '/teacher', 'teacher', 'Main', 3);
-INSERT INTO `menu` VALUES (3, '/admin', 'admin', 'Main', 3);
-INSERT INTO `menu` VALUES (4, '/judges', 'judges', 'Main', 3);
-INSERT INTO `menu` VALUES (5, '/common ', 'common ', 'Main', 3);
-INSERT INTO `menu` VALUES (6, '/group', 'group', 'Main', 3);
-INSERT INTO `menu` VALUES (7, '/lead', 'lead', 'Main', 3);
-INSERT INTO `menu` VALUES (8, '/student/join', 'stu_join', 'stu_join', 7);
-INSERT INTO `menu` VALUES (9, '/teacher/group', 'teacher_group', 'teacher_group', 1);
-INSERT INTO `menu` VALUES (10, '/admin/teacher/group', 'admin_teacher_group', 'admin_teacher_group', 2);
-INSERT INTO `menu` VALUES (11, '/admin/post', 'post', 'admin_post', 2);
-INSERT INTO `menu` VALUES (12, '/admin/menu', 'admin_menu', 'admin_menu', 2);
-INSERT INTO `menu` VALUES (13, '/admin/permission', 'admin_permission', 'admin_permission', 2);
-INSERT INTO `menu` VALUES (14, '/admin/user', 'admin_user', 'admin_user', 2);
-INSERT INTO `menu` VALUES (15, '/admin/competition/', 'admin_competition', 'admin_competition', 2);
-INSERT INTO `menu` VALUES (16, '/admin/competition/result', 'admin_competition_result', 'admin_competition_result', 2);
-INSERT INTO `menu` VALUES (17, '/common/message', 'common_message', 'common_message', 2);
-INSERT INTO `menu` VALUES (18, '/common/edit', 'common_edit_self', 'common_edit_self', 2);
-INSERT INTO `menu` VALUES (19, '/common/competition', 'common_competition', 'common_competition', 2);
-INSERT INTO `menu` VALUES (20, '/group/invite', 'group_invite', 'group_invite', 1);
-INSERT INTO `menu` VALUES (21, '/group/competition', 'group_competition', 'group_competition', 2);
-INSERT INTO `menu` VALUES (22, '/group/competition/list', 'group_competition_list', 'group_competition_list', 1);
-INSERT INTO `menu` VALUES (23, '/group/post', 'group_post', 'group_post', 1);
-INSERT INTO `menu` VALUES (24, '/lead/review', 'review', 'lead_review', 2);
-INSERT INTO `menu` VALUES (25, '/lead/all', 'all', '/lead/review', 2);
-INSERT INTO `menu` VALUES (27, '/student/join/list', 'stu_join_list', 'stu_join_list', 4);
-INSERT INTO `menu` VALUES (28, '/student/group', 'stu_group', 'stu_group', 2);
-INSERT INTO `menu` VALUES (29, '/teacher/group/list', 'teacher_group_list', 'teacher_group_list', 1);
-INSERT INTO `menu` VALUES (30, '/test', 'test', 'test', 2);
-INSERT INTO `menu` VALUES (31, '/competition/enter/list', 'competition_enter_list', 'competition_enter_list', 1);
-INSERT INTO `menu` VALUES (32, '/common/post/page', 'common-post-page', 'common-post-page', 2);
+INSERT INTO `menu1` VALUES (1, '/group', 'group', 'Main', 3, NULL);
+INSERT INTO `menu1` VALUES (2, '/admin', 'admin', 'Main', 3, NULL);
+INSERT INTO `menu1` VALUES (3, '/judges', 'judges', 'Main', 3, NULL);
+INSERT INTO `menu1` VALUES (4, '/lead', 'lead', 'Main', 3, NULL);
+INSERT INTO `menu1` VALUES (5, '/student', 'student', 'Main', 3, NULL);
+INSERT INTO `menu1` VALUES (6, '/common', 'common', 'Main', 3, NULL);
 
 -- ----------------------------
--- Table structure for menu_children
+-- Table structure for menu2
 -- ----------------------------
-DROP TABLE IF EXISTS `menu_children`;
-CREATE TABLE `menu_children`  (
+DROP TABLE IF EXISTS `menu2`;
+CREATE TABLE `menu2`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `menu_father` int(11) NULL DEFAULT NULL,
-  `menu_child` int(11) NULL DEFAULT NULL,
+  `path` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `component` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `meta_id` int(11) NULL DEFAULT NULL,
+  `father_id` int(11) NULL DEFAULT NULL,
+  `des` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `menu_father`(`menu_father`) USING BTREE,
-  INDEX `menu_child`(`menu_child`) USING BTREE,
-  CONSTRAINT `menu_children_ibfk_1` FOREIGN KEY (`menu_father`) REFERENCES `menu` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `menu_children_ibfk_2` FOREIGN KEY (`menu_child`) REFERENCES `menu` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  INDEX `father_id`(`father_id`) USING BTREE,
+  INDEX `meta_id`(`meta_id`) USING BTREE,
+  CONSTRAINT `menu2_ibfk_1` FOREIGN KEY (`father_id`) REFERENCES `menu1` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `menu2_ibfk_2` FOREIGN KEY (`meta_id`) REFERENCES `meta` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of menu_children
+-- Records of menu2
 -- ----------------------------
-INSERT INTO `menu_children` VALUES (1, 1, 8);
-INSERT INTO `menu_children` VALUES (2, 2, 9);
-INSERT INTO `menu_children` VALUES (3, 3, 10);
-INSERT INTO `menu_children` VALUES (4, 3, 11);
-INSERT INTO `menu_children` VALUES (5, 3, 12);
-INSERT INTO `menu_children` VALUES (6, 3, 13);
-INSERT INTO `menu_children` VALUES (7, 3, 14);
-INSERT INTO `menu_children` VALUES (8, 3, 15);
-INSERT INTO `menu_children` VALUES (9, 3, 16);
-INSERT INTO `menu_children` VALUES (10, 5, 17);
-INSERT INTO `menu_children` VALUES (11, 5, 18);
-INSERT INTO `menu_children` VALUES (12, 5, 19);
-INSERT INTO `menu_children` VALUES (13, 6, 20);
-INSERT INTO `menu_children` VALUES (14, 6, 21);
-INSERT INTO `menu_children` VALUES (15, 6, 22);
-INSERT INTO `menu_children` VALUES (16, 6, 23);
-INSERT INTO `menu_children` VALUES (21, 1, 27);
-INSERT INTO `menu_children` VALUES (22, 1, 28);
-INSERT INTO `menu_children` VALUES (23, 7, 24);
-INSERT INTO `menu_children` VALUES (24, 2, 29);
-INSERT INTO `menu_children` VALUES (25, 2, 30);
-INSERT INTO `menu_children` VALUES (26, 2, 31);
-INSERT INTO `menu_children` VALUES (27, 5, 32);
+INSERT INTO `menu2` VALUES (1, '/student/join', 'stu_join', 'stu_join', 7, 5, NULL);
+INSERT INTO `menu2` VALUES (2, '/admin/teacher/group', 'admin_teacher_group', 'admin_teacher_group', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (3, '/admin/post', 'post', 'admin_post', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (4, '/admin/menu', 'admin_menu', 'admin_menu', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (5, '/admin/permission', 'admin_permission', 'admin_permission', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (6, '/admin/user', 'admin_user', 'admin_user', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (7, '/admin/competition/', 'admin_competition', 'admin_competition', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (8, '/admin/competition/result', 'admin_competition_result', 'admin_competition_result', 2, 2, NULL);
+INSERT INTO `menu2` VALUES (9, '/group/post', 'group_post', 'group_post', 1, 1, NULL);
+INSERT INTO `menu2` VALUES (10, '/lead/review', 'review', 'lead_review', 2, 4, NULL);
+INSERT INTO `menu2` VALUES (11, '/student/join/list', 'stu_join_list', 'stu_join_list', 4, 5, NULL);
+INSERT INTO `menu2` VALUES (12, '/student/group', 'stu_group', 'stu_group', 2, 5, NULL);
+INSERT INTO `menu2` VALUES (13, '/group', 'group', 'test', 2, 1, NULL);
+INSERT INTO `menu2` VALUES (14, '/common/competition', 'common_competition', 'common_competition', 2, 6, NULL);
+INSERT INTO `menu2` VALUES (15, '/common/edit', 'common_edit_self', 'common_edit_self', 2, 6, NULL);
+INSERT INTO `menu2` VALUES (16, '/common/message', 'common_message', 'common_message', 2, 6, NULL);
+INSERT INTO `menu2` VALUES (17, '/common/post/page', 'common-post-page', 'common-post-page', 1, 6, NULL);
 
 -- ----------------------------
 -- Table structure for meta
@@ -253,53 +228,6 @@ INSERT INTO `meta` VALUES (2, 'md-home', 'false', '哈哈');
 INSERT INTO `meta` VALUES (3, 'md-home', '0', '11');
 INSERT INTO `meta` VALUES (4, 'md-home', '0', 'new');
 INSERT INTO `meta` VALUES (7, 'md-home', '1', '学生参赛');
-
--- ----------------------------
--- Table structure for permission
--- ----------------------------
-DROP TABLE IF EXISTS `permission`;
-CREATE TABLE `permission`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `permission_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '权限名',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of permission
--- ----------------------------
-INSERT INTO `permission` VALUES (1, '学生');
-INSERT INTO `permission` VALUES (2, '教师');
-INSERT INTO `permission` VALUES (3, '管理员');
-INSERT INTO `permission` VALUES (4, '评委');
-INSERT INTO `permission` VALUES (5, '通用');
-INSERT INTO `permission` VALUES (6, '工作组');
-INSERT INTO `permission` VALUES (7, '指导教师');
-
--- ----------------------------
--- Table structure for permission_menu
--- ----------------------------
-DROP TABLE IF EXISTS `permission_menu`;
-CREATE TABLE `permission_menu`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `permission_id` int(11) NULL DEFAULT NULL,
-  `menu_id` int(11) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  INDEX `permission_id`(`permission_id`) USING BTREE,
-  INDEX `permission_menu_ibfk_2`(`menu_id`) USING BTREE,
-  CONSTRAINT `permission_menu_ibfk_1` FOREIGN KEY (`permission_id`) REFERENCES `permission` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `permission_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of permission_menu
--- ----------------------------
-INSERT INTO `permission_menu` VALUES (1, 1, 1);
-INSERT INTO `permission_menu` VALUES (2, 2, 2);
-INSERT INTO `permission_menu` VALUES (3, 3, 3);
-INSERT INTO `permission_menu` VALUES (4, 4, 4);
-INSERT INTO `permission_menu` VALUES (5, 5, 5);
-INSERT INTO `permission_menu` VALUES (6, 6, 6);
-INSERT INTO `permission_menu` VALUES (7, 7, 7);
 
 -- ----------------------------
 -- Table structure for pic
@@ -385,49 +313,35 @@ CREATE TABLE `role`  (
 -- ----------------------------
 -- Records of role
 -- ----------------------------
-INSERT INTO `role` VALUES (1, '学生');
-INSERT INTO `role` VALUES (2, '教师');
-INSERT INTO `role` VALUES (3, '管理员');
-INSERT INTO `role` VALUES (4, '评委');
-INSERT INTO `role` VALUES (5, '通用');
-INSERT INTO `role` VALUES (6, '学生组长');
-INSERT INTO `role` VALUES (7, '学生组员');
-INSERT INTO `role` VALUES (8, '教师组长');
-INSERT INTO `role` VALUES (9, '教师组员');
-INSERT INTO `role` VALUES (10, '指导教师');
+INSERT INTO `role` VALUES (1, '老师');
+INSERT INTO `role` VALUES (2, '管理员');
+INSERT INTO `role` VALUES (3, '评委');
+INSERT INTO `role` VALUES (4, '指导老师');
+INSERT INTO `role` VALUES (5, '学生');
+INSERT INTO `role` VALUES (6, '游客');
 
 -- ----------------------------
--- Table structure for role_permission
+-- Table structure for role_menu
 -- ----------------------------
-DROP TABLE IF EXISTS `role_permission`;
-CREATE TABLE `role_permission`  (
+DROP TABLE IF EXISTS `role_menu`;
+CREATE TABLE `role_menu`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `role_id` int(11) NULL DEFAULT NULL,
-  `permission_id` int(11) NULL DEFAULT NULL,
+  `menu_id` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `role_id`(`role_id`) USING BTREE,
-  INDEX `permission_id`(`permission_id`) USING BTREE,
-  CONSTRAINT `role_permission_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `role_permission_ibfk_2` FOREIGN KEY (`permission_id`) REFERENCES `permission` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  INDEX `menu_id`(`menu_id`) USING BTREE,
+  CONSTRAINT `role_menu_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `role_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `menu1` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of role_permission
+-- Records of role_menu
 -- ----------------------------
-INSERT INTO `role_permission` VALUES (1, 1, 1);
-INSERT INTO `role_permission` VALUES (2, 2, 2);
-INSERT INTO `role_permission` VALUES (3, 3, 3);
-INSERT INTO `role_permission` VALUES (4, 4, 4);
-INSERT INTO `role_permission` VALUES (5, 5, 5);
-INSERT INTO `role_permission` VALUES (6, 8, 6);
-INSERT INTO `role_permission` VALUES (7, 9, 6);
-INSERT INTO `role_permission` VALUES (8, 10, 7);
-INSERT INTO `role_permission` VALUES (89, 1, 5);
-INSERT INTO `role_permission` VALUES (90, 2, 5);
-INSERT INTO `role_permission` VALUES (91, 3, 5);
-INSERT INTO `role_permission` VALUES (92, 4, 5);
-INSERT INTO `role_permission` VALUES (93, 10, 2);
-INSERT INTO `role_permission` VALUES (94, 10, 5);
+INSERT INTO `role_menu` VALUES (1, 1, 1);
+INSERT INTO `role_menu` VALUES (2, 1, 6);
+INSERT INTO `role_menu` VALUES (3, 2, 6);
+INSERT INTO `role_menu` VALUES (4, 2, 2);
 
 -- ----------------------------
 -- Table structure for role_stu
@@ -443,15 +357,6 @@ CREATE TABLE `role_stu`  (
   CONSTRAINT `role_stu_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `role_stu_ibfk_3` FOREIGN KEY (`stu_id`) REFERENCES `student` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of role_stu
--- ----------------------------
-INSERT INTO `role_stu` VALUES (27, 15, 1);
-INSERT INTO `role_stu` VALUES (28, 15, 6);
-INSERT INTO `role_stu` VALUES (29, 15, 7);
-INSERT INTO `role_stu` VALUES (30, 16, 1);
-INSERT INTO `role_stu` VALUES (31, 16, 7);
 
 -- ----------------------------
 -- Table structure for role_teacher
@@ -471,13 +376,8 @@ CREATE TABLE `role_teacher`  (
 -- ----------------------------
 -- Records of role_teacher
 -- ----------------------------
-INSERT INTO `role_teacher` VALUES (1, 4, 3);
-INSERT INTO `role_teacher` VALUES (18, 4, 2);
-INSERT INTO `role_teacher` VALUES (19, 15, 2);
-INSERT INTO `role_teacher` VALUES (20, 15, 8);
-INSERT INTO `role_teacher` VALUES (21, 16, 2);
-INSERT INTO `role_teacher` VALUES (22, 16, 9);
-INSERT INTO `role_teacher` VALUES (23, 17, 10);
+INSERT INTO `role_teacher` VALUES (1, 4, 2);
+INSERT INTO `role_teacher` VALUES (24, 15, 1);
 
 -- ----------------------------
 -- Table structure for stu_group

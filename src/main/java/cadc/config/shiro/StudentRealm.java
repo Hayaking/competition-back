@@ -1,10 +1,8 @@
 package cadc.config.shiro;
 
 
-import cadc.entity.Permission;
 import cadc.entity.Role;
 import cadc.entity.Student;
-import cadc.service.PermissionService;
 import cadc.service.RoleService;
 import cadc.service.StudentService;
 import lombok.extern.log4j.Log4j2;
@@ -30,8 +28,6 @@ public class StudentRealm extends AuthorizingRealm {
     private StudentService studentService;
     @Autowired
     private RoleService roleService;
-    @Autowired
-    private PermissionService permissionService;
 
     /**
      * 登录成功后 获取角色、权限等信息
@@ -44,14 +40,8 @@ public class StudentRealm extends AuthorizingRealm {
         Student student = (Student) getAvailablePrincipal( principalCollection );
         Set<String> roles = new HashSet<>( 10 );
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-        List<Role> roleList = roleService.findStudent( student.getId() );
-        for (Role item : roleList) {
-            roles.add( item.getRoleName() );
-            List<Permission> permissionList = permissionService.findPermissionList( item.getId() );
-            for (Permission item2 : permissionList) {
-                info.addStringPermission( item2.getPermissionName() );
-            }
-        }
+        List<Role> list = roleService.findStudent( student.getId() );
+        list.forEach( item-> roles.add( item.getRoleName() ) );
         info.setRoles( roles );
         return info;
     }

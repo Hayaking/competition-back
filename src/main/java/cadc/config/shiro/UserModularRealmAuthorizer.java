@@ -5,7 +5,6 @@ import cadc.entity.Teacher;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.authz.Authorizer;
 import org.apache.shiro.authz.ModularRealmAuthorizer;
-import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
 
