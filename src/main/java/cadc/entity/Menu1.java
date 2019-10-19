@@ -30,7 +30,7 @@ public class Menu1 extends Model<Menu1> implements Serializable {
 
 
     @TableField(exist = false)
-    private List<Menu1> children;
+    private List<Menu2> children;
     @TableField(exist = false)
     private Meta meta;
 }

@@ -11,7 +11,7 @@
  Target Server Version : 80011
  File Encoding         : 65001
 
- Date: 19/10/2019 10:04:55
+ Date: 19/10/2019 18:57:41
 */
 
 SET NAMES utf8mb4;
@@ -161,12 +161,12 @@ CREATE TABLE `menu1`  (
 -- ----------------------------
 -- Records of menu1
 -- ----------------------------
-INSERT INTO `menu1` VALUES (1, '/group', 'group', 'Main', 3, NULL);
-INSERT INTO `menu1` VALUES (2, '/admin', 'admin', 'Main', 3, NULL);
-INSERT INTO `menu1` VALUES (3, '/judges', 'judges', 'Main', 3, NULL);
-INSERT INTO `menu1` VALUES (4, '/lead', 'lead', 'Main', 3, NULL);
-INSERT INTO `menu1` VALUES (5, '/student', 'student', 'Main', 3, NULL);
-INSERT INTO `menu1` VALUES (6, '/common', 'common', 'Main', 3, NULL);
+INSERT INTO `menu1` VALUES (1, '/group', 'group', 'Main', 3, '工作组');
+INSERT INTO `menu1` VALUES (2, '/admin', 'admin', 'Main', 3, '管理');
+INSERT INTO `menu1` VALUES (3, '/judges', 'judges', 'Main', 3, '评委');
+INSERT INTO `menu1` VALUES (4, '/lead', 'lead', 'Main', 3, '指导');
+INSERT INTO `menu1` VALUES (5, '/student', 'student', 'Main', 3, '学生');
+INSERT INTO `menu1` VALUES (6, '/common', 'common', 'Main', 3, '通用');
 
 -- ----------------------------
 -- Table structure for menu2
@@ -183,7 +183,6 @@ CREATE TABLE `menu2`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `father_id`(`father_id`) USING BTREE,
   INDEX `meta_id`(`meta_id`) USING BTREE,
-  CONSTRAINT `menu2_ibfk_1` FOREIGN KEY (`father_id`) REFERENCES `menu1` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `menu2_ibfk_2` FOREIGN KEY (`meta_id`) REFERENCES `meta` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
@@ -327,21 +326,47 @@ DROP TABLE IF EXISTS `role_menu`;
 CREATE TABLE `role_menu`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `role_id` int(11) NULL DEFAULT NULL,
-  `menu_id` int(11) NULL DEFAULT NULL,
+  `menu1_id` int(11) NULL DEFAULT NULL,
+  `menu2_id` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `role_id`(`role_id`) USING BTREE,
-  INDEX `menu_id`(`menu_id`) USING BTREE,
+  INDEX `menu_id`(`menu1_id`) USING BTREE,
+  INDEX `menu2_id`(`menu2_id`) USING BTREE,
   CONSTRAINT `role_menu_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `role_menu_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `menu1` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `role_menu_ibfk_2` FOREIGN KEY (`menu1_id`) REFERENCES `menu1` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `role_menu_ibfk_3` FOREIGN KEY (`menu2_id`) REFERENCES `menu2` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_menu
 -- ----------------------------
-INSERT INTO `role_menu` VALUES (1, 1, 1);
-INSERT INTO `role_menu` VALUES (2, 1, 6);
-INSERT INTO `role_menu` VALUES (3, 2, 6);
-INSERT INTO `role_menu` VALUES (4, 2, 2);
+INSERT INTO `role_menu` VALUES (1, 1, 1, NULL);
+INSERT INTO `role_menu` VALUES (2, 1, 6, NULL);
+INSERT INTO `role_menu` VALUES (3, 2, 6, 15);
+INSERT INTO `role_menu` VALUES (4, 2, 2, 2);
+INSERT INTO `role_menu` VALUES (5, 2, 2, 3);
+INSERT INTO `role_menu` VALUES (6, 2, 2, 4);
+INSERT INTO `role_menu` VALUES (7, 2, 2, 5);
+INSERT INTO `role_menu` VALUES (8, 2, 2, 6);
+INSERT INTO `role_menu` VALUES (9, 2, 2, 7);
+INSERT INTO `role_menu` VALUES (10, 2, 2, 8);
+INSERT INTO `role_menu` VALUES (15, 2, 6, 16);
+INSERT INTO `role_menu` VALUES (16, 1, 1, 9);
+INSERT INTO `role_menu` VALUES (17, 1, 1, 13);
+INSERT INTO `role_menu` VALUES (18, 1, 6, 14);
+INSERT INTO `role_menu` VALUES (19, 1, 6, 15);
+INSERT INTO `role_menu` VALUES (20, 1, 6, 16);
+INSERT INTO `role_menu` VALUES (21, 1, 6, 17);
+INSERT INTO `role_menu` VALUES (22, 4, 4, 10);
+INSERT INTO `role_menu` VALUES (23, 5, 5, 1);
+INSERT INTO `role_menu` VALUES (24, 5, 5, 11);
+INSERT INTO `role_menu` VALUES (25, 5, 5, 12);
+INSERT INTO `role_menu` VALUES (26, 6, 6, 14);
+INSERT INTO `role_menu` VALUES (27, 6, 6, 15);
+INSERT INTO `role_menu` VALUES (28, 6, 6, 16);
+INSERT INTO `role_menu` VALUES (29, 6, 6, 17);
+INSERT INTO `role_menu` VALUES (30, 2, 6, 14);
+INSERT INTO `role_menu` VALUES (31, 2, 6, 17);
 
 -- ----------------------------
 -- Table structure for role_stu
@@ -371,7 +396,7 @@ CREATE TABLE `role_teacher`  (
   INDEX `teacher_id`(`teacher_id`) USING BTREE,
   CONSTRAINT `role_teacher_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `role_teacher_ibfk_3` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_teacher
@@ -434,7 +459,7 @@ CREATE TABLE `student`  (
   `pic_id` int(255) NULL DEFAULT NULL COMMENT '照片',
   `sign_time` datetime(3) NULL DEFAULT NULL COMMENT '注册时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of student
@@ -459,7 +484,7 @@ CREATE TABLE `teacher`  (
   `pic_id` int(255) NULL DEFAULT NULL COMMENT '照片',
   `sign_time` datetime(3) NULL DEFAULT NULL COMMENT '注册时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of teacher
