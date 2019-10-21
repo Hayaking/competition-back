@@ -27,7 +27,7 @@ public class JoinController {
     private JoinService joinService;
 
     /**
-     * 创建参赛 仍需完善 *目前只能创建小组赛的
+     * 创建参赛
      * @param enter
      * @return
      */
@@ -55,8 +55,8 @@ public class JoinController {
     @RequestMapping(value = "/join/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object getJoinList(@PathVariable int pageNum, @PathVariable int pageSize) {
         Student stu = (Student) SecurityUtils.getSubject().getPrincipal();
-        String account = stu.getAccount();
-        IPage<Join> res = joinService.getByStudentAccount( new Page<>( pageNum, pageSize ), account );
+        int id = stu.getId();
+        IPage<Join> res = joinService.getByStudentId( new Page<>( pageNum, pageSize ), id );
         return MessageFactory.message( SUCCESS, res );
     }
 }

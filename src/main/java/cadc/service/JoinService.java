@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface JoinService extends IService<Join> {
 
-    IPage<Join> getByStudentAccount(Page<Join> page, String account);
+    IPage<Join> getByStudentId(Page<Join> page, int id);
 
     IPage<Join> getByLead(Page<Join> page, int teacherId);
 

@@ -1,7 +1,6 @@
 package cadc.mapper;
 
 import cadc.entity.Join;
-import cadc.entity.StudentGroup;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.*;
@@ -12,16 +11,8 @@ import java.util.List;
  * @author haya
  */
 public interface JoinMapper extends BaseMapper<Join> {
-    String GET_LIST_STU_ACCOUNT = "SELECT " +
-            "join.id, works_id, competition_id, teacher_id1, teacher_id2, " +
-            "apply_state, enter_state, join_state " +
-            "FROM student " +
-            "JOIN stu_in_group on stu_in_group.stu_id = student.id\n" +
-            "JOIN stu_group on stu_group.id = stu_in_group.group_id\n" +
-            "JOIN works on works.stu_group_id = stu_group.id\n" +
-            "JOIN `join` on `join`.works_id = works.id\n" +
-            "where student.account = #{account}";
 
+    String GET_LIST_STU_ACCOUNT = "SELECT `join`.id, works_id, competition_id, teacher_id1, teacher_id2 , apply_state, enter_state, join_state FROM student JOIN stu_in_group ON stu_in_group.stu_id = student.id JOIN stu_group ON stu_group.id = stu_in_group.group_id JOIN `join` ON `join`.group_id = stu_group.id AND `join`.join_type_id = 1 WHERE student.id = #{id} UNION SELECT `join`.id, works_id, competition_id, teacher_id1, teacher_id2 , apply_state, enter_state, join_state FROM student JOIN `join` ON `join`.creator_id = student.id AND `join`.join_type_id = 2 WHERE student.id = #{id}";
 
     @Results({
             @Result(column = "id", property = "id"),
@@ -36,7 +27,7 @@ public interface JoinMapper extends BaseMapper<Join> {
             @Result(column = "join_state", property = "joinState"),
     })
     @Select(GET_LIST_STU_ACCOUNT)
-    List<Join> getListByStudentAccount(String account);
+    List<Join> getJoinListByStudentId(Page<Join> page, int id);
 
     @Results({
             @Result(column = "id", property = "id"),
@@ -97,7 +88,6 @@ public interface JoinMapper extends BaseMapper<Join> {
     })
     @Select("SELECT * FROM `join` WHERE teacher_id1 = #{id} or teacher_id2 = #{id}")
     List<Join> searchListByTeacherId(Page<Join> page, @Param("id") int id);
-
 
     @Results({
             @Result(column = "id", property = "id"),

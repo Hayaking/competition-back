@@ -69,14 +69,16 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         join.setEnterState( STATE_APPLYING.toString() );
         join.setJoinState( STATE_NOT_START.toString() );
         join.setJoinTypeId( 1 );
+        join.setCreatorId( student.getId() );
+        join.setCreateTime( new Date() );
         join.insert();
         return true;
     }
 
     @Override
-    public IPage<Join> getByStudentAccount(Page<Join> page, String account) {
-        List<Join> list = joinMapper.getListByStudentAccount( account );
-        System.out.println( list );
+    public IPage<Join> getByStudentId(Page<Join> page, int id) {
+        List<Join> list = joinMapper.getJoinListByStudentId(page, id );
+//        joinMapper.getSingleJoinListByStudentId(  )
         page.setRecords( list );
         return page;
     }
@@ -154,6 +156,8 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
 
         join.setJoinTypeId( 2 );
         join.setWorksId( works.getId() );
+        join.setCreatorId( student.getId() );
+        join.setCreateTime( new Date() );
         return join.insert();
     }
 }

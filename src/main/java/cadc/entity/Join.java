@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
+
 /**
  * @author haya
  */
@@ -27,6 +29,8 @@ public class Join extends Model<Join> {
     private String enterState;
     private String joinState;
     private int joinTypeId;
+    private int creatorId;
+    private Date createTime;
 
     @TableField(exist = false)
     private Works works;
