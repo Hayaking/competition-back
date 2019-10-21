@@ -12,6 +12,8 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedList;
+
 import static cadc.bean.message.STATE.FAILED;
 import static cadc.bean.message.STATE.SUCCESS;
 
@@ -24,10 +26,23 @@ public class JoinController {
     @Autowired
     private JoinService joinService;
 
+    /**
+     * 创建参赛 仍需完善 *目前只能创建小组赛的
+     * @param enter
+     * @return
+     */
     @RequestMapping(value = "/join", method = RequestMethod.POST)
     public Object addJoin(@RequestBody Enter enter) {
         Student student = (Student) SecurityUtils.getSubject().getPrincipal();
-        boolean flag = joinService.create( student,enter.getGroup(), enter.getList(), enter.getWorks(), enter.getJoin() );
+        int joinTypeId = enter.getJoin().getJoinTypeId();
+        boolean flag = false;
+        // joinTypeId == 1 是小组赛
+        if (joinTypeId == 1) {
+            flag = joinService.createGroupJoin( student,enter.getGroup(), enter.getList(), enter.getWorks(), enter.getJoin() );
+        } else {
+            // joinTypeId == 2 是个人赛
+            flag = joinService.createSingleJoin(student,enter.getWorks(),enter.getJoin());
+        }
         return MessageFactory.message( flag);
     }
 

@@ -20,9 +20,11 @@ public class StudentGroup extends Model<StudentGroup> {
     @TableId(type = IdType.AUTO)
     private int id;
     private String name;
-    private int creator;
+    private int creatorId;
     private String createTime;
 
+    @TableField(exist = false)
+    private Student creator;
     @TableField(exist = false)
     private List<StudentInGroup> members;
     @TableField(exist = false)
@@ -31,9 +33,9 @@ public class StudentGroup extends Model<StudentGroup> {
     public StudentGroup() {
     }
 
-    public StudentGroup(String name, int creator, String createTime) {
+    public StudentGroup(String name, int creatorId, String createTime) {
         this.name = name;
-        this.creator = creator;
+        this.creatorId = creatorId;
         this.createTime = createTime;
     }
 }

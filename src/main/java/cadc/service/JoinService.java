@@ -14,7 +14,6 @@ import java.util.List;
  * @author haya
  */
 public interface JoinService extends IService<Join> {
-    boolean create(Student student,StudentGroup group, List<String> list, Works works, Join join);
 
     IPage<Join> getByStudentAccount(Page<Join> page, String account);
 
@@ -47,4 +46,24 @@ public interface JoinService extends IService<Join> {
     String generateEnterListExcel(int competitionId);
 
     boolean setEnterState(Boolean flag, int joinId);
+
+    /**
+     * 创建个人赛
+     * @param student
+     * @param works
+     * @param join
+     * @return
+     */
+    boolean createSingleJoin(Student student, Works works, Join join);
+
+    /**
+     * 创建小组赛
+     * @param student
+     * @param group
+     * @param list
+     * @param works
+     * @param join
+     * @return
+     */
+    boolean createGroupJoin(Student student,StudentGroup group, List<String> list, Works works, Join join);
 }

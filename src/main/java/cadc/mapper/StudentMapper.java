@@ -2,10 +2,7 @@ package cadc.mapper;
 
 import cadc.entity.Student;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +16,7 @@ public interface StudentMapper extends BaseMapper<Student> {
     @Insert("insert into student(account,password) values(#{acc},#{psw})")
     int insertStudent(@Param("acc") String account, @Param("psw") String password);
 
-    @Select("select * from student where id = #{id}")
+    @Select("select id,account,stu_name from student where id = #{id}")
     Student getStudentById(int id);
+
 }

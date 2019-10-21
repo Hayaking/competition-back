@@ -40,12 +40,12 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     private StudentGroupMapper studentGroupMapper;
 
     @Override
-    public boolean create(Student student, StudentGroup group, List<String> list, Works works, Join join) {
+    public boolean createGroupJoin(Student student, StudentGroup group, List<String> list, Works works, Join join) {
         if (group == null || works == null || list == null || join == null) {
             throw new NullPointerException();
         }
         // 创建参赛小组
-        group.setCreator( student.getId() );
+        group.setCreatorId( student.getId() );
         group.setCreateTime( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() ) );
         group.insert();
         if (group.getId() == 0) {
@@ -62,13 +62,13 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         }
         // 创建作品
         works.setStuGroupId( group.getId() );
-//        works.insert();
-        worksMapper.insert( works );
+        works.insert();
         // 参赛
         join.setWorksId( works.getId() );
         join.setApplyState( STATE_APPLYING.toString() );
         join.setEnterState( STATE_APPLYING.toString() );
         join.setJoinState( STATE_NOT_START.toString() );
+        join.setJoinTypeId( 1 );
         join.insert();
         return true;
     }
@@ -145,5 +145,15 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         UpdateWrapper<Join> wrapper = new UpdateWrapper<>();
         wrapper.set( "enter_state", flag ? STATE_AGREE.toString() : STATE_REFUSE.toString() );
         return joinMapper.update( join, wrapper ) > 0;
+    }
+
+    @Override
+    public boolean createSingleJoin(Student student, Works works, Join join) {
+        works.setCreatorId( student.getId() );
+        works.insert();
+
+        join.setJoinTypeId( 2 );
+        join.setWorksId( works.getId() );
+        return join.insert();
     }
 }

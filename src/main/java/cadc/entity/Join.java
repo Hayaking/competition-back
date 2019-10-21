@@ -26,6 +26,7 @@ public class Join extends Model<Join> {
     private String applyState2;
     private String enterState;
     private String joinState;
+    private int joinTypeId;
 
     @TableField(exist = false)
     private Works works;
