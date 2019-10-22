@@ -33,6 +33,8 @@ public class Join extends Model<Join> {
     private Date createTime;
 
     @TableField(exist = false)
+    private Student creator;
+    @TableField(exist = false)
     private Works works;
     @TableField(exist = false)
     private Competition competition;

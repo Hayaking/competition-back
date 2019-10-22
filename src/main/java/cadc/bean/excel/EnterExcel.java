@@ -1,15 +1,15 @@
 package cadc.bean.excel;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * @author haya
  */
 @Data
-public class EnterExcel {
+@Builder
+public class EnterExcel implements ExcelModel{
     @ExcelProperty("#")
     private Integer index;
     @ExcelProperty("作品名")

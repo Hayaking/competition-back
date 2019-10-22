@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 /**
  * @author haya
@@ -48,22 +47,29 @@ public class DownLoadController {
     }
 
     @RequestMapping(value = "/download/{competitionId}/enter/list", method = RequestMethod.POST)
-    public Object getEnterListExcel(HttpServletResponse response, @PathVariable int competitionId) throws IOException {
+    public Object getEnterListExcel(HttpServletResponse response, @PathVariable int competitionId) {
         String fileName = joinService.generateEnterListExcel( competitionId );
-        InputStream in = ExcelUtils.getExcel( fileName );
-        response.setHeader( "Access-Control-Expose-Headers", "Content-Disposition" );
-        response.setHeader( "Content-Disposition", "attachment;filename=" + competitionId + ".xlsx" );
-        response.setContentType( "application/octet-stream;charset=UTF-8" );
-        // 形成输出流
-        BufferedOutputStream out = new BufferedOutputStream( response.getOutputStream() );
-
-        byte[] bys = new byte[1024];
-        int len = 0;
-        while ((len = in.read( bys )) != -1) {
-            out.write( bys, 0, len );
+        File file = ExcelUtils.getFile( fileName );
+        if (file.exists()) {
+            response.setContentType( "application/json;charset=UTF-8" );
+            response.addHeader( "Content-Length", "" + file.length() );
+            response.setHeader( "Access-Control-Expose-Headers", "Content-Disposition" );
+            response.setHeader( "Content-Disposition", "attachment;filename=" + competitionId + ".xlsx" );
+            try (
+                    OutputStream writer = response.getOutputStream();
+                    FileInputStream fis = new FileInputStream( file );
+                    FileChannel channel = fis.getChannel()
+            ) {
+                ByteBuffer byteBuffer = ByteBuffer.allocate( 512 );
+                while (channel.read( byteBuffer ) != -1) {
+                    byteBuffer.flip();
+                    writer.write( byteBuffer.array() );
+                    byteBuffer.clear();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        in.close();
-        out.close();
         return MessageFactory.message( true );
     }
 }

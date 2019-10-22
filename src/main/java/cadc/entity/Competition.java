@@ -40,4 +40,5 @@ public class Competition extends Model<Competition> {
     private int minLevelId;
     private int teacherGroupId;
     private int joinTypeId;
+    private boolean isHaveWorks;
 }

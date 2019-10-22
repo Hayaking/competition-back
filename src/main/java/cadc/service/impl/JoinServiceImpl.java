@@ -1,6 +1,8 @@
 package cadc.service.impl;
 
 import cadc.bean.excel.EnterExcel;
+import cadc.bean.excel.EnterExcel2;
+import cadc.bean.excel.ExcelModel;
 import cadc.entity.*;
 import cadc.mapper.*;
 import cadc.service.JoinService;
@@ -10,6 +12,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +30,7 @@ import static cadc.bean.message.STATE.*;
  */
 @Transactional(rollbackFor = Exception.class)
 @Service
+@Log4j2
 public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements JoinService {
     @Resource
     private JoinMapper joinMapper;
@@ -77,7 +81,7 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
 
     @Override
     public IPage<Join> getByStudentId(Page<Join> page, int id) {
-        List<Join> list = joinMapper.getJoinListByStudentId(page, id );
+        List<Join> list = joinMapper.getJoinListByStudentId( page, id );
 //        joinMapper.getSingleJoinListByStudentId(  )
         page.setRecords( list );
         return page;
@@ -85,7 +89,6 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
 
     @Override
     public IPage<Join> getByLead(Page<Join> page, int teacherId) {
-
         List<Join> list = joinMapper.getListByTeacherId( page, teacherId );
         page.setRecords( list );
         return page;
@@ -125,19 +128,39 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
 
     @Override
     public String generateEnterListExcel(int competitionId) {
-        List<Join> list = joinMapper.getListByCompetitionId( competitionId );
-        List<EnterExcel> data = new LinkedList<>();
-        list.spliterator().forEachRemaining( item -> {
-            StringBuilder members = new StringBuilder();
-
-            item.getWorks().getStudentGroup().getMembers().spliterator().forEachRemaining( member -> {
-                members.append( member.getStudent().getStuName() + "," );
+        Competition competition = competitionMapper.getById( competitionId );
+        // 竞赛是需要参赛作品
+        boolean isHaveWorks = competition.isHaveWorks();
+        // 参赛类型
+        int joinTypeId = competition.getJoinTypeId();
+        List<Join> joinList = joinMapper.getListByCompetitionId( competitionId );
+        List<ExcelModel> data = new LinkedList<>();
+        if (joinTypeId == 1) {
+            //小组赛
+            joinList.spliterator().forEachRemaining( item -> {
+                StringBuilder members = new StringBuilder();
+                item.getWorks().getStudentGroup().getMembers().spliterator().forEachRemaining( member -> {
+                    members.append( member.getStudent().getStuName() + "," );
+                } );
+                data.add( new EnterExcel( item.getId(), item.getWorks().getWorksName(), members.toString(), "" ) );
             } );
-            data.add( new EnterExcel( item.getId(), item.getWorks().getWorksName(), members.toString(), "" ) );
-
-        } );
+        } else if (joinTypeId == 2) {
+            //单人赛
+            joinList.spliterator().forEachRemaining( item -> {
+                data.add( isHaveWorks
+                        ? EnterExcel.builder()
+                            .index( item.getId() )
+                            .worksName( item.getWorks().getWorksName() )
+                            .member( item.getCreator().getStuName() )
+                            .lead1( "" ).build()
+                        : EnterExcel2.builder()
+                            .index( item.getId() )
+                            .member( item.getCreator().getStuName() )
+                            .lead1( "" ).build() );
+            } );
+        }
         String fileName = LocalDate.now().toString() + competitionId;
-        ExcelUtils.generateExcel( fileName, "", data, EnterExcel.class );
+        ExcelUtils.generateExcel( fileName, "", data, isHaveWorks ? EnterExcel.class : EnterExcel2.class );
         return fileName;
     }
 

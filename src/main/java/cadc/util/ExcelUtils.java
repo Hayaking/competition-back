@@ -43,4 +43,10 @@ public class ExcelUtils {
         }
         return in;
     }
+
+    public static File getFile(String name) {
+        String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
+        String path = root + "static/excel/" + name + ".xlsx";
+        return new File( path );
+    }
 }
