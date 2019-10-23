@@ -37,7 +37,7 @@ public class CompetitionController {
         competition.setEnterState( STATE_NOT_START.toString() );
         competition.setStartState( STATE_NOT_START.toString() );
         competition.setCreator( teacher.getAccount() );
-        competition.insert();
+        competitionService.add( competition );
         competitionService.generateWord( competition );
         return MessageFactory.message( competition.getId() );
     }

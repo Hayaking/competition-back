@@ -50,4 +50,6 @@ public interface TeacherGroupService extends IService<TeacherGroup> {
 
     boolean exit(int groupId, int teacherId);
 
+    boolean delete(int groupId, int teacherId);
+
 }

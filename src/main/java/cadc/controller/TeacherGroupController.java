@@ -190,12 +190,26 @@ public class TeacherGroupController {
      * @param groupId
      * @return
      */
-    @RequestMapping(value = "teacherGroup/{groupId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "teacherGroup/exit/{groupId}", method = RequestMethod.DELETE)
     public Object exit(@PathVariable int groupId) {
         Subject subject = SecurityUtils.getSubject();
         Teacher teacher = (Teacher) subject.getPrincipal();
         int teacherId = teacher.getId();
         boolean flag = teacherGroupService.exit( groupId, teacherId );
+        return MessageFactory.message( flag );
+    }
+
+    /**
+     * 删除工作组
+     * @param groupId
+     * @return
+     */
+    @RequestMapping(value = "teacherGroup/{groupId}", method = RequestMethod.DELETE)
+    public Object delete(@PathVariable int groupId) {
+        Subject subject = SecurityUtils.getSubject();
+        Teacher teacher = (Teacher) subject.getPrincipal();
+        int teacherId = teacher.getId();
+        boolean flag = teacherGroupService.delete( groupId, teacherId );
         return MessageFactory.message( flag );
     }
 

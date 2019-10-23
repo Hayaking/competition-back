@@ -130,7 +130,7 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     public String generateEnterListExcel(int competitionId) {
         Competition competition = competitionMapper.getById( competitionId );
         // 竞赛是需要参赛作品
-        boolean isHaveWorks = competition.isHaveWorks();
+        boolean isHaveWorks = competition.getIsHaveWorks();
         // 参赛类型
         int joinTypeId = competition.getJoinTypeId();
         List<Join> joinList = joinMapper.getListByCompetitionId( competitionId );
@@ -179,6 +179,9 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
 
         join.setJoinTypeId( 2 );
         join.setWorksId( works.getId() );
+        join.setApplyState( STATE_APPLYING.toString() );
+        join.setEnterState( STATE_APPLYING.toString() );
+        join.setJoinState( STATE_NOT_START.toString() );
         join.setCreatorId( student.getId() );
         join.setCreateTime( new Date() );
         return join.insert();

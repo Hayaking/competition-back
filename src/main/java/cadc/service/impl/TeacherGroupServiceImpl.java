@@ -8,6 +8,7 @@ import cadc.mapper.TeacherInGroupMapper;
 import cadc.mapper.TeacherMapper;
 import cadc.service.TeacherGroupService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang.StringUtils;
@@ -129,5 +130,20 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
         map.put( "group_id", groupId );
         map.put( "teacher_id", teacherId );
         return teacherInGroupMapper.deleteByMap( map ) > 0;
+    }
+
+    @Override
+    public boolean delete(int groupId, int teacherId) {
+        TeacherGroup group = teacherGroupMapper.selectById( groupId );
+        int creatorId = group.getCreatorId();
+        boolean flag = teacherId == creatorId;
+        if (flag) {
+            UpdateWrapper<TeacherInGroup> wrapper = new UpdateWrapper<>();
+            wrapper.eq( "group_id", groupId );
+            teacherInGroupMapper.delete( wrapper );
+            teacherGroupMapper.deleteById( groupId );
+            return true;
+        }
+        return false;
     }
 }

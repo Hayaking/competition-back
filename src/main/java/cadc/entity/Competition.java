@@ -1,6 +1,7 @@
 package cadc.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -40,5 +41,6 @@ public class Competition extends Model<Competition> {
     private int minLevelId;
     private int teacherGroupId;
     private int joinTypeId;
-    private boolean isHaveWorks;
+    @TableField(value = "is_have_works")
+    private Boolean isHaveWorks;
 }
