@@ -1,12 +1,14 @@
 package cadc.service;
 
+import cadc.entity.Budget;
 import cadc.entity.Competition;
+import cadc.entity.Progress;
+import cadc.entity.Teacher;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -15,10 +17,14 @@ import java.util.List;
 public interface CompetitionService extends IService<Competition> {
     /**
      * 增加一个竞赛
+     *
+     * @param teacher
      * @param competition
+     * @param progresses
+     * @param budgets
      * @return
      */
-    boolean insertCompetition(Competition competition);
+    boolean createCompetition(Teacher teacher, Competition competition, List<Progress> progresses, List<Budget> budgets);
 
     Integer add(Competition competition);
 

@@ -43,4 +43,6 @@ public class Competition extends Model<Competition> {
     private int joinTypeId;
     @TableField(value = "is_have_works")
     private Boolean isHaveWorks;
+    @TableField(exist = false)
+    private Progress progress;
 }

@@ -1,5 +1,6 @@
 package cadc.controller;
 
+import cadc.bean.holder.CompetitionHolder;
 import cadc.bean.message.MessageFactory;
 import cadc.entity.Competition;
 import cadc.entity.Teacher;
@@ -26,25 +27,8 @@ public class CompetitionController {
     private CompetitionService competitionService;
 
     /**
-     * 申请比赛立项
-     * @param competition
-     * @return
-     */
-    @RequestMapping(value = "/competition", method = RequestMethod.POST)
-    public Object save(@RequestBody Competition competition) {
-        Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
-        competition.setState( STATE_APPLYING.toString() );
-        competition.setEnterState( STATE_NOT_START.toString() );
-        competition.setStartState( STATE_NOT_START.toString() );
-        competition.setCreator( teacher.getAccount() );
-        competitionService.add( competition );
-        competitionService.generateWord( competition );
-        return MessageFactory.message( competition.getId() );
-    }
-
-
-    /**
      * 删除
+     *
      * @param id
      * @return
      */
@@ -56,6 +40,7 @@ public class CompetitionController {
 
     /**
      * 根据工作组id 分页查询竞赛
+     *
      * @param groupId
      * @param pageNum
      * @param pageSize
@@ -69,6 +54,7 @@ public class CompetitionController {
 
     /**
      * 分页查询全部
+     *
      * @param pageNum
      * @param pageSize
      * @return
@@ -81,6 +67,7 @@ public class CompetitionController {
 
     /**
      * 获得5个
+     *
      * @param typeId
      * @return
      */
@@ -92,10 +79,11 @@ public class CompetitionController {
 
     /**
      * 参赛时学生根据竞赛id得到竞赛
+     *
      * @param id
      * @return
      */
-    @RequiresRoles( "学生" )
+    @RequiresRoles("学生")
     @RequestMapping(value = "/competition/enter/{id}", method = RequestMethod.GET)
     public Object getEnterCompetition(@PathVariable int id) {
         Competition res = competitionService.getById( id );
@@ -110,6 +98,7 @@ public class CompetitionController {
 
     /**
      * 设置审核状态
+     *
      * @param id
      * @param flag
      * @return
@@ -127,6 +116,7 @@ public class CompetitionController {
 
     /**
      * 设置比赛开始状态
+     *
      * @param id
      * @param flag
      * @return
@@ -144,18 +134,19 @@ public class CompetitionController {
 
     @RequestMapping(value = "/competition/judge/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object searchJudge(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
-        IPage<Competition> res = competitionService.find(new Page<>(pageNum, pageSize), key);
-        return MessageFactory.message(SUCCESS, res);
+        IPage<Competition> res = competitionService.find( new Page<>( pageNum, pageSize ), key );
+        return MessageFactory.message( SUCCESS, res );
     }
 
     @RequestMapping(value = "/competition/pass/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object searchPass(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
-        IPage<Competition> res = competitionService.findPassByKey(new Page<>(pageNum, pageSize), key);
-        return MessageFactory.message(SUCCESS, res);
+        IPage<Competition> res = competitionService.findPassByKey( new Page<>( pageNum, pageSize ), key );
+        return MessageFactory.message( SUCCESS, res );
     }
 
     /**
      * 分获取所有审核通过的比赛
+     *
      * @param pageNum
      * @param pageSize
      * @return
@@ -164,5 +155,17 @@ public class CompetitionController {
     public Object getAllPass(@PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<Competition> res = competitionService.findPassAll( new Page<>( pageNum, pageSize ) );
         return MessageFactory.message( SUCCESS, res );
+    }
+
+    @RequestMapping(value = "/competition", method = RequestMethod.POST)
+    public Object save(@RequestBody CompetitionHolder holder) {
+        log.warn( holder );
+        Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
+        boolean flag = competitionService.createCompetition(
+                teacher,
+                holder.getCompetition(),
+                holder.getProgresses(),
+                holder.getBudgets() );
+        return MessageFactory.message( flag );
     }
 }

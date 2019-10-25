@@ -1,6 +1,6 @@
 package cadc.controller;
 
-import cadc.bean.Enter;
+import cadc.bean.holder.EnterHolder;
 import cadc.bean.message.MessageFactory;
 import cadc.entity.Join;
 import cadc.entity.Student;
@@ -12,9 +12,6 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedList;
-
-import static cadc.bean.message.STATE.FAILED;
 import static cadc.bean.message.STATE.SUCCESS;
 
 /**
@@ -28,20 +25,20 @@ public class JoinController {
 
     /**
      * 创建参赛
-     * @param enter
+     * @param enterHolder
      * @return
      */
     @RequestMapping(value = "/join", method = RequestMethod.POST)
-    public Object addJoin(@RequestBody Enter enter) {
+    public Object addJoin(@RequestBody EnterHolder enterHolder) {
         Student student = (Student) SecurityUtils.getSubject().getPrincipal();
-        int joinTypeId = enter.getJoin().getJoinTypeId();
+        int joinTypeId = enterHolder.getJoin().getJoinTypeId();
         boolean flag = false;
         // joinTypeId == 1 是小组赛
         if (joinTypeId == 1) {
-            flag = joinService.createGroupJoin( student,enter.getGroup(), enter.getList(), enter.getWorks(), enter.getJoin() );
+            flag = joinService.createGroupJoin( student, enterHolder.getGroup(), enterHolder.getList(), enterHolder.getWorks(), enterHolder.getJoin() );
         } else {
             // joinTypeId == 2 是个人赛
-            flag = joinService.createSingleJoin(student,enter.getWorks(),enter.getJoin());
+            flag = joinService.createSingleJoin(student, enterHolder.getWorks(), enterHolder.getJoin());
         }
         return MessageFactory.message( flag);
     }

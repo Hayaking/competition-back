@@ -7,20 +7,23 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
 
 /**
  * @author haya
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName("budget")
-public class Budget extends Model<Budget> {
+@TableName("progress")
+public class Progress extends Model<Progress> {
     @TableId(type = IdType.AUTO)
     private int id;
-    private Double enter;
-    private Double travel;
-    private Double thing;
-    private Double other;
-    private String reason;
-    private int progressId;
+    private int competitionId;
+    private int typeId;
+    private String startState;
+    private String enterState;
+    private Date startTime;
+    private Date endTime;
+    private Date enterStartTime;
+    private Date enterEndTime;
 }

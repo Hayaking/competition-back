@@ -1,9 +1,10 @@
 package cadc.service.impl;
 
-import cadc.entity.Competition;
-import cadc.entity.Join;
+import cadc.entity.*;
 import cadc.mapper.CompetitionMapper;
 import cadc.mapper.JoinMapper;
+import cadc.mapper.ProcessMapper;
+import cadc.mapper.ProgressMapper;
 import cadc.service.CompetitionService;
 import cadc.util.WordUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -21,6 +22,7 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static cadc.bean.message.STATE.*;
 
@@ -33,13 +35,28 @@ import static cadc.bean.message.STATE.*;
 public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> implements CompetitionService {
     @Resource
     private CompetitionMapper competitionMapper;
-
     @Resource
     private JoinMapper joinMapper;
+    @Resource
+    private ProgressMapper progressMapper;
 
     @Override
-    public boolean insertCompetition(Competition competition) {
-        return competitionMapper.insert( competition ) > 0;
+    public boolean createCompetition(Teacher teacher, Competition competition, List<Progress> progresses, List<Budget> budgets) {
+        competition.setState( STATE_APPLYING.toString() );
+        competition.setEnterState( STATE_NOT_START.toString() );
+        competition.setStartState( STATE_NOT_START.toString() );
+        competition.setCreator( teacher.getAccount() );
+        competitionMapper.insert( competition );
+        AtomicInteger index = new AtomicInteger();
+        progresses.forEach( item -> {
+            item.setCompetitionId( competition.getId() );
+            progressMapper.insert( item );
+            Budget budget = budgets.get( index.getAndIncrement() );
+            budget.setProgressId( item.getId() );
+            budget.insert();
+        } );
+        this.generateWord( competition );
+        return true;
     }
 
     @Override
