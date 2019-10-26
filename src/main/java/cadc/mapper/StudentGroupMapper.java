@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * @author haya
  */
-@Mapper
 public interface StudentGroupMapper extends BaseMapper<StudentGroup> {
 
     @Select("select * from stu_group where id = #{id}")

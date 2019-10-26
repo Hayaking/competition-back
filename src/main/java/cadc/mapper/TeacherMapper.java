@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * @author haya
  */
-@Mapper
 public interface TeacherMapper extends BaseMapper<Teacher> {
     @Select("select * from teacher where account = #{account} and password=#{password}")
     Teacher find(@Param("account") String account, @Param("password") String password);

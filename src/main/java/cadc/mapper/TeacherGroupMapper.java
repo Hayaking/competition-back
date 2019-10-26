@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * @author haya
  */
-@Mapper
 public interface TeacherGroupMapper extends BaseMapper<TeacherGroup> {
     /**
      * 获取所在工作组

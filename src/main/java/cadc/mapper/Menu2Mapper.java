@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * @author haya
  */
-@Mapper
 public interface Menu2Mapper extends BaseMapper<Menu2> {
     @Results({
             @Result(column = "id", property = "id"),

@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * @author haya
  */
-@Mapper
 public interface Menu1Mapper extends BaseMapper<Menu1> {
 
     @Results({

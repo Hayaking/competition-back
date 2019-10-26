@@ -1,6 +1,7 @@
 package cadc.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -26,4 +27,7 @@ public class Progress extends Model<Progress> {
     private Date endTime;
     private Date enterStartTime;
     private Date enterEndTime;
+
+    @TableField(exist = false)
+    private Budget budget;
 }

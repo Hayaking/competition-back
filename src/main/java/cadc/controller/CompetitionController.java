@@ -157,6 +157,11 @@ public class CompetitionController {
         return MessageFactory.message( SUCCESS, res );
     }
 
+    /**
+     * 申请竞赛
+     * @param holder
+     * @return
+     */
     @RequestMapping(value = "/competition", method = RequestMethod.POST)
     public Object save(@RequestBody CompetitionHolder holder) {
         log.warn( holder );

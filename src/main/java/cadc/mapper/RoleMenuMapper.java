@@ -7,6 +7,5 @@ import org.apache.ibatis.annotations.Mapper;
 /**
  * @author haya
  */
-@Mapper
 public interface RoleMenuMapper extends BaseMapper<RoleMenu> {
 }

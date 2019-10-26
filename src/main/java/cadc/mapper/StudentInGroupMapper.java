@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * @author haya
  */
-@Mapper
 public interface StudentInGroupMapper extends BaseMapper<StudentInGroup> {
     @Results({
             @Result(column = "id", property = "id"),

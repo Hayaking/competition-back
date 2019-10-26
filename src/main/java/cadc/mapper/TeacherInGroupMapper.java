@@ -9,7 +9,6 @@ import org.apache.ibatis.annotations.Update;
 /**
  * @author haya
  */
-@Mapper
 public interface TeacherInGroupMapper extends BaseMapper<TeacherInGroup> {
     @Update( "update teacher_in_group set state = #{state} where group_id = #{groupId} and teacher_id= #{teacherId}" )
     int updateState(@Param( "groupId" ) int groupId, @Param( "teacherId" ) int teacherId,@Param( "state" ) String state);

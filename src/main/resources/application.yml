@@ -12,6 +12,7 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/xkjs?useUnicode=true&characterEncoding=utf8&useSSL=true&serverTimezone=Asia/Shanghai
     username: root
     password: 1024
+    type: com.zaxxer.hikari.HikariDataSource
     hikari:
       auto-commit: true
       #等待连接池分配连接的最大时长（毫秒），超过这个时长还没可用的连接则发生SQLException， 缺省:30秒
@@ -27,7 +28,7 @@ spring:
       minimum-idle: 5
       pool-name: DatebookHikariCP
       read-only: false
-    type: com.zaxxer.hikari.HikariDataSource
+
 # mybatis-plus
 mybatis-plus:
   # xml文件位置

@@ -43,13 +43,13 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     @Override
     public boolean createCompetition(Teacher teacher, Competition competition, List<Progress> progresses, List<Budget> budgets) {
         competition.setState( STATE_APPLYING.toString() );
-        competition.setEnterState( STATE_NOT_START.toString() );
-        competition.setStartState( STATE_NOT_START.toString() );
         competition.setCreator( teacher.getAccount() );
         competitionMapper.insert( competition );
         AtomicInteger index = new AtomicInteger();
         progresses.forEach( item -> {
             item.setCompetitionId( competition.getId() );
+            item.setEnterState( STATE_NOT_START.toString() );
+            item.setStartState( STATE_NOT_START.toString() );
             progressMapper.insert( item );
             Budget budget = budgets.get( index.getAndIncrement() );
             budget.setProgressId( item.getId() );
@@ -76,9 +76,12 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
 
     @Override
     public IPage<Competition> findByGroupId(Page<Competition> page, int groupId) {
-        QueryWrapper<Competition> wrapper = new QueryWrapper<>();
-        wrapper.eq( "teacher_group_id", groupId );
-        return competitionMapper.selectPage( page, wrapper );
+//        QueryWrapper<Competition> wrapper = new QueryWrapper<>();
+//        wrapper.eq( "teacher_group_id", groupId );
+//        return competitionMapper.selectPage( page, wrapper );
+        List<Competition> list = competitionMapper.getWithProgressListByTeacherGroupId( page, groupId );
+        page.setRecords( list );
+        return page;
     }
 
     @Override
@@ -124,8 +127,8 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     @Override
     public List<Competition> getStartNoEnd() {
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
-        wrapper.eq( "start_state", STATE_NOT_START.toString() ).or()
-                .eq( "start_state", STATE_HAD_START.toString() );
+//        wrapper.eq( "start_state", STATE_NOT_START.toString() ).or()
+//                .eq( "start_state", STATE_HAD_START.toString() );
         return competitionMapper.selectList( wrapper );
     }
 
@@ -139,7 +142,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
                 .last( "LIMIT 5" );
         List<Competition> startList = competitionMapper.selectList( wrapper );
         // 按结束时间升序排序
-        startList.sort( Comparator.comparing( Competition::getEnterEndTime ) );
+//        startList.sort( Comparator.comparing( Competition::getEnterEndTime ) );
         //满5个返回
         if (startList.size() == 5) {
             return startList;
@@ -153,7 +156,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
                 .last( "LIMIT 5" );
         List<Competition> noStartList = competitionMapper.selectList( wrapper );
         // 按开始报名时间升序排序
-        noStartList.sort( Comparator.comparing( Competition::getEnterStartTime ) );
+//        noStartList.sort( Comparator.comparing( Competition::getEnterStartTime ) );
         list.addAll( noStartList );
         // 满5个
         if (list.size() >= 5) {
@@ -171,8 +174,8 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     @Override
     public List<Competition> getEnterNoEnd() {
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
-        wrapper.eq( "enter_state", STATE_NOT_START.toString() ).or()
-                .eq( "enter_state", STATE_HAD_START.toString() );
+//        wrapper.eq( "enter_state", STATE_NOT_START.toString() ).or()
+//                .eq( "enter_state", STATE_HAD_START.toString() );
         return competitionMapper.selectList( wrapper );
     }
 

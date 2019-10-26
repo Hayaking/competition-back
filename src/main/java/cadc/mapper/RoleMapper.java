@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * @author haya
  */
-@Mapper
 public interface RoleMapper extends BaseMapper<Role> {
     @Select("select role.id,role.role_name from role_stu " +
             "join role on role_stu.role_id = role.id " +

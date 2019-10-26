@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 /**
  * @author haya
  */
-@Mapper
 public interface StudentMapper extends BaseMapper<Student> {
     @Select("select * from student where account = #{account} and password=#{password}")
     Student find(@Param("account") String account, @Param("password") String password);

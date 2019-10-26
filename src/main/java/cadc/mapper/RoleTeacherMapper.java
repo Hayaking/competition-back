@@ -8,6 +8,5 @@ import org.apache.ibatis.annotations.Mapper;
 /**
  * @author haya
  */
-@Mapper
 public interface RoleTeacherMapper extends BaseMapper<RoleTeacher> {
 }
