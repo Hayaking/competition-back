@@ -1,6 +1,7 @@
 package cadc.service.impl;
 
 import cadc.bean.message.STATE;
+import cadc.entity.Process;
 import cadc.entity.Progress;
 import cadc.mapper.ProgressMapper;
 import cadc.service.ProgressService;
@@ -26,34 +27,51 @@ public class ProgressServiceImpl extends ServiceImpl<ProgressMapper, Progress> i
     private ProgressMapper progressMapper;
 
     @Override
-    public List<Progress> getEnterNoEnd() {
+    public List<Progress> getEnterNoStart() {
         QueryWrapper<Progress> wrapper = new QueryWrapper<>();
-        wrapper.eq( "enter_state", STATE_NOT_START.toString() ).or()
-                .eq( "enter_state", STATE_HAD_START.toString() );
+        wrapper.eq( "enter_state", STATE_NOT_START.toString() );
         return progressMapper.selectList( wrapper );
     }
 
     @Override
-    public List<Progress> getStartNoEnd() {
+    public List<Progress> getEnterHadStart() {
         QueryWrapper<Progress> wrapper = new QueryWrapper<>();
-        wrapper.eq( "start_state", STATE_NOT_START.toString() ).or()
-                .eq( "start_state", STATE_HAD_START.toString() );
+        wrapper.eq( "enter_state", STATE_HAD_START.toString() );
+        return progressMapper.selectList( wrapper );
+    }
+
+    @Override
+    public List<Progress> getStartNoStart() {
+        QueryWrapper<Progress> wrapper = new QueryWrapper<>();
+        wrapper.eq( "start_state", STATE_NOT_START.toString() );
+        return progressMapper.selectList( wrapper );
+    }
+
+    @Override
+    public List<Progress> getStartHadStart() {
+        QueryWrapper<Progress> wrapper = new QueryWrapper<>();
+        wrapper.eq( "start_state", STATE_HAD_START.toString() );
         return progressMapper.selectList( wrapper );
     }
 
     @Override
     public boolean setEnterState(int id, STATE state) {
         Progress progress = progressMapper.selectById( id );
-        UpdateWrapper<Progress> wrapper = new UpdateWrapper<>();
-        wrapper.set( "enter_state", state.toString() );
-        return progressMapper.update( progress, wrapper ) > 0;
+        progress.setEnterState( state.toString() );
+        return progress.insertOrUpdate();
     }
 
     @Override
     public boolean setStartState(int id, STATE state) {
         Progress progress = progressMapper.selectById( id );
-        UpdateWrapper<Progress> wrapper = new UpdateWrapper<>();
-        wrapper.set( "start_state", state.toString() );
-        return progressMapper.update( progress, wrapper ) > 0;
+        progress.setStartState( state.toString() );
+        return progress.insertOrUpdate();
+    }
+
+    @Override
+    public List<Progress> getByCompetitionId(int competitionId) {
+        QueryWrapper<Progress> wrapper = new QueryWrapper<>();
+        wrapper.eq( "competition_id", competitionId );
+        return progressMapper.selectList( wrapper );
     }
 }

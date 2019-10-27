@@ -11,7 +11,6 @@ import java.util.List;
  * @author haya
  */
 public interface CompetitionMapper extends BaseMapper<Competition> {
-    Result[] results = {};
 
     @Update( "update competition set state = #{state} where id=#{id}" )
     int updateState(int id, String state);
@@ -52,4 +51,12 @@ public interface CompetitionMapper extends BaseMapper<Competition> {
     })
     @Select("select * from competition where teacher_group_id =#{id}")
     List<Competition> getWithProgressListByTeacherGroupId(Page<Competition> page, @Param( "id" )int id);
+
+    @ResultMap(value = "withProgressList")
+    @Select(" select * from competition where state = '通过'")
+    List<Competition> getPassList(Page<Competition> page);
+
+    @ResultMap(value = "withProgressList")
+    @Select(" select * from competition")
+    List<Competition> getAllByPage(Page<Competition> page);
 }

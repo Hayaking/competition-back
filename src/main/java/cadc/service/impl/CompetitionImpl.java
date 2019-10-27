@@ -76,9 +76,6 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
 
     @Override
     public IPage<Competition> findByGroupId(Page<Competition> page, int groupId) {
-//        QueryWrapper<Competition> wrapper = new QueryWrapper<>();
-//        wrapper.eq( "teacher_group_id", groupId );
-//        return competitionMapper.selectPage( page, wrapper );
         List<Competition> list = competitionMapper.getWithProgressListByTeacherGroupId( page, groupId );
         page.setRecords( list );
         return page;
@@ -86,7 +83,9 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
 
     @Override
     public IPage<Competition> findAll(Page<Competition> page) {
-        return competitionMapper.selectPage( page, new QueryWrapper<>() );
+        List<Competition> list = competitionMapper.getAllByPage( page );
+        page.setRecords( list );
+        return page;
     }
 
     @Override
@@ -107,10 +106,10 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     }
 
     @Override
-    public IPage<Competition> findPassAll(IPage<Competition> page) {
-        QueryWrapper<Competition> wrapper = new QueryWrapper<>();
-        wrapper.eq( "state", STATE_AGREE.toString() );
-        return competitionMapper.selectPage(page, wrapper);
+    public IPage<Competition> findPassAll(Page<Competition> page) {
+        List<Competition> list = competitionMapper.getPassList( page );
+        page.setRecords( list );
+        return page;
     }
 
 
@@ -136,38 +135,9 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     public List<Competition> get5ByType(int typeId) {
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
         // 查询已开始的
-        wrapper.eq( "min_level_id", typeId )
-                .eq( "state",STATE_AGREE.toString() )
-                .eq( "enter_state", STATE_HAD_START.toString() )
+        wrapper.eq( "state",STATE_AGREE.toString() )
                 .last( "LIMIT 5" );
-        List<Competition> startList = competitionMapper.selectList( wrapper );
-        // 按结束时间升序排序
-//        startList.sort( Comparator.comparing( Competition::getEnterEndTime ) );
-        //满5个返回
-        if (startList.size() == 5) {
-            return startList;
-        }
-        // 不满5个继续查询 未开始的
-        List<Competition> list = new LinkedList<>( startList );
-        wrapper = new QueryWrapper<>();
-        wrapper.eq( "min_level_id", typeId )
-                .eq( "state",STATE_AGREE.toString() )
-                .eq( "enter_state", STATE_NOT_START.toString() )
-                .last( "LIMIT 5" );
-        List<Competition> noStartList = competitionMapper.selectList( wrapper );
-        // 按开始报名时间升序排序
-//        noStartList.sort( Comparator.comparing( Competition::getEnterStartTime ) );
-        list.addAll( noStartList );
-        // 满5个
-        if (list.size() >= 5) {
-            return list.subList( 0,4 );
-        }
-        wrapper = new QueryWrapper<>();
-        wrapper.eq( "min_level_id", typeId )
-                .eq( "state",STATE_AGREE.toString() )
-                .eq( "enter_state", STATE_END )
-                .last( "LIMIT 5" );
-        list.addAll( competitionMapper.selectList( wrapper ) );
+        List<Competition> list = competitionMapper.selectList( wrapper );
         return list;
     }
 
