@@ -19,6 +19,8 @@ public interface ProgressMapper extends BaseMapper<Progress> {
             @Result(column = "type_id", property = "typeId"),
             @Result(column = "start_state", property = "startState"),
             @Result(column = "enter_state", property = "enterState"),
+            @Result(column = "is_scan_enter_state", property = "isScanEnterState"),
+            @Result(column = "is_scan_start_state", property = "isScanStartState"),
             @Result(column = "start_time", property = "startTime"),
             @Result(column = "end_time", property = "endTime"),
             @Result(column = "enter_start_time", property = "enterStartTime")

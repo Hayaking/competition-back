@@ -49,6 +49,11 @@ public class StudentController {
         return MessageFactory.message( res != null ? SUCCESS : FAILED );
     }
 
+    /**
+     * 查询学生账号是否存在，返回不存在的
+     * @param list
+     * @return
+     */
     @RequestMapping(value = "/student/exist", method = RequestMethod.POST)
     public Object exist(@RequestBody List<String> list) {
         List<String> res = studentService.exist( list );

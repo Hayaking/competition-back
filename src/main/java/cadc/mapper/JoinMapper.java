@@ -19,7 +19,7 @@ public interface JoinMapper extends BaseMapper<Join> {
             @Result(column = "works_id", property = "works",
                     one = @One(select = "cadc.mapper.WorksMapper.getById")),
             @Result(column = "competition_id", property = "competition",
-                    one = @One(select = "cadc.mapper.CompetitionMapper.getById")),
+                    one = @One(select = "cadc.mapper.CompetitionMapper.getWithProgressListById")),
             @Result(column = "teacher_id1", property = "teacherId1"),
             @Result(column = "teacher_id2", property = "teacherId2"),
             @Result(column = "apply_state", property = "applyState"),

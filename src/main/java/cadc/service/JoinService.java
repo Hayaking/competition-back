@@ -58,6 +58,7 @@ public interface JoinService extends IService<Join> {
 
     /**
      * 创建小组赛
+     *
      * @param student
      * @param group
      * @param list
@@ -65,5 +66,7 @@ public interface JoinService extends IService<Join> {
      * @param join
      * @return
      */
-    boolean createGroupJoin(Student student,StudentGroup group, List<String> list, Works works, Join join);
+    boolean createGroupJoin(Student student, StudentGroup group, List<String> list, Works works, Join join);
+
+    List<Join> getByGroupId(int groupId);
 }

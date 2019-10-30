@@ -27,6 +27,8 @@ public class Progress extends Model<Progress> {
     private Date endTime;
     private Date enterStartTime;
     private Date enterEndTime;
+    private Boolean isScanStartState;
+    private Boolean isScanEnterState;
 
     @TableField(exist = false)
     private Budget budget;

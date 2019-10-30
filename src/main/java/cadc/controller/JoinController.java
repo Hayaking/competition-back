@@ -12,6 +12,8 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static cadc.bean.message.STATE.SUCCESS;
 
 /**
@@ -55,5 +57,11 @@ public class JoinController {
         int id = stu.getId();
         IPage<Join> res = joinService.getByStudentId( new Page<>( pageNum, pageSize ), id );
         return MessageFactory.message( SUCCESS, res );
+    }
+
+    @RequestMapping(value = "/join/group/{groupId}", method = RequestMethod.GET)
+    public Object getSimpleJoinListByGroupId(@PathVariable int groupId) {
+        List<Join> list = joinService.getByGroupId( groupId );
+        return MessageFactory.message( list );
     }
 }

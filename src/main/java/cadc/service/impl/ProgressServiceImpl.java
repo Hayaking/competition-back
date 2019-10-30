@@ -29,28 +29,32 @@ public class ProgressServiceImpl extends ServiceImpl<ProgressMapper, Progress> i
     @Override
     public List<Progress> getEnterNoStart() {
         QueryWrapper<Progress> wrapper = new QueryWrapper<>();
-        wrapper.eq( "enter_state", STATE_NOT_START.toString() );
+        wrapper.eq( "enter_state", STATE_NOT_START.toString() )
+                .eq( "is_scan_enter_state", true );
         return progressMapper.selectList( wrapper );
     }
 
     @Override
     public List<Progress> getEnterHadStart() {
         QueryWrapper<Progress> wrapper = new QueryWrapper<>();
-        wrapper.eq( "enter_state", STATE_HAD_START.toString() );
+        wrapper.eq( "enter_state", STATE_HAD_START.toString() )
+                .eq( "is_scan_enter_state", true );
         return progressMapper.selectList( wrapper );
     }
 
     @Override
     public List<Progress> getStartNoStart() {
         QueryWrapper<Progress> wrapper = new QueryWrapper<>();
-        wrapper.eq( "start_state", STATE_NOT_START.toString() );
+        wrapper.eq( "start_state", STATE_NOT_START.toString() )
+                .eq( "is_scan_start_state", true );
         return progressMapper.selectList( wrapper );
     }
 
     @Override
     public List<Progress> getStartHadStart() {
         QueryWrapper<Progress> wrapper = new QueryWrapper<>();
-        wrapper.eq( "start_state", STATE_HAD_START.toString() );
+        wrapper.eq( "start_state", STATE_HAD_START.toString() )
+                .eq( "is_scan_start_state", true );
         return progressMapper.selectList( wrapper );
     }
 

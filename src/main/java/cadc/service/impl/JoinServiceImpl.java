@@ -68,6 +68,7 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         works.setStuGroupId( group.getId() );
         works.insert();
         // 参赛
+        join.setGroupId( group.getId() );
         join.setWorksId( works.getId() );
         join.setApplyState( STATE_APPLYING.toString() );
         join.setEnterState( STATE_APPLYING.toString() );
@@ -80,9 +81,15 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     }
 
     @Override
+    public List<Join> getByGroupId(int groupId) {
+        QueryWrapper<Join> wrapper = new QueryWrapper<>();
+        wrapper.eq( "group_id", groupId );
+        return joinMapper.selectList( wrapper );
+    }
+
+    @Override
     public IPage<Join> getByStudentId(Page<Join> page, int id) {
         List<Join> list = joinMapper.getJoinListByStudentId( page, id );
-//        joinMapper.getSingleJoinListByStudentId(  )
         page.setRecords( list );
         return page;
     }

@@ -50,6 +50,8 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
             item.setCompetitionId( competition.getId() );
             item.setEnterState( STATE_NOT_START.toString() );
             item.setStartState( STATE_NOT_START.toString() );
+            item.setIsScanEnterState( true );
+            item.setIsScanStartState( true );
             progressMapper.insert( item );
             Budget budget = budgets.get( index.getAndIncrement() );
             budget.setProgressId( item.getId() );
@@ -190,5 +192,14 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
             e.printStackTrace();
         }
         return in;
+    }
+
+    @Override
+    public List<Competition> findByGroupId(int groupId) {
+        QueryWrapper<Competition> wrapper = new QueryWrapper<>();
+        wrapper.eq( "teacher_group_id", groupId );
+        List<Competition> list = competitionMapper.selectList( wrapper );
+        if (list.size()<=5) return list;
+        return list.subList( 0, 5 );
     }
 }

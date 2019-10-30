@@ -29,10 +29,19 @@ public class ProgressController {
 
     @RequestMapping(value = "/progress", method = RequestMethod.POST)
     public Object update( @RequestBody Progress progress) {
-        log.warn( progress );
         Progress obj = progressService.getById( progress.getId() );
-        obj.setEnterState( progress.getEnterState() );
-        obj.setStartState( progress.getStartState() );
+        if (progress.getIsScanEnterState()) {
+            obj.setIsScanStartState( true );
+        }else{
+            obj.setIsScanEnterState( false );
+            obj.setEnterState( progress.getEnterState() );
+        }
+        if (progress.getIsScanStartState()) {
+            obj.setIsScanStartState( true );
+        } else {
+            obj.setIsScanStartState( false );
+            obj.setStartState( progress.getStartState() );
+        }
         boolean flag = obj.insertOrUpdate();
         return MessageFactory.message( flag );
     }

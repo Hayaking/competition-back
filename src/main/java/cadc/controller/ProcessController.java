@@ -18,10 +18,19 @@ import java.util.List;
 @RestController
 public class ProcessController {
 
+    @Autowired
+    private ProcessService processService;
 
-    @RequestMapping(value = "/progress/list", method = RequestMethod.POST)
-    public Object create(@RequestBody List<Progress> progresses) {
-
-        return MessageFactory.message( true );
+    @RequestMapping(value = "/process", method = RequestMethod.POST)
+    public Object create(@RequestBody Process process) {
+        boolean flag = process.insert();
+        return MessageFactory.message( flag );
     }
+
+    @RequestMapping(value = "/process/{competitionId}/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    public Object create(@PathVariable int competitionId, @PathVariable int pageNum, @PathVariable int pageSize) {
+        Page<Process> res = processService.getByCompetitionId( new Page<>( pageNum, pageSize ), competitionId );
+        return MessageFactory.message( res );
+    }
+
 }

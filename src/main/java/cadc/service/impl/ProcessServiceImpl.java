@@ -21,8 +21,8 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
     private ProcessMapper processMapper;
 
     @Override
-    public Page<Process> getByJoinId(Page<Process> page, int competitionId) {
-        List<Process> list = processMapper.getByJoinId( page, competitionId );
+    public Page<Process> getByCompetitionId(Page<Process> page, int competitionId) {
+        List<Process> list = processMapper.getByCompetitionId( page, competitionId );
         page.setRecords( list );
         return page;
     }

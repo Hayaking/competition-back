@@ -12,20 +12,25 @@ import java.util.List;
  */
 public interface CompetitionMapper extends BaseMapper<Competition> {
 
-    @Update( "update competition set state = #{state} where id=#{id}" )
+    @Update("update competition set state = #{state} where id=#{id}")
     int updateState(int id, String state);
 
-    @Update( "update competition set start_state = #{state} where id=#{id}" )
+    @Update("update competition set start_state = #{state} where id=#{id}")
     int updateStartState(int id, String state);
 
-    @Update( "update competition set enter_state = #{state} where id=#{id}" )
+    @Update("update competition set enter_state = #{state} where id=#{id}")
     int updateEnterState(int id, String state);
 
     @Select("select * from competition where id =#{id}")
-    Competition getById(@Param( "id" )int id);
+    Competition getById(@Param("id") int id);
+
+    @ResultMap(value = "withProgressList")
+    @Select("select * from competition where id =#{id}")
+    Competition getWithProgressListById(@Param("id") int id);
 
     /**
      * 根据工作组id 查询competition带上progress
+     *
      * @param page
      * @param id
      * @return
@@ -50,7 +55,7 @@ public interface CompetitionMapper extends BaseMapper<Competition> {
             @Result(column = "join_type_id", property = "joinTypeId"),
     })
     @Select("select * from competition where teacher_group_id =#{id}")
-    List<Competition> getWithProgressListByTeacherGroupId(Page<Competition> page, @Param( "id" )int id);
+    List<Competition> getWithProgressListByTeacherGroupId(Page<Competition> page, @Param("id") int id);
 
     @ResultMap(value = "withProgressList")
     @Select(" select * from competition where state = '通过'")

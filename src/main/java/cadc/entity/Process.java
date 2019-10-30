@@ -21,5 +21,6 @@ public class Process extends Model<Process> implements Serializable {
     private Date time;
     private String persons;
     private int competitionId;
+    private int progressId;
     private int picId;
 }

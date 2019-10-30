@@ -57,4 +57,6 @@ public interface CompetitionService extends IService<Competition> {
     String generateWord(Competition competition);
 
     FileInputStream getWord(int competitionId);
+
+    List<Competition> findByGroupId(int groupId);
 }

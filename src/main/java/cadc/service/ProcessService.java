@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface ProcessService extends IService<Process> {
 
-    Page<Process> getByJoinId(Page<Process> page, int competitionId);
+    Page<Process> getByCompetitionId(Page<Process> page, int competitionId);
 
 }

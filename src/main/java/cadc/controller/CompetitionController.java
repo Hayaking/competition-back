@@ -52,6 +52,12 @@ public class CompetitionController {
         return MessageFactory.message( SUCCESS, res );
     }
 
+    @RequestMapping(value = "/competition/group/{groupId}", method = RequestMethod.GET)
+    public Object simpleGetByGroupId(@PathVariable int groupId) {
+        List<Competition> res = competitionService.findByGroupId( groupId );
+        return MessageFactory.message( SUCCESS, res );
+    }
+
     /**
      * 分页查询全部
      *

@@ -13,5 +13,5 @@ import java.util.List;
  */
 public interface ProcessMapper extends BaseMapper<Process> {
     @Select("select * from process where competition_id= #{competitionId}")
-    List<Process> getByJoinId(Page<Process> page, @Param("competitionId") int competitionId);
+    List<Process> getByCompetitionId(Page<Process> page, @Param("competitionId") int competitionId);
 }
