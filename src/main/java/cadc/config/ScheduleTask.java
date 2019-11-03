@@ -1,5 +1,6 @@
 package cadc.config;
 
+import cadc.bean.PRROGRESS_STATE;
 import cadc.entity.Progress;
 import cadc.service.ProgressService;
 import lombok.extern.log4j.Log4j2;
@@ -11,8 +12,6 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.List;
 
-import static cadc.bean.message.STATE.STATE_END;
-import static cadc.bean.message.STATE.STATE_HAD_START;
 
 /**
  * @author haya
@@ -32,12 +31,12 @@ public class ScheduleTask {
         Date now = new Date();
         noStartList.forEach( item ->{
             if (now.getTime() >= item.getEnterStartTime().getTime()) {
-                progressService.setEnterState( item.getId(), STATE_HAD_START );
+                progressService.setEnterState( item.getId(), PRROGRESS_STATE.HAD_START );
             }
         } );
         hadStartList.forEach( item ->{
             if (now.getTime() >= item.getEnterEndTime().getTime()) {
-                progressService.setEnterState( item.getId(), STATE_END );
+                progressService.setEnterState( item.getId(), PRROGRESS_STATE.HAD_END );
             }
         } );
         log.info( "检查报名状态完毕" );
@@ -51,12 +50,12 @@ public class ScheduleTask {
         Date now = new Date();
         noStartList.forEach( item ->{
             if (now.getTime() >= item.getStartTime().getTime()) {
-                progressService.setStartState( item.getId(), STATE_HAD_START );
+                progressService.setStartState( item.getId(), PRROGRESS_STATE.HAD_START );
             }
         } );
         hadStartList.forEach( item ->{
-            if (now.getTime() >= item.getEnterEndTime().getTime()) {
-                progressService.setStartState( item.getId(), STATE_END );
+            if (now.getTime() >= item.getEndTime().getTime()) {
+                progressService.setStartState( item.getId(), PRROGRESS_STATE.WAIT_END );
             }
         } );
         log.info( "检查开始状态结束" );

@@ -13,17 +13,10 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName("works")
-public class Works extends Model<Works> {
+@TableName("join_in_progress")
+public class JoinInProgress extends Model<JoinInProgress> {
     @TableId(type = IdType.AUTO)
     private int id;
-    private String worksName;
-    private int stuGroupId;
-    private int creatorId;
-    private String des;
-
-    @TableField(exist = false)
-    private StudentGroup studentGroup;
-    @TableField(exist = false)
-    private Student creator;
+    private int progressId;
+    private int joinId;
 }

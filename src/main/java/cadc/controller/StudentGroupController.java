@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -38,10 +39,15 @@ public class StudentGroupController {
     @RequestMapping(value = "/studentGroup/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object getByPage(@PathVariable int pageNum, @PathVariable int pageSize) {
         Student student = (Student) SecurityUtils.getSubject().getPrincipal();
-        IPage<StudentGroup> res = studentGroupService.getByStudentId( new Page<>( pageNum, pageSize ), student.getId() );
+        IPage<StudentGroup> res = studentGroupService.getPageByStudentId( new Page<>( pageNum, pageSize ), student.getId() );
         return MessageFactory.message( SUCCESS, res );
     }
-
+    @RequestMapping(value = "/studentGroup", method = RequestMethod.GET)
+    public Object getByPage() {
+        Student student = (Student) SecurityUtils.getSubject().getPrincipal();
+        List<StudentGroup> res = studentGroupService.getListByStudentId( student.getId() );
+        return MessageFactory.message( res );
+    }
     /**
      * 学生创建小组
      *
@@ -69,5 +75,16 @@ public class StudentGroupController {
     public Object invite(@RequestBody List<String> list, @PathVariable int groupId) {
         studentInGroupService.addList( list, groupId );
         return MessageFactory.message( SUCCESS );
+    }
+
+    /**
+     * 获取小组成员
+     * @param groupId
+     * @return
+     */
+    @RequestMapping(value = "/studentGroup/{groupId}/members", method = RequestMethod.GET)
+    public Object getSimpleMemberList(@PathVariable int groupId) {
+        List<Student> list = studentInGroupService.getMemberList( groupId );
+        return MessageFactory.message( list );
     }
 }

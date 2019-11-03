@@ -23,6 +23,7 @@ public class EnterController {
 
     /**
      * 获取报名列表
+     *
      * @param competitionId
      * @param pageNum
      * @param pageSize
@@ -34,14 +35,21 @@ public class EnterController {
         return MessageFactory.message( res );
     }
 
+    @RequestMapping(value = "/enter/{competitionId}/{progressId}/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    public Object getEnterList(@PathVariable int competitionId, @PathVariable int progressId, @PathVariable int pageNum, @PathVariable int pageSize) {
+        IPage<Join> res = joinService.getEnterList( new Page<>( pageNum, pageSize ), competitionId, progressId );
+        return MessageFactory.message( res );
+    }
+
     /**
      * 审核join的enterState
+     *
      * @param joinId
      * @param flag
      * @return
      */
     @RequestMapping(value = "/enter/{joinId}/{flag}", method = RequestMethod.POST)
-    public Object reviewEnter( @PathVariable int joinId, @PathVariable boolean flag) {
+    public Object reviewEnter(@PathVariable int joinId, @PathVariable boolean flag) {
         boolean res = joinService.setEnterState( flag, joinId );
         return MessageFactory.message( res );
     }

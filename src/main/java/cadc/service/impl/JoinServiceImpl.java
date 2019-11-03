@@ -6,6 +6,7 @@ import cadc.bean.excel.ExcelModel;
 import cadc.entity.*;
 import cadc.mapper.*;
 import cadc.service.JoinService;
+import cadc.service.ProgressService;
 import cadc.util.ExcelUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -13,6 +14,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +44,8 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     private CompetitionMapper competitionMapper;
     @Resource
     private StudentGroupMapper studentGroupMapper;
-
+    @Autowired
+    private ProgressService progressService;
     @Override
     public boolean createGroupJoin(Student student, StudentGroup group, List<String> list, Works works, Join join) {
         if (group == null || works == null || list == null || join == null) {
@@ -66,6 +69,7 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         }
         // 创建作品
         works.setStuGroupId( group.getId() );
+        works.setCreatorId( student.getId() );
         works.insert();
         // 参赛
         join.setGroupId( group.getId() );
@@ -77,14 +81,17 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         join.setCreatorId( student.getId() );
         join.setCreateTime( new Date() );
         join.insert();
-        return true;
+
+        List<Progress> progressList = progressService.getByCompetitionId( join.getCompetitionId() );
+        return new JoinInProgress() {{
+            setJoinId( join.getId() );
+            setProgressId( progressList.get( 0 ).getId() );
+        }}.insert();
     }
 
     @Override
     public List<Join> getByGroupId(int groupId) {
-        QueryWrapper<Join> wrapper = new QueryWrapper<>();
-        wrapper.eq( "group_id", groupId );
-        return joinMapper.selectList( wrapper );
+        return joinMapper.getSimpleListByGroupId( groupId );
     }
 
     @Override
@@ -121,6 +128,13 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     @Override
     public IPage<Join> getByCompetitionId(Page<Join> page, int competitionId) {
         List<Join> list = joinMapper.getListByCompetitionId( page, competitionId );
+        page.setRecords( list );
+        return page;
+    }
+
+    @Override
+    public IPage<Join> getEnterList(Page<Join> page, int competitionId, int progressId) {
+        List<Join> list = joinMapper.getEnterList( page, competitionId, progressId );
         page.setRecords( list );
         return page;
     }

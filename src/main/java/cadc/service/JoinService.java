@@ -36,6 +36,15 @@ public interface JoinService extends IService<Join> {
      */
     IPage<Join> getByCompetitionId(Page<Join> page, int competitionId);
 
+    /**
+     * 根据 competitionId progressId获取参赛学生list
+     * @param page
+     * @param competitionId
+     * @param progressId
+     * @return
+     */
+    IPage<Join> getEnterList(Page<Join> page, int competitionId, int progressId);
+
     Boolean setApplyState(Boolean flag, int joinId, int teacherId);
 
     /**

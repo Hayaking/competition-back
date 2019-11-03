@@ -11,7 +11,7 @@
  Target Server Version : 80011
  File Encoding         : 65001
 
- Date: 25/10/2019 21:11:39
+ Date: 03/11/2019 18:21:58
 */
 
 SET NAMES utf8mb4;
@@ -32,12 +32,15 @@ CREATE TABLE `budget`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `progress_id`(`progress_id`) USING BTREE,
   CONSTRAINT `budget_ibfk_1` FOREIGN KEY (`progress_id`) REFERENCES `progress` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of budget
 -- ----------------------------
-INSERT INTO `budget` VALUES (23, 123, 123, 123, '123', 123, 1);
+INSERT INTO `budget` VALUES (24, 123, 123, 123, '123', 123, 2);
+INSERT INTO `budget` VALUES (25, 123, 123, 123, '123', 123, 3);
+INSERT INTO `budget` VALUES (26, 123, 123, 123, '123', 123, 4);
+INSERT INTO `budget` VALUES (27, 123, 123, 123, '123', 123, 5);
 
 -- ----------------------------
 -- Table structure for certificate
@@ -60,13 +63,7 @@ DROP TABLE IF EXISTS `competition`;
 CREATE TABLE `competition`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '竞赛名称',
-  `start_time` datetime(0) NULL DEFAULT NULL COMMENT '比赛开始时间',
-  `end_time` datetime(0) NULL DEFAULT NULL COMMENT '比赛结束时间',
-  `enter_start_time` datetime(0) NULL DEFAULT NULL COMMENT '报名开始时间',
-  `enter_end_time` datetime(0) NULL DEFAULT NULL COMMENT '报名结束时间',
   `state` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '立项状态',
-  `enter_state` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '报名状态',
-  `start_state` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '开始状态',
   `group_num` int(11) NULL DEFAULT NULL COMMENT '预期参赛对数',
   `stu_num` int(11) NULL DEFAULT NULL COMMENT '预期参赛人数',
   `ex_res` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '预期成果',
@@ -77,27 +74,19 @@ CREATE TABLE `competition`  (
   `creator` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '立项者',
   `process` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '比赛流程',
   `intro` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '比赛简介',
-  `max_level_id` int(255) NULL DEFAULT NULL COMMENT '比赛最高级别id ------',
-  `min_level_id` int(11) NULL DEFAULT NULL COMMENT '比赛最小级别id------',
   `teacher_group_id` int(11) NULL DEFAULT NULL COMMENT '工作组id',
   `join_type_id` int(11) NULL DEFAULT NULL COMMENT '参赛形式id',
   `is_have_works` tinyint(1) NULL DEFAULT NULL COMMENT '是否需要参赛作品',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `type_id`(`min_level_id`) USING BTREE,
   INDEX `teacher_group_id`(`teacher_group_id`) USING BTREE,
-  INDEX `highest_level`(`max_level_id`) USING BTREE,
   INDEX `join_type_id`(`join_type_id`) USING BTREE,
   CONSTRAINT `competition_ibfk_1` FOREIGN KEY (`join_type_id`) REFERENCES `type_join` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 79 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 83 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of competition
 -- ----------------------------
-INSERT INTO `competition` VALUES (75, '蓝桥杯', '2019-11-01 00:00:00', '2019-11-30 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', '申请中', '已开始', '未开始', 123, 123, '', '123', '123', '123', '123', 't2', '123', '123', 1, 1, 39, 1, 1);
-INSERT INTO `competition` VALUES (76, 'acm', '2019-11-01 00:00:00', '2019-11-30 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', '申请中', '已开始', '未开始', 123, 123, '123', '123', '123', '123', '123', 't2', '123', '123', 4, 1, 39, 1, 0);
-INSERT INTO `competition` VALUES (77, 'pat', '2019-10-01 00:00:00', '2019-10-31 00:00:00', '2019-10-01 00:00:00', '2019-10-16 00:00:00', '申请中', '结束', '已开始', 123, 123, '123', '123', '123', '123', '123', 't2', '123', '123', 4, 1, 39, 1, 1);
-INSERT INTO `competition` VALUES (78, '互联网+', '2019-11-01 00:00:00', '2019-11-30 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', '申请中', '已开始', '未开始', 123, 123, '123', '123', '123', '123', '123', 't2', '123', '132', 1, 1, 39, 1, 1);
-INSERT INTO `competition` VALUES (81, '123', NULL, NULL, NULL, NULL, '申请中', '未开始', '未开始', 123, 123, '123', '123', '123', '123', '123', 't2', '123', '123', 0, 0, 39, 1, 1);
+INSERT INTO `competition` VALUES (82, '蓝桥杯', '通过', 123, 123, '123', '123', '123', '123', '123', 't2', '123', '123', 39, 1, 1);
 
 -- ----------------------------
 -- Table structure for cost
@@ -137,9 +126,33 @@ CREATE TABLE `join`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `competition_id`(`competition_id`) USING BTREE,
   INDEX `works_id`(`works_id`) USING BTREE,
-  CONSTRAINT `join_ibfk_3` FOREIGN KEY (`competition_id`) REFERENCES `competition` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `join_ibfk_4` FOREIGN KEY (`works_id`) REFERENCES `works` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of join
+-- ----------------------------
+INSERT INTO `join` VALUES (21, 26, 82, 37, '16', '0', '申请中', NULL, '申请中', '未开始', 1, 15, '2019-10-29 17:29:40');
+
+-- ----------------------------
+-- Table structure for join_in_progress
+-- ----------------------------
+DROP TABLE IF EXISTS `join_in_progress`;
+CREATE TABLE `join_in_progress`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `progress_id` int(11) NULL DEFAULT NULL,
+  `join_id` int(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `progress_id`(`progress_id`) USING BTREE,
+  INDEX `join_id`(`join_id`) USING BTREE,
+  CONSTRAINT `join_in_progress_ibfk_1` FOREIGN KEY (`progress_id`) REFERENCES `progress` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `join_in_progress_ibfk_2` FOREIGN KEY (`join_id`) REFERENCES `join` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of join_in_progress
+-- ----------------------------
+INSERT INTO `join_in_progress` VALUES (2, 2, 21);
 
 -- ----------------------------
 -- Table structure for menu1
@@ -192,7 +205,6 @@ INSERT INTO `menu2` VALUES (1, '/student/join', 'stu_join', 'student/stu_join', 
 INSERT INTO `menu2` VALUES (2, '/admin/teacher/group', 'admin_teacher_group', 'admin/admin_teacher_group', 2, 2, NULL);
 INSERT INTO `menu2` VALUES (3, '/admin/post', 'post', 'admin/admin_post', 2, 2, NULL);
 INSERT INTO `menu2` VALUES (4, '/admin/menu', 'admin_menu', 'admin/admin_menu', 2, 2, NULL);
-INSERT INTO `menu2` VALUES (5, '/admin/permission', 'admin_permission', 'admin/admin_permission', 2, 2, NULL);
 INSERT INTO `menu2` VALUES (6, '/admin/user', 'admin_user', 'admin/admin_user', 2, 2, NULL);
 INSERT INTO `menu2` VALUES (7, '/admin/competition/', 'admin_competition', 'admin/admin_competition', 2, 2, NULL);
 INSERT INTO `menu2` VALUES (8, '/admin/competition/result', 'admin_competition_result', 'admin/admin_competition_result', 2, 2, NULL);
@@ -205,8 +217,8 @@ INSERT INTO `menu2` VALUES (14, '/common/competition', 'common_competition', 'co
 INSERT INTO `menu2` VALUES (15, '/common/edit', 'common_edit_self', 'common/common_edit_self', 2, 6, NULL);
 INSERT INTO `menu2` VALUES (16, '/common/message', 'common_message', 'common/common_message', 2, 6, NULL);
 INSERT INTO `menu2` VALUES (17, '/common/post/page', 'common-post-page', 'common/common-post-page', 1, 6, NULL);
-INSERT INTO `menu2` VALUES (18, '/group/competition/enter', 'competition_enter_list', 'group/competition_enter_list', 1, 1, NULL);
-INSERT INTO `menu2` VALUES (19, '/group/competition/list', 'group_competition_list', 'group/competition_list', 1, 1, NULL);
+INSERT INTO `menu2` VALUES (18, '/group/competition/enter', 'competition_enter_list', 'group/competition_enter_list', 2, 1, NULL);
+INSERT INTO `menu2` VALUES (19, '/group/competition/list', 'group_competition_list', 'group/competition_list', 2, 1, NULL);
 INSERT INTO `menu2` VALUES (20, '/group/competition', 'group_competition', 'group/competition', 1, 1, NULL);
 
 -- ----------------------------
@@ -239,13 +251,14 @@ CREATE TABLE `pic`  (
   `path` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '图片路径',
   `create_time` datetime(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of pic
 -- ----------------------------
 INSERT INTO `pic` VALUES (1, 'static/images/TIM图片20191001113219.jpg', '2019-10-11 19:05:10');
 INSERT INTO `pic` VALUES (2, 'static/images/TIM图片20191001113219.jpg', '2019-10-11 19:09:56');
+INSERT INTO `pic` VALUES (3, 'static/images/TIM图片20191001113219.jpg', '2019-10-28 17:38:56');
 
 -- ----------------------------
 -- Table structure for post
@@ -259,7 +272,7 @@ CREATE TABLE `post`  (
   `creator_id` int(255) NULL DEFAULT NULL COMMENT '创建者',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for price
@@ -289,10 +302,17 @@ CREATE TABLE `process`  (
   `persons` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '参与者',
   `competition_id` int(11) NULL DEFAULT NULL,
   `pic_id` int(11) NULL DEFAULT NULL,
+  `progress_id` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `process_ibfk_1`(`competition_id`) USING BTREE,
-  CONSTRAINT `process_ibfk_1` FOREIGN KEY (`competition_id`) REFERENCES `competition` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  INDEX `progress_id`(`progress_id`) USING BTREE,
+  CONSTRAINT `process_ibfk_1` FOREIGN KEY (`progress_id`) REFERENCES `progress` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of process
+-- ----------------------------
+INSERT INTO `process` VALUES (16, '123123', '2019-10-28 17:38:01', '123123', 82, 3, 2);
 
 -- ----------------------------
 -- Table structure for progress
@@ -308,17 +328,22 @@ CREATE TABLE `progress`  (
   `end_time` datetime(0) NULL DEFAULT NULL,
   `enter_start_time` datetime(0) NULL DEFAULT NULL,
   `enter_end_time` datetime(0) NULL DEFAULT NULL,
+  `is_scan_start_state` tinyint(1) NULL DEFAULT NULL,
+  `is_scan_enter_state` tinyint(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `competition_id`(`competition_id`) USING BTREE,
   INDEX `progress_ibfk_2`(`type_id`) USING BTREE,
+  INDEX `competition_id`(`competition_id`) USING BTREE,
   CONSTRAINT `progress_ibfk_2` FOREIGN KEY (`type_id`) REFERENCES `type_competition` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `progress_ibfk_3` FOREIGN KEY (`competition_id`) REFERENCES `competition` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of progress
 -- ----------------------------
-INSERT INTO `progress` VALUES (1, 81, 1, NULL, NULL, '2019-11-01 00:00:00', '2019-11-30 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00');
+INSERT INTO `progress` VALUES (2, 82, 1, '结算中', '已结束', '2019-10-01 00:00:00', '2019-11-01 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', 1, 1);
+INSERT INTO `progress` VALUES (3, 82, 2, '结算中', '已结束', '2019-11-01 00:00:00', '2019-11-30 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', 1, 1);
+INSERT INTO `progress` VALUES (4, 82, 3, '未开始', '未开始', '2019-11-01 00:00:00', '2019-11-30 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', 0, 0);
+INSERT INTO `progress` VALUES (5, 82, 4, '未开始', '未开始', '2019-11-01 00:00:00', '2019-11-30 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', 0, 0);
 
 -- ----------------------------
 -- Table structure for role
@@ -366,7 +391,6 @@ INSERT INTO `role_menu` VALUES (2, 1, 6, NULL);
 INSERT INTO `role_menu` VALUES (3, 2, 6, 15);
 INSERT INTO `role_menu` VALUES (5, 2, 2, 3);
 INSERT INTO `role_menu` VALUES (6, 2, 2, 4);
-INSERT INTO `role_menu` VALUES (7, 2, 2, 5);
 INSERT INTO `role_menu` VALUES (8, 2, 2, 6);
 INSERT INTO `role_menu` VALUES (9, 2, 2, 7);
 INSERT INTO `role_menu` VALUES (10, 2, 2, 8);
@@ -409,7 +433,7 @@ CREATE TABLE `role_stu`  (
   INDEX `stu_id`(`stu_id`) USING BTREE,
   CONSTRAINT `role_stu_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `role_stu_ibfk_3` FOREIGN KEY (`stu_id`) REFERENCES `student` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_stu
@@ -430,7 +454,7 @@ CREATE TABLE `role_teacher`  (
   INDEX `teacher_id`(`teacher_id`) USING BTREE,
   CONSTRAINT `role_teacher_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `role_teacher_ibfk_3` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_teacher
@@ -439,6 +463,7 @@ INSERT INTO `role_teacher` VALUES (1, 4, 2);
 INSERT INTO `role_teacher` VALUES (24, 15, 1);
 INSERT INTO `role_teacher` VALUES (25, 17, 4);
 INSERT INTO `role_teacher` VALUES (26, 16, 1);
+INSERT INTO `role_teacher` VALUES (27, 16, 4);
 
 -- ----------------------------
 -- Table structure for stu_group
@@ -450,12 +475,13 @@ CREATE TABLE `stu_group`  (
   `creator_id` int(255) NULL DEFAULT NULL COMMENT '创建者',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of stu_group
 -- ----------------------------
 INSERT INTO `stu_group` VALUES (36, '冲冲冲', 15, '2019-10-06 14:14:17');
+INSERT INTO `stu_group` VALUES (37, 'ggg', 15, '2019-10-29 17:29:39');
 
 -- ----------------------------
 -- Table structure for stu_in_group
@@ -471,13 +497,15 @@ CREATE TABLE `stu_in_group`  (
   INDEX `stu_id`(`stu_id`) USING BTREE,
   CONSTRAINT `stu_in_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `stu_group` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `stu_in_group_ibfk_3` FOREIGN KEY (`stu_id`) REFERENCES `student` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 43 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 46 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of stu_in_group
 -- ----------------------------
 INSERT INTO `stu_in_group` VALUES (42, 15, 36, '邀请成功');
 INSERT INTO `stu_in_group` VALUES (43, 16, 36, '邀请中');
+INSERT INTO `stu_in_group` VALUES (44, 15, 37, '邀请成功');
+INSERT INTO `stu_in_group` VALUES (45, 16, 37, '邀请中');
 
 -- ----------------------------
 -- Table structure for student
@@ -495,7 +523,7 @@ CREATE TABLE `student`  (
   `pic_id` int(255) NULL DEFAULT NULL COMMENT '照片',
   `sign_time` datetime(3) NULL DEFAULT NULL COMMENT '注册时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 35 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of student
@@ -573,7 +601,7 @@ CREATE TABLE `teacher_in_group`  (
   INDEX `teacher_id`(`teacher_id`) USING BTREE,
   CONSTRAINT `teacher_in_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `teacher_group` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `teacher_in_group_ibfk_3` FOREIGN KEY (`teacher_id`) REFERENCES `teacher` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 57 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 78 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of teacher_in_group
@@ -581,11 +609,9 @@ CREATE TABLE `teacher_in_group`  (
 INSERT INTO `teacher_in_group` VALUES (48, 15, 39, '邀请成功');
 INSERT INTO `teacher_in_group` VALUES (49, 15, 40, '邀请成功');
 INSERT INTO `teacher_in_group` VALUES (51, 16, 39, '邀请成功');
-INSERT INTO `teacher_in_group` VALUES (52, 17, 39, '邀请中');
-INSERT INTO `teacher_in_group` VALUES (53, 22, 39, '邀请中');
-INSERT INTO `teacher_in_group` VALUES (54, 23, 39, '邀请中');
-INSERT INTO `teacher_in_group` VALUES (55, 24, 39, '邀请中');
-INSERT INTO `teacher_in_group` VALUES (56, 25, 39, '邀请中');
+INSERT INTO `teacher_in_group` VALUES (70, 25, 39, '邀请中');
+INSERT INTO `teacher_in_group` VALUES (75, 24, 39, '邀请中');
+INSERT INTO `teacher_in_group` VALUES (77, 23, 39, '邀请中');
 
 -- ----------------------------
 -- Table structure for type_competition
@@ -613,7 +639,7 @@ CREATE TABLE `type_cost`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for type_join
@@ -623,7 +649,7 @@ CREATE TABLE `type_join`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of type_join
@@ -639,7 +665,7 @@ CREATE TABLE `type_price`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of type_price
@@ -671,8 +697,14 @@ CREATE TABLE `works`  (
   `works_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '作品名',
   `stu_group_id` int(11) NULL DEFAULT NULL,
   `creator_id` int(11) NULL DEFAULT NULL,
+  `des` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `stu_group_id`(`stu_group_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of works
+-- ----------------------------
+INSERT INTO `works` VALUES (26, 'zp', 37, 15, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

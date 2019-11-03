@@ -1,12 +1,10 @@
 package cadc.service.impl;
 
-import cadc.bean.message.STATE;
-import cadc.entity.Process;
+import cadc.bean.PRROGRESS_STATE;
 import cadc.entity.Progress;
 import cadc.mapper.ProgressMapper;
 import cadc.service.ProgressService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,14 +57,14 @@ public class ProgressServiceImpl extends ServiceImpl<ProgressMapper, Progress> i
     }
 
     @Override
-    public boolean setEnterState(int id, STATE state) {
+    public boolean setEnterState(int id, PRROGRESS_STATE state) {
         Progress progress = progressMapper.selectById( id );
         progress.setEnterState( state.toString() );
         return progress.insertOrUpdate();
     }
 
     @Override
-    public boolean setStartState(int id, STATE state) {
+    public boolean setStartState(int id, PRROGRESS_STATE state) {
         Progress progress = progressMapper.selectById( id );
         progress.setStartState( state.toString() );
         return progress.insertOrUpdate();

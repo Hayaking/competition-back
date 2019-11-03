@@ -26,7 +26,13 @@ public class StudentGroupServiceImpl extends ServiceImpl<StudentGroupMapper, Stu
     private StudentInGroupMapper studentInGroupMapper;
 
     @Override
-    public IPage<StudentGroup> getByStudentId(Page<StudentGroup> page, int id) {
+    public IPage<StudentGroup> getPageByStudentId(Page<StudentGroup> page, int id) {
         return page.setRecords( studentGroupMapper.getWithWorksByStudentId( page, id ) );
+    }
+
+    @Override
+    public List<StudentGroup> getListByStudentId(int id) {
+        List<StudentGroup> list = studentGroupMapper.getWithWorksByStudentId( id );
+        return list;
     }
 }

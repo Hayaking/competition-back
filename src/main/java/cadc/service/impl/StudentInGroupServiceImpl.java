@@ -1,5 +1,6 @@
 package cadc.service.impl;
 
+import cadc.entity.Student;
 import cadc.entity.StudentInGroup;
 import cadc.mapper.StudentInGroupMapper;
 import cadc.service.StudentInGroupService;
@@ -7,7 +8,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static cadc.bean.message.STATE.STATE_INVITING;
 
@@ -24,5 +26,15 @@ public class StudentInGroupServiceImpl extends ServiceImpl<StudentInGroupMapper,
 //            studentInGroupMapper.insert( new StudentInGroup( str, groupId, STATE_INVITING.toString() ) );
 //        }
         return true;
+    }
+
+    @Override
+    public List<Student> getMemberList(int groupId) {
+        List<StudentInGroup> list = studentInGroupMapper.getMemberListByGroupId( groupId );
+        List<Student> res = new LinkedList<>();
+        if (list != null && !list.isEmpty()) {
+            list.forEach( item -> res.add( item.getStudent() ) );
+        }
+        return res;
     }
 }

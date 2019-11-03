@@ -2,7 +2,6 @@ package cadc.mapper;
 
 import cadc.entity.StudentInGroup;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
 public interface StudentInGroupMapper extends BaseMapper<StudentInGroup> {
     @Results({
             @Result(column = "id", property = "id"),
-            @Result(column = "stu_id", property = "id"),
+            @Result(column = "stu_id", property = "stuId"),
             @Result(column = "group_id", property = "groupId"),
             @Result(column = "group_id", property = "group", one = @One(select = "cadc.mapper.StudentGroupMapper.getById")),
     })
@@ -25,6 +24,7 @@ public interface StudentInGroupMapper extends BaseMapper<StudentInGroup> {
 
     /**
      * 根据groupId查询 顺带根据stuId查询学生
+     *
      * @param id
      * @return
      */
@@ -37,4 +37,16 @@ public interface StudentInGroupMapper extends BaseMapper<StudentInGroup> {
     @Select("select * from stu_in_group where group_id = #{id}")
     List<StudentInGroup> getStudentInGroupByGroupId(int id);
 
+
+    @Results(id = "withStudent",
+        value = {
+            @Result(column = "id", property = "id"),
+            @Result(column = "stu_id", property = "stuId"),
+                @Result(column = "stu_id", property = "student", one = @One(select = "cadc.mapper.StudentMapper.getStudentById")),
+            @Result(column = "group_id", property = "groupId"),
+            @Result(column = "state", property = "state"),
+        }
+    )
+    @Select("select * from stu_in_group where group_id=#{groupId}")
+    List<StudentInGroup> getMemberListByGroupId(@Param("groupId") int groupId);
 }

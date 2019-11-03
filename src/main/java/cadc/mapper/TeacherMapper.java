@@ -27,14 +27,13 @@ public interface TeacherMapper extends BaseMapper<Teacher> {
 
     @Results({
             @Result(column = "account", property = "account"),
-            @Result(column = "password", property = "password"),
             @Result(column = "teacher_name", property = "teacherName"),
             @Result(column = "teacher_sex", property = "teacherSex"),
             @Result(column = "teacher_phone", property = "teacherPhone"),
             @Result(column = "teacher_master", property = "teacherMaster"),
             @Result(column = "teacher_level", property = "teacherLevel"),
     })
-    @Select( "SELECT * FROM teacher JOIN role_teacher on teacher.account = role_teacher.teacher_id WHERE role_teacher.role_id =#{roleId}" )
+    @Select( "SELECT * FROM teacher JOIN role_teacher on teacher.id = role_teacher.teacher_id WHERE role_teacher.role_id =#{roleId}" )
     List<Teacher> getByRoleId(int roleId);
 
     @Select("Select * from teacher where id = #{id}")

@@ -1,10 +1,12 @@
 package cadc;
 
 import cadc.bean.excel.Demo;
+import cadc.entity.Join;
 import cadc.entity.Menu1;
 import cadc.entity.Menu2;
 import cadc.entity.RoleMenu;
 import cadc.mapper.Menu2Mapper;
+import cadc.service.JoinService;
 import cadc.service.Menu1Service;
 import cadc.service.Menu2Service;
 import cadc.service.RoleMenuService;
@@ -12,6 +14,9 @@ import cadc.util.ExcelUtils;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.log4j.Log4j2;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +28,7 @@ import javax.annotation.Resource;
 import java.util.LinkedList;
 import java.util.List;
 
+@Log4j2
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CadcApplicationTests {
@@ -34,6 +40,9 @@ public class CadcApplicationTests {
     public RoleMenuService roleMenuService;
     @Resource
     public Menu2Mapper menu2Mapper;
+
+    @Autowired
+    public JoinService joinService;
 
     @Test
     public void contextLoads() {
@@ -61,12 +70,19 @@ public class CadcApplicationTests {
         System.out.println(menu1s);
     }
 
+//    @Test
+//    public void getMenu2ByIdList() {
+//        LinkedList<Integer> list = new LinkedList<>();
+//        list.add( 1 );
+//        list.add( 2 );
+//        List<Menu2> list1 = menu2Mapper.getByIdList( list );
+//        System.out.println( list1 );
+//    }
+
     @Test
-    public void getMenu2ByIdList() {
-        LinkedList<Integer> list = new LinkedList<>();
-        list.add( 1 );
-        list.add( 2 );
-        List<Menu2> list1 = menu2Mapper.getByIdList( list );
-        System.out.println( list1 );
+    public void getEnterList() {
+        IPage<Join> enterList = joinService.getEnterList( new Page<>( 1, 12 ), 82, 2 );
+        log.warn( enterList );
+
     }
 }
