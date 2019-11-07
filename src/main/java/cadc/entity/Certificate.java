@@ -1,7 +1,6 @@
 package cadc.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -13,11 +12,11 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName("join_in_progress")
-public class JoinInProgress extends Model<JoinInProgress> {
+@TableName("certificate")
+public class Certificate extends Model<Certificate> {
     @TableId(type = IdType.AUTO)
     private int id;
-    private int progressId;
-    private int joinId;
-    private String state;
+    private int certificateNo;
+    private int priceId;
+    private int picId;
 }

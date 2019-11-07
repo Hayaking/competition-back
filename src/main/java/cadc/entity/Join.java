@@ -42,5 +42,7 @@ public class Join extends Model<Join> {
     private Teacher teacher1;
     @TableField(exist = false)
     private Teacher teacher2;
+    @TableField(exist = false)
+    private JoinInProgress inProgress;
 
 }

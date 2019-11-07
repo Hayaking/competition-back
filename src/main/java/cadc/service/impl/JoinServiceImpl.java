@@ -1,5 +1,7 @@
 package cadc.service.impl;
 
+import cadc.bean.ENTER_STATE;
+import cadc.bean.JOIN_STATE;
 import cadc.bean.excel.EnterExcel;
 import cadc.bean.excel.EnterExcel2;
 import cadc.bean.excel.ExcelModel;
@@ -46,6 +48,7 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     private StudentGroupMapper studentGroupMapper;
     @Autowired
     private ProgressService progressService;
+
     @Override
     public boolean createGroupJoin(Student student, StudentGroup group, List<String> list, Works works, Join join) {
         if (group == null || works == null || list == null || join == null) {
@@ -72,11 +75,16 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         works.setCreatorId( student.getId() );
         works.insert();
         // 参赛
+        // 设置小组id
         join.setGroupId( group.getId() );
+        // 设置作品id
         join.setWorksId( works.getId() );
+        // 设置指导老师申请状态
         join.setApplyState( STATE_APPLYING.toString() );
-        join.setEnterState( STATE_APPLYING.toString() );
-        join.setJoinState( STATE_NOT_START.toString() );
+        join.setApplyState2( STATE_APPLYING.toString() );
+        // 设置参赛申请状态
+        join.setEnterState( ENTER_STATE.APPLYING.toString() );
+        join.setJoinState( JOIN_STATE.NO_START.toString() );
         join.setJoinTypeId( 1 );
         join.setCreatorId( student.getId() );
         join.setCreateTime( new Date() );
@@ -186,6 +194,16 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     }
 
     @Override
+    public String generateEnterListExcel(int competitionId, int progressId) {
+        Competition competition = competitionMapper.getById( competitionId );
+        // 竞赛是需要参赛作品
+        boolean isHaveWorks = competition.getIsHaveWorks();
+        // 参赛类型
+        int joinTypeId = competition.getJoinTypeId();
+        return null;
+    }
+
+    @Override
     public boolean setEnterState(Boolean flag, int joinId) {
         Join join = joinMapper.selectById( joinId );
         UpdateWrapper<Join> wrapper = new UpdateWrapper<>();
@@ -201,8 +219,8 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         join.setJoinTypeId( 2 );
         join.setWorksId( works.getId() );
         join.setApplyState( STATE_APPLYING.toString() );
-        join.setEnterState( STATE_APPLYING.toString() );
-        join.setJoinState( STATE_NOT_START.toString() );
+        join.setEnterState( ENTER_STATE.APPLYING.toString() );
+        join.setJoinState( JOIN_STATE.NO_START.toString() );
         join.setCreatorId( student.getId() );
         join.setCreateTime( new Date() );
         return join.insert();

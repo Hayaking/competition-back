@@ -72,4 +72,31 @@ public class DownLoadController {
         }
         return MessageFactory.message( true );
     }
+
+    @RequestMapping(value = "/download/{competitionId}/{progressId}/enter/list", method = RequestMethod.POST)
+    public Object getEnterListExcel(HttpServletResponse response, @PathVariable int competitionId, @PathVariable int progressId) {
+        String fileName = joinService.generateEnterListExcel( competitionId );
+        File file = ExcelUtils.getFile( fileName );
+        if (file.exists()) {
+            response.setContentType( "application/json;charset=UTF-8" );
+            response.addHeader( "Content-Length", "" + file.length() );
+            response.setHeader( "Access-Control-Expose-Headers", "Content-Disposition" );
+            response.setHeader( "Content-Disposition", "attachment;filename=" + competitionId + ".xlsx" );
+            try (
+                    OutputStream writer = response.getOutputStream();
+                    FileInputStream fis = new FileInputStream( file );
+                    FileChannel channel = fis.getChannel()
+            ) {
+                ByteBuffer byteBuffer = ByteBuffer.allocate( 512 );
+                while (channel.read( byteBuffer ) != -1) {
+                    byteBuffer.flip();
+                    writer.write( byteBuffer.array() );
+                    byteBuffer.clear();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return MessageFactory.message( true );
+    }
 }

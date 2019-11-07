@@ -2,15 +2,14 @@ package cadc.controller;
 
 import cadc.bean.message.MessageFactory;
 import cadc.entity.Join;
+import cadc.entity.JoinInProgress;
+import cadc.service.JoinInProgressService;
 import cadc.service.JoinService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author haya
@@ -20,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class EnterController {
     @Autowired
     private JoinService joinService;
+    @Autowired
+    private JoinInProgressService joinInProgressService;
 
     /**
      * 获取报名列表
@@ -29,13 +30,13 @@ public class EnterController {
      * @param pageSize
      * @return
      */
-    @RequestMapping(value = "/enter/{competitionId}/list/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    @GetMapping(value = "/enter/{competitionId}/list/{pageNum}/{pageSize}")
     public Object getEnterList(@PathVariable int competitionId, @PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<Join> res = joinService.getByCompetitionId( new Page<>( pageNum, pageSize ), competitionId );
         return MessageFactory.message( res );
     }
 
-    @RequestMapping(value = "/enter/{competitionId}/{progressId}/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    @GetMapping(value = "/enter/{competitionId}/{progressId}/{pageNum}/{pageSize}")
     public Object getEnterList(@PathVariable int competitionId, @PathVariable int progressId, @PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<Join> res = joinService.getEnterList( new Page<>( pageNum, pageSize ), competitionId, progressId );
         return MessageFactory.message( res );
@@ -48,9 +49,15 @@ public class EnterController {
      * @param flag
      * @return
      */
-    @RequestMapping(value = "/enter/{joinId}/{flag}", method = RequestMethod.POST)
+    @PostMapping(value = "/enter/{joinId}/{flag}")
     public Object reviewEnter(@PathVariable int joinId, @PathVariable boolean flag) {
         boolean res = joinService.setEnterState( flag, joinId );
+        return MessageFactory.message( res );
+    }
+
+    @PostMapping(value = "/enter/promotion/{joinInProgressId}/{flag}")
+    public Object promotion(@PathVariable Integer joinInProgressId, @PathVariable Boolean flag) {
+        Boolean res = joinInProgressService.promotion( joinInProgressId, flag );
         return MessageFactory.message( res );
     }
 }

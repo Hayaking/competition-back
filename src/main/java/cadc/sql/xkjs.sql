@@ -11,7 +11,7 @@
  Target Server Version : 80011
  File Encoding         : 65001
 
- Date: 03/11/2019 18:21:58
+ Date: 07/11/2019 19:35:18
 */
 
 SET NAMES utf8mb4;
@@ -32,7 +32,7 @@ CREATE TABLE `budget`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `progress_id`(`progress_id`) USING BTREE,
   CONSTRAINT `budget_ibfk_1` FOREIGN KEY (`progress_id`) REFERENCES `progress` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of budget
@@ -142,17 +142,19 @@ CREATE TABLE `join_in_progress`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `progress_id` int(11) NULL DEFAULT NULL,
   `join_id` int(11) NULL DEFAULT NULL,
+  `state` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `progress_id`(`progress_id`) USING BTREE,
   INDEX `join_id`(`join_id`) USING BTREE,
   CONSTRAINT `join_in_progress_ibfk_1` FOREIGN KEY (`progress_id`) REFERENCES `progress` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `join_in_progress_ibfk_2` FOREIGN KEY (`join_id`) REFERENCES `join` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of join_in_progress
 -- ----------------------------
-INSERT INTO `join_in_progress` VALUES (2, 2, 21);
+INSERT INTO `join_in_progress` VALUES (2, 2, 21, '晋级');
+INSERT INTO `join_in_progress` VALUES (5, 3, 21, '未开始');
 
 -- ----------------------------
 -- Table structure for menu1
@@ -259,6 +261,7 @@ CREATE TABLE `pic`  (
 INSERT INTO `pic` VALUES (1, 'static/images/TIM图片20191001113219.jpg', '2019-10-11 19:05:10');
 INSERT INTO `pic` VALUES (2, 'static/images/TIM图片20191001113219.jpg', '2019-10-11 19:09:56');
 INSERT INTO `pic` VALUES (3, 'static/images/TIM图片20191001113219.jpg', '2019-10-28 17:38:56');
+INSERT INTO `pic` VALUES (4, 'static/images/77_avatar.jpg', '2019-11-05 17:24:30');
 
 -- ----------------------------
 -- Table structure for post
@@ -272,7 +275,7 @@ CREATE TABLE `post`  (
   `creator_id` int(255) NULL DEFAULT NULL COMMENT '创建者',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for price
@@ -284,11 +287,13 @@ CREATE TABLE `price`  (
   `price_time` datetime(0) NULL DEFAULT NULL COMMENT '获奖时间',
   `type_id` int(11) NULL DEFAULT NULL COMMENT '获奖类型',
   `join_id` int(11) NULL DEFAULT NULL,
+  `join_in_process_id` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `join_id`(`join_id`) USING BTREE,
   INDEX `type_id`(`type_id`) USING BTREE,
-  CONSTRAINT `price_ibfk_2` FOREIGN KEY (`join_id`) REFERENCES `join` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `price_ibfk_3` FOREIGN KEY (`type_id`) REFERENCES `type_price` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  INDEX `join_in_process_id`(`join_in_process_id`) USING BTREE,
+  CONSTRAINT `price_ibfk_3` FOREIGN KEY (`type_id`) REFERENCES `type_price` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `price_ibfk_4` FOREIGN KEY (`join_in_process_id`) REFERENCES `join_in_progress` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -342,7 +347,7 @@ CREATE TABLE `progress`  (
 -- ----------------------------
 INSERT INTO `progress` VALUES (2, 82, 1, '结算中', '已结束', '2019-10-01 00:00:00', '2019-11-01 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', 1, 1);
 INSERT INTO `progress` VALUES (3, 82, 2, '结算中', '已结束', '2019-11-01 00:00:00', '2019-11-30 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', 1, 1);
-INSERT INTO `progress` VALUES (4, 82, 3, '未开始', '未开始', '2019-11-01 00:00:00', '2019-11-30 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', 0, 0);
+INSERT INTO `progress` VALUES (4, 82, 3, '已开始', '已开始', '2019-11-01 00:00:00', '2019-11-30 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', 0, 0);
 INSERT INTO `progress` VALUES (5, 82, 4, '未开始', '未开始', '2019-11-01 00:00:00', '2019-11-30 00:00:00', '2019-10-01 00:00:00', '2019-10-31 00:00:00', 0, 0);
 
 -- ----------------------------
@@ -433,7 +438,7 @@ CREATE TABLE `role_stu`  (
   INDEX `stu_id`(`stu_id`) USING BTREE,
   CONSTRAINT `role_stu_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `role_stu_ibfk_3` FOREIGN KEY (`stu_id`) REFERENCES `student` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of role_stu
@@ -639,7 +644,7 @@ CREATE TABLE `type_cost`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for type_join
@@ -649,7 +654,7 @@ CREATE TABLE `type_join`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of type_join
@@ -665,7 +670,7 @@ CREATE TABLE `type_price`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of type_price
