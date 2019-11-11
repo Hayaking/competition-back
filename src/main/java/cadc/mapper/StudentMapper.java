@@ -17,5 +17,4 @@ public interface StudentMapper extends BaseMapper<Student> {
 
     @Select("select id,account,stu_name from student where id = #{id}")
     Student getStudentById(int id);
-
 }
