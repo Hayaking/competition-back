@@ -6,15 +6,18 @@ import cadc.service.JoinService;
 import cadc.util.ExcelUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+
+import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS;
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 
 /**
  * @author haya
@@ -73,30 +76,26 @@ public class DownLoadController {
         return MessageFactory.message( true );
     }
 
-    @RequestMapping(value = "/download/{competitionId}/{progressId}/enter/list", method = RequestMethod.POST)
-    public Object getEnterListExcel(HttpServletResponse response, @PathVariable int competitionId, @PathVariable int progressId) {
-        String fileName = joinService.generateEnterListExcel( competitionId );
+    @PostMapping(value = "/download/{competitionId}/{progressId}/enter/list")
+    public ResponseEntity<byte[]> getEnterListExcel(@PathVariable int competitionId, @PathVariable int progressId) throws IOException {
+        ResponseEntity<byte[]> response;
+        String fileName = joinService.generateEnterListExcel( competitionId, progressId );
         File file = ExcelUtils.getFile( fileName );
         if (file.exists()) {
-            response.setContentType( "application/json;charset=UTF-8" );
-            response.addHeader( "Content-Length", "" + file.length() );
-            response.setHeader( "Access-Control-Expose-Headers", "Content-Disposition" );
-            response.setHeader( "Content-Disposition", "attachment;filename=" + competitionId + ".xlsx" );
             try (
-                    OutputStream writer = response.getOutputStream();
                     FileInputStream fis = new FileInputStream( file );
                     FileChannel channel = fis.getChannel()
             ) {
-                ByteBuffer byteBuffer = ByteBuffer.allocate( 512 );
-                while (channel.read( byteBuffer ) != -1) {
-                    byteBuffer.flip();
-                    writer.write( byteBuffer.array() );
-                    byteBuffer.clear();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+                ByteBuffer body = ByteBuffer.allocate( fis.available() );
+                channel.read( body );
+                HttpHeaders headers = new HttpHeaders();
+                headers.add( CONTENT_DISPOSITION, "attachment;filename=" + fileName + ".xlsx" );
+                headers.add( ACCESS_CONTROL_ALLOW_HEADERS, CONTENT_DISPOSITION );
+                response = new ResponseEntity<>( body.array(), headers, HttpStatus.OK );
             }
+        } else {
+            response = new ResponseEntity<>( HttpStatus.NOT_FOUND );
         }
-        return MessageFactory.message( true );
+        return response;
     }
 }

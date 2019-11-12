@@ -22,4 +22,6 @@ public class Price extends Model<Price> {
     private Date priceTime;
     private String priceState;
     private int joinId;
+    private int joinInProgressId;
+    private int state;
 }

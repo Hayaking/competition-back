@@ -14,20 +14,22 @@ public interface JoinMapper extends BaseMapper<Join> {
 
     String GET_LIST_STU_ACCOUNT = "SELECT `join`.id, works_id, competition_id, teacher_id1, teacher_id2 , apply_state, enter_state, join_state FROM student JOIN stu_in_group ON stu_in_group.stu_id = student.id JOIN stu_group ON stu_group.id = stu_in_group.group_id JOIN `join` ON `join`.group_id = stu_group.id AND `join`.join_type_id = 1 WHERE student.id = #{id} UNION SELECT `join`.id, works_id, competition_id, teacher_id1, teacher_id2 , apply_state, enter_state, join_state FROM student JOIN `join` ON `join`.creator_id = student.id AND `join`.join_type_id = 2 WHERE student.id = #{id}";
 
+    @Select(value = "select * from `join` where id =#{id}")
+    Join getById(int id);
+
     @Results({
             @Result(column = "id", property = "id"),
             @Result(column = "works_id", property = "works",
                     one = @One(select = "cadc.mapper.WorksMapper.getById")),
+            @Result(column = "competition_id", property = "competitionId"),
             @Result(column = "competition_id", property = "competition",
-                    one = @One(select = "cadc.mapper.CompetitionMapper.getWithProgressListById")),
+                    one = @One(select = "cadc.mapper.CompetitionMapper.getById")),
             @Result(column = "teacher_id1", property = "teacher1",
                     one = @One(select = "cadc.mapper.TeacherMapper.getById")),
             @Result(column = "teacher_id2", property = "teacher2",
                     one = @One(select = "cadc.mapper.TeacherMapper.getById")),
             @Result(column = "apply_state", property = "applyState"),
-            @Result(column = "apply_state2", property = "applyState2"),
-            @Result(column = "enter_state", property = "enterState"),
-            @Result(column = "join_state", property = "joinState"),
+            @Result(column = "apply_state2", property = "applyState2")
     })
     @Select(GET_LIST_STU_ACCOUNT)
     List<Join> getJoinListByStudentId(Page<Join> page, int id);
@@ -37,22 +39,24 @@ public interface JoinMapper extends BaseMapper<Join> {
     List<Join> getListByCompetitionId(Page<Join> page, @Param("id") int id);
 
     @Results(id = "withWorksAndCompetition",
-            value = {
-                    @Result(column = "id", property = "id"),
-                    @Result(column = "works_id", property = "works",
-                            one = @One(select = "cadc.mapper.WorksMapper.getById")),
-                    @Result(column = "competition_id", property = "competition",
-                            one = @One(select = "cadc.mapper.CompetitionMapper.getById")),
-                    @Result(column = "teacher_id1", property = "teacherId1"),
-                    @Result(column = "teacher_id2", property = "teacherId2"),
-                    @Result(column = "apply_state", property = "applyState"),
-                    @Result(column = "enter_state", property = "enterState"),
-                    @Result(column = "join_state", property = "joinState"),
-                    @Result(column = "creator_id", property = "creatorId"),
-                    @Result(column = "creator_id", property = "creator", one = @One(select = "cadc.mapper.StudentMapper.getStudentById"))
-            })
+        value = {
+                @Result(column = "id", property = "id"),
+                @Result(column = "works_id", property = "works",
+                        one = @One(select = "cadc.mapper.WorksMapper.getById")),
+                @Result(column = "competition_id", property = "competition",
+                        one = @One(select = "cadc.mapper.CompetitionMapper.getById")),
+                @Result(column = "teacher_id1", property = "teacherId1"),
+                @Result(column = "teacher_id2", property = "teacherId2"),
+                @Result(column = "apply_state", property = "applyState"),
+                @Result(column = "creator_id", property = "creatorId"),
+                @Result(column = "creator_id", property = "creator", one = @One(select = "cadc.mapper.StudentMapper.getStudentById"))
+        })
     @Select("select * from `join` where competition_id = #{id}")
     List<Join> getListByCompetitionId(@Param("id") int id);
+
+    @ResultMap( value = "withWorksAndCompetition")
+    @Select("SELECT * FROM `join` JOIN join_in_progress ON join_in_progress.progress_id = #{progressId} WHERE competition_id = #{competitionId}")
+    List<Join> getListByCompetitionIdProgressId(@Param("competitionId") int competitionId, @Param( "progressId" ) int progressId);
 
     @ResultMap(value = {"withWorksAndCompetition"})
     @Select("SELECT * FROM `join` WHERE teacher_id1 = #{id} or teacher_id2 = #{id}")
@@ -79,14 +83,11 @@ public interface JoinMapper extends BaseMapper<Join> {
                     @Result(column = "teacher_id1", property = "teacherId1"),
                     @Result(column = "teacher_id2", property = "teacherId2"),
                     @Result(column = "apply_state", property = "applyState"),
-                    @Result(column = "enter_state", property = "enterState"),
-                    @Result(column = "join_state", property = "joinState"),
             })
     @Select("select * from `join` where group_id = #{groupId}")
     List<Join> getSimpleListByGroupId(@Param("groupId") int groupId);
 
     @Results({
-            @Result(column = "id", property = "id"),
             @Result(column = "id", property = "id"),
             @Result(column = "{joinId = id, progressId = progressId}", property = "inProgress",
                     one = @One(select = "cadc.mapper.JoinInProgressMapper.getByJoinIdProgressId")),
@@ -97,8 +98,6 @@ public interface JoinMapper extends BaseMapper<Join> {
             @Result(column = "teacher_id1", property = "teacherId1"),
             @Result(column = "teacher_id2", property = "teacherId2"),
             @Result(column = "apply_state", property = "applyState"),
-            @Result(column = "enter_state", property = "enterState"),
-            @Result(column = "join_state", property = "joinState"),
             @Result(column = "creator_id", property = "creatorId"),
             @Result(column = "creator_id", property = "creator", one = @One(select = "cadc.mapper.StudentMapper.getStudentById"))
     })
@@ -106,4 +105,19 @@ public interface JoinMapper extends BaseMapper<Join> {
     List<Join> getEnterList(Page<Join> page,
                             @Param( "competitionId" ) int competitionId,
                             @Param( "progressId" ) int progressId);
+
+
+    @Results({
+            @Result(column = "id", property = "id"),
+            @Result(column = "works_id", property = "works",
+                    one = @One(select = "cadc.mapper.WorksMapper.getById")),
+            @Result(column = "teacher_id1", property = "teacherId1"),
+            @Result(column = "teacher_id2", property = "teacherId2"),
+            @Result(column = "apply_state", property = "applyState"),
+            @Result(column = "state", property = "state"),
+            @Result(column = "creator_id", property = "creatorId"),
+            @Result(column = "creator_id", property = "creator", one = @One(select = "cadc.mapper.StudentMapper.getStudentById"))
+    })
+    @Select("SELECT * FROM join_in_progress JOIN `join` ON `join`.id = join_in_progress.join_id WHERE join_in_progress.progress_id =#{progressId} AND join_in_progress.price_state = TRUE ")
+    List<Join> getListByProgressId(Page<Join> page, int progressId);
 }

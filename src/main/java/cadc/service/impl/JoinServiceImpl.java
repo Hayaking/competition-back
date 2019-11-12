@@ -5,6 +5,7 @@ import cadc.bean.JOIN_STATE;
 import cadc.bean.excel.EnterExcel;
 import cadc.bean.excel.EnterExcel2;
 import cadc.bean.excel.ExcelModel;
+import cadc.bean.holder.EnterHolder;
 import cadc.entity.*;
 import cadc.mapper.*;
 import cadc.service.JoinService;
@@ -16,6 +17,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.log4j.Log4j2;
+import org.apache.ibatis.annotations.ResultMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,8 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     @Resource
     private JoinMapper joinMapper;
     @Resource
+    private JoinInProgressMapper joinInProgressMapper;
+    @Resource
     private StudentMapper studentMapper;
     @Resource
     private WorksMapper worksMapper;
@@ -50,56 +54,119 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     private ProgressService progressService;
 
     @Override
-    public boolean createGroupJoin(Student student, StudentGroup group, List<String> list, Works works, Join join) {
-        if (group == null || works == null || list == null || join == null) {
-            throw new NullPointerException();
+    public List<Join> getByGroupId(int groupId) {
+        return joinMapper.getSimpleListByGroupId( groupId );
+    }
+
+    @Override
+    public Page<Join> getListByProgressId(Page<Join> page, int progressId) {
+        List<Join> list = joinMapper.getListByProgressId( page, progressId );
+        page.setRecords( list );
+        return page;
+    }
+
+    @Override
+    public boolean createJoin(Student student, EnterHolder enterHolder) {
+        int joinTypeId = enterHolder.getJoin().getJoinTypeId();
+        int competitionId = enterHolder.getJoin().getCompetitionId();
+        Competition competition = competitionMapper.selectById( competitionId );
+        Boolean isHaveWorks = competition.getIsHaveWorks();
+        if (joinTypeId == 1) {
+            // 个人赛
+            return createSingleJoin( student, isHaveWorks, enterHolder );
+        } else {
+            // 多人|小组赛
+            return createGroupJoin( student, isHaveWorks, enterHolder );
         }
+    }
+
+    private boolean createGroupJoin(Student student, Boolean isHaveWorks, EnterHolder enterHolder) {
+        StudentGroup group = enterHolder.getGroup();
         // 创建参赛小组
         group.setCreatorId( student.getId() );
         group.setCreateTime( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() ) );
         group.insert();
-        if (group.getId() == 0) {
-            throw new NullPointerException();
-        }
         // 将创建者 添加进群组
         new StudentInGroup( student.getId(), group.getId(), STATE_INVITE_SUCCESS.toString() ).insert();
         // 邀请组员
+        List<String> list = enterHolder.getList();
         for (String item : list) {
             QueryWrapper<Student> wrapper = new QueryWrapper<>();
             wrapper.eq( "account", item );
             Student stu = studentMapper.selectOne( wrapper );
             new StudentInGroup( stu.getId(), group.getId(), STATE_INVITING.toString() ).insert();
         }
-        // 创建作品
-        works.setStuGroupId( group.getId() );
-        works.setCreatorId( student.getId() );
-        works.insert();
         // 参赛
+        Join join = enterHolder.getJoin();
+        // 创建作品
+        if (isHaveWorks) {
+            Works works = enterHolder.getWorks();
+            works.setStuGroupId( group.getId() );
+            works.setCreatorId( student.getId() );
+            works.insert();
+            // 设置作品id
+            join.setWorksId( works.getId() );
+        } else {
+            join.setWorksId( null );
+        }
         // 设置小组id
         join.setGroupId( group.getId() );
-        // 设置作品id
-        join.setWorksId( works.getId() );
         // 设置指导老师申请状态
         join.setApplyState( STATE_APPLYING.toString() );
         join.setApplyState2( STATE_APPLYING.toString() );
-        // 设置参赛申请状态
-        join.setEnterState( ENTER_STATE.APPLYING.toString() );
-        join.setJoinState( JOIN_STATE.NO_START.toString() );
         join.setJoinTypeId( 1 );
         join.setCreatorId( student.getId() );
         join.setCreateTime( new Date() );
         join.insert();
-
         List<Progress> progressList = progressService.getByCompetitionId( join.getCompetitionId() );
         return new JoinInProgress() {{
             setJoinId( join.getId() );
             setProgressId( progressList.get( 0 ).getId() );
+            // 得奖状态
+            setPriceState( false );
+            // 审核比赛结果状态
+            setReviewState( false );
+            // 晋级状态
+            setPromotionState( false );
+            // 报名状态
+            setEnterState( false );
         }}.insert();
     }
 
-    @Override
-    public List<Join> getByGroupId(int groupId) {
-        return joinMapper.getSimpleListByGroupId( groupId );
+    private boolean createSingleJoin(Student student, Boolean isHaveWorks, EnterHolder enterHolder) {
+        Join join = enterHolder.getJoin();
+        if (isHaveWorks) {
+            Works works = enterHolder.getWorks();
+            works.setCreatorId( student.getId() );
+            works.insert();
+            join.setWorksId( works.getId() );
+        } else {
+            join.setWorksId( null );
+        }
+        join.setGroupId( null );
+        join.setJoinTypeId( 2 );
+        if (join.getTeacher1() != null) {
+            join.setApplyState( STATE_APPLYING.toString() );
+        }
+        if (join.getTeacher2() != null) {
+            join.setApplyState2(  STATE_APPLYING.toString() );
+        }
+        join.setCreatorId( student.getId() );
+        join.setCreateTime( new Date() );
+        join.insert();
+        List<Progress> progressList = progressService.getByCompetitionId( join.getCompetitionId() );
+        return new JoinInProgress() {{
+            setJoinId( join.getId() );
+            setProgressId( progressList.get( 0 ).getId() );
+            // 得奖状态
+            setPriceState( false );
+            // 审核比赛结果状态
+            setReviewState( false );
+            // 晋级状态
+            setPromotionState( false );
+            // 报名状态
+            setEnterState( false );
+        }}.insert();
     }
 
     @Override
@@ -200,7 +267,45 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         boolean isHaveWorks = competition.getIsHaveWorks();
         // 参赛类型
         int joinTypeId = competition.getJoinTypeId();
-        return null;
+        List<Join> joinList = joinMapper.getListByCompetitionIdProgressId( competitionId, progressId );
+        List<ExcelModel> data = new LinkedList<>();
+        if (joinTypeId == 1) {
+            //小组赛
+            joinList.spliterator().forEachRemaining( item -> {
+                StringBuilder members = new StringBuilder();
+                item.getWorks()
+                        .getStudentGroup()
+                        .getMembers()
+                        .spliterator()
+                        .forEachRemaining( member ->
+                                members.append( member.getStudent().getStuName() + "," )
+                        );
+                data.add( new EnterExcel(
+                        item.getId(),
+                        item.getWorks().getWorksName(),
+                        members.toString(),
+                        "" )
+                );
+            } );
+        }
+        else if (joinTypeId == 2) {
+            //单人赛
+            joinList.spliterator().forEachRemaining( item -> {
+                data.add( isHaveWorks
+                        ? EnterExcel.builder()
+                        .index( item.getId() )
+                        .worksName( item.getWorks().getWorksName() )
+                        .member( item.getCreator().getStuName() )
+                        .lead1( "" ).build()
+                        : EnterExcel2.builder()
+                        .index( item.getId() )
+                        .member( item.getCreator().getStuName() )
+                        .lead1( "" ).build() );
+            } );
+        }
+        String fileName = LocalDate.now().toString() + competitionId;
+        ExcelUtils.generateExcel( fileName, "", data, isHaveWorks ? EnterExcel.class : EnterExcel2.class );
+        return fileName;
     }
 
     @Override
@@ -211,18 +316,4 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         return joinMapper.update( join, wrapper ) > 0;
     }
 
-    @Override
-    public boolean createSingleJoin(Student student, Works works, Join join) {
-        works.setCreatorId( student.getId() );
-        works.insert();
-
-        join.setJoinTypeId( 2 );
-        join.setWorksId( works.getId() );
-        join.setApplyState( STATE_APPLYING.toString() );
-        join.setEnterState( ENTER_STATE.APPLYING.toString() );
-        join.setJoinState( JOIN_STATE.NO_START.toString() );
-        join.setCreatorId( student.getId() );
-        join.setCreateTime( new Date() );
-        return join.insert();
-    }
 }

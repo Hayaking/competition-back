@@ -19,5 +19,21 @@ public class JoinInProgress extends Model<JoinInProgress> {
     private int id;
     private int progressId;
     private int joinId;
-    private String state;
+
+//    private String state;
+//    private Boolean isPrice;
+
+    private Boolean promotionState;
+    private Boolean priceState;
+    private Boolean reviewState;
+    private Boolean enterState;
+    private Boolean joinState;
+
+    @TableField(exist = false)
+    private Progress progress;
+    @TableField(exist = false)
+    private Join join;
+    @TableField(exist = false)
+    private Price price;
+
 }

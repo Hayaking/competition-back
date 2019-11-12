@@ -38,23 +38,31 @@ public class EnterController {
 
     @GetMapping(value = "/enter/{competitionId}/{progressId}/{pageNum}/{pageSize}")
     public Object getEnterList(@PathVariable int competitionId, @PathVariable int progressId, @PathVariable int pageNum, @PathVariable int pageSize) {
-        IPage<Join> res = joinService.getEnterList( new Page<>( pageNum, pageSize ), competitionId, progressId );
+        Page<JoinInProgress> res = joinInProgressService.getEnterPage( new Page<>( pageNum, pageSize ), competitionId, progressId );
+//        IPage<Join> res = joinService.getEnterList( new Page<>( pageNum, pageSize ), competitionId, progressId );
         return MessageFactory.message( res );
     }
 
     /**
      * 审核join的enterState
      *
-     * @param joinId
+     * @param inProgressId
      * @param flag
      * @return
      */
-    @PostMapping(value = "/enter/{joinId}/{flag}")
-    public Object reviewEnter(@PathVariable int joinId, @PathVariable boolean flag) {
-        boolean res = joinService.setEnterState( flag, joinId );
+    @PostMapping(value = "/enter/{inProgressId}/{flag}")
+    public Object reviewEnter(@PathVariable int inProgressId, @PathVariable boolean flag) {
+        boolean res = joinInProgressService.setEnterState( inProgressId, flag );
+//        boolean res = joinService.setEnterState( flag, joinId );
         return MessageFactory.message( res );
     }
 
+    /**
+     * 审核晋级
+     * @param joinInProgressId
+     * @param flag
+     * @return
+     */
     @PostMapping(value = "/enter/promotion/{joinInProgressId}/{flag}")
     public Object promotion(@PathVariable Integer joinInProgressId, @PathVariable Boolean flag) {
         Boolean res = joinInProgressService.promotion( joinInProgressId, flag );

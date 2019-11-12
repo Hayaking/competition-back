@@ -19,17 +19,17 @@ import java.util.Date;
 public class Join extends Model<Join> {
     @TableId(type = IdType.AUTO)
     private int id;
-    private int worksId;
-    private int competitionId;
-    private int teacherId1;
-    private int teacherId2;
-    private int groupId;
+    private Integer worksId;
+    private Integer competitionId;
+    private Integer teacherId1;
+    private Integer teacherId2;
+    private Integer groupId;
     private String applyState;
     private String applyState2;
-    private String enterState;
-    private String joinState;
-    private int joinTypeId;
-    private int creatorId;
+//    private String enterState;
+//    private String joinState;
+    private Integer joinTypeId;
+    private Integer creatorId;
     private Date createTime;
 
     @TableField(exist = false)
@@ -44,5 +44,7 @@ public class Join extends Model<Join> {
     private Teacher teacher2;
     @TableField(exist = false)
     private JoinInProgress inProgress;
+    @TableField(exist = false)
+    private String state;
 
 }

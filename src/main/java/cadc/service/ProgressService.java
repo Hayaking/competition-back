@@ -23,4 +23,6 @@ public interface ProgressService extends IService<Progress> {
     boolean setStartState(int id, PRROGRESS_STATE state);
 
     List<Progress> getByCompetitionId(int competitionId);
+
+    List<Progress> getListByJoinId(int joinId);
 }

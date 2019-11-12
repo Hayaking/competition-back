@@ -1,5 +1,6 @@
 package cadc.service;
 
+import cadc.bean.holder.EnterHolder;
 import cadc.entity.Join;
 import cadc.entity.Student;
 import cadc.entity.StudentGroup;
@@ -58,26 +59,15 @@ public interface JoinService extends IService<Join> {
 
     boolean setEnterState(Boolean flag, int joinId);
 
-    /**
-     * 创建个人赛
-     * @param student
-     * @param works
-     * @param join
-     * @return
-     */
-    boolean createSingleJoin(Student student, Works works, Join join);
-
-    /**
-     * 创建小组赛
-     *
-     * @param student
-     * @param group
-     * @param list
-     * @param works
-     * @param join
-     * @return
-     */
-    boolean createGroupJoin(Student student, StudentGroup group, List<String> list, Works works, Join join);
-
     List<Join> getByGroupId(int groupId);
+
+    Page<Join> getListByProgressId(Page<Join> page, int progressId);
+
+    /**
+     * 学生创建参赛
+     * @param student
+     * @param enterHolder
+     * @return
+     */
+    boolean createJoin(Student student, EnterHolder enterHolder);
 }

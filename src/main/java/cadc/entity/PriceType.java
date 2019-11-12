@@ -8,29 +8,18 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.Date;
+import java.io.Serializable;
 
 /**
  * @author haya
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName("progress")
-public class Progress extends Model<Progress> {
+@TableName("type_price")
+public class PriceType extends Model<PriceType> implements Serializable {
+    private static final long serialVersionUID = 1L;
     @TableId(type = IdType.AUTO)
     private int id;
-    private int competitionId;
-    private int typeId;
-    private String startState;
-    private String enterState;
-    private Date startTime;
-    private Date endTime;
-    private Date enterStartTime;
-    private Date enterEndTime;
-    private Boolean isScanStartState;
-    private Boolean isScanEnterState;
-
-    @TableField(exist = false)
-    private Budget budget;
-
+    @TableField("type_name")
+    private String typeName;
 }

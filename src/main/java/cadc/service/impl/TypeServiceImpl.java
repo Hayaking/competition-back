@@ -2,6 +2,7 @@ package cadc.service.impl;
 
 import cadc.entity.CompetitionType;
 import cadc.entity.JoinType;
+import cadc.entity.PriceType;
 import cadc.mapper.CompetitionTypeMapper;
 import cadc.service.TypeService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -29,5 +30,10 @@ public class TypeServiceImpl implements TypeService {
     @Override
     public List<JoinType> findJoinType() {
         return new JoinType().selectList( new QueryWrapper<>() );
+    }
+
+    @Override
+    public List<PriceType> findPriceType() {
+        return new PriceType().selectList( new QueryWrapper<>() );
     }
 }

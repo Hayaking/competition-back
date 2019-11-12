@@ -9,6 +9,7 @@ import lombok.Data;
  */
 @Data
 public class ResultHolder {
+    private Boolean isWinThePrice;
     private Price price;
     private Certificate certificate;
 }

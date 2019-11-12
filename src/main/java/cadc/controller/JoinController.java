@@ -2,8 +2,12 @@ package cadc.controller;
 
 import cadc.bean.holder.EnterHolder;
 import cadc.bean.message.MessageFactory;
+import cadc.entity.Competition;
 import cadc.entity.Join;
+import cadc.entity.JoinInProgress;
 import cadc.entity.Student;
+import cadc.service.CompetitionService;
+import cadc.service.JoinInProgressService;
 import cadc.service.JoinService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,25 +28,20 @@ import static cadc.bean.message.STATE.SUCCESS;
 public class JoinController {
     @Autowired
     private JoinService joinService;
+    @Autowired
+    private JoinInProgressService joinInProgressService;
 
     /**
-     * 创建参赛
+     * 学生创建参赛
+     *
      * @param enterHolder
      * @return
      */
     @RequestMapping(value = "/join", method = RequestMethod.POST)
     public Object addJoin(@RequestBody EnterHolder enterHolder) {
         Student student = (Student) SecurityUtils.getSubject().getPrincipal();
-        int joinTypeId = enterHolder.getJoin().getJoinTypeId();
-        boolean flag = false;
-        // joinTypeId == 1 是小组赛
-        if (joinTypeId == 1) {
-            flag = joinService.createGroupJoin( student, enterHolder.getGroup(), enterHolder.getList(), enterHolder.getWorks(), enterHolder.getJoin() );
-        } else {
-            // joinTypeId == 2 是个人赛
-            flag = joinService.createSingleJoin(student, enterHolder.getWorks(), enterHolder.getJoin());
-        }
-        return MessageFactory.message( flag);
+        boolean flag = joinService.createJoin(student, enterHolder );
+        return MessageFactory.message( flag );
     }
 
     @RequestMapping(value = "/join/{id}", method = RequestMethod.DELETE)
@@ -51,6 +50,13 @@ public class JoinController {
         return MessageFactory.message( flag );
     }
 
+    /**
+     * 学生获取自己的参赛列表
+     *
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @RequestMapping(value = "/join/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object getJoinList(@PathVariable int pageNum, @PathVariable int pageSize) {
         Student stu = (Student) SecurityUtils.getSubject().getPrincipal();
@@ -63,5 +69,16 @@ public class JoinController {
     public Object getSimpleJoinListByGroupId(@PathVariable int groupId) {
         List<Join> list = joinService.getByGroupId( groupId );
         return MessageFactory.message( list );
+    }
+
+    /**
+     * 根据progressId获取参赛列表 以及比赛结果
+     * @param progressId
+     * @return
+     */
+    @GetMapping(value = "/join/progress/{progressId}/{pageNum}/{pageSize}")
+    public Object getJoinListByProgressId(@PathVariable int progressId, @PathVariable int pageNum, @PathVariable int pageSize) {
+        Page<JoinInProgress> res = joinInProgressService.getResultListByProgressId( new Page<>( pageNum, pageSize ), progressId );
+        return MessageFactory.message( res );
     }
 }

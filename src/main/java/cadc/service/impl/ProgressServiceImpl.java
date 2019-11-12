@@ -76,4 +76,9 @@ public class ProgressServiceImpl extends ServiceImpl<ProgressMapper, Progress> i
         wrapper.eq( "competition_id", competitionId );
         return progressMapper.selectList( wrapper );
     }
+
+    @Override
+    public List<Progress> getListByJoinId(int joinId) {
+        return progressMapper.getListByJoinId( joinId );
+    }
 }

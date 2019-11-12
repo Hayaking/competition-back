@@ -1,8 +1,10 @@
 package cadc.controller;
 
 import cadc.bean.message.MessageFactory;
+import cadc.entity.JoinInProgress;
 import cadc.entity.Process;
 import cadc.entity.Progress;
+import cadc.service.JoinInProgressService;
 import cadc.service.ProcessService;
 import cadc.service.ProgressService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -20,8 +22,10 @@ import java.util.List;
 public class ProgressController {
     @Autowired
     private ProgressService progressService;
+    @Autowired
+    private JoinInProgressService joinInProgressService;
 
-    @RequestMapping(value = "/progress/competition/{competitionId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/progress/list/competition/{competitionId}", method = RequestMethod.GET)
     public Object create( @PathVariable int competitionId) {
         List<Progress> res = progressService.getByCompetitionId( competitionId );
         return MessageFactory.message( res );
@@ -44,5 +48,17 @@ public class ProgressController {
         }
         boolean flag = obj.insertOrUpdate();
         return MessageFactory.message( flag );
+    }
+
+    /**
+     * 获取join 拥有的progress
+     * @param joinId
+     * @return
+     */
+    @GetMapping(value = "/progress/list/join/{joinId}")
+    public Object getJoinProgress(@PathVariable int joinId) {
+        List<JoinInProgress> list = joinInProgressService.getListByJoinId( joinId );
+//        List<Progress> list = progressService.getListByJoinId( joinId );
+        return MessageFactory.message( list );
     }
 }

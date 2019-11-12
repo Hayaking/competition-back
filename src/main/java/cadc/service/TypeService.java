@@ -2,6 +2,7 @@ package cadc.service;
 
 import cadc.entity.CompetitionType;
 import cadc.entity.JoinType;
+import cadc.entity.PriceType;
 
 import java.util.List;
 
@@ -17,4 +18,6 @@ public interface TypeService {
     List<CompetitionType> findCompetitionType();
 
     List<JoinType> findJoinType();
+
+    List<PriceType> findPriceType();
 }

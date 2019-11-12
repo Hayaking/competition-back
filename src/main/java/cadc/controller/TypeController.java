@@ -33,6 +33,7 @@ public class TypeController {
             case "cost":
                 break;
             case "price":
+                res = typeService.findPriceType();
                 break;
             case "join":
                 res = typeService.findJoinType();
