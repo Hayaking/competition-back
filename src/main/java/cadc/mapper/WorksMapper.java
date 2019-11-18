@@ -37,4 +37,9 @@ public interface WorksMapper extends BaseMapper<Works> {
     })
     @Select("select * from works where stu_group_id = #{groupId}")
     List<Works> getSimpleListByGroupId(@Param( "groupId" ) int groupId);
+
+
+
+
+
 }
