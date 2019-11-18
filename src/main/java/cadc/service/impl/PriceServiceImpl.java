@@ -7,6 +7,7 @@ import cadc.entity.Price;
 import cadc.mapper.JoinInProgressMapper;
 import cadc.mapper.PriceMapper;
 import cadc.service.PriceService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,5 +42,12 @@ public class PriceServiceImpl extends ServiceImpl<PriceMapper, Price> implements
             certificate.insert();
         }
         return jip.insertOrUpdate();
+    }
+
+    @Override
+    public Price getByInProgressId(int joinInProgressId) {
+        QueryWrapper<Price> wrapper = new QueryWrapper<>();
+        wrapper.eq( "join_in_progress_id", joinInProgressId );
+        return priceMapper.selectOne( wrapper );
     }
 }

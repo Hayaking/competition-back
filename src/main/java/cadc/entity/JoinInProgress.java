@@ -28,6 +28,7 @@ public class JoinInProgress extends Model<JoinInProgress> {
     private Boolean reviewState;
     private Boolean enterState;
     private Boolean joinState;
+    private Boolean editState;
 
     @TableField(exist = false)
     private Progress progress;

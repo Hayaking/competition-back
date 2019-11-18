@@ -2,11 +2,9 @@ package cadc.controller;
 
 import cadc.bean.holder.EnterHolder;
 import cadc.bean.message.MessageFactory;
-import cadc.entity.Competition;
 import cadc.entity.Join;
 import cadc.entity.JoinInProgress;
 import cadc.entity.Student;
-import cadc.service.CompetitionService;
 import cadc.service.JoinInProgressService;
 import cadc.service.JoinService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -40,7 +38,7 @@ public class JoinController {
     @RequestMapping(value = "/join", method = RequestMethod.POST)
     public Object addJoin(@RequestBody EnterHolder enterHolder) {
         Student student = (Student) SecurityUtils.getSubject().getPrincipal();
-        boolean flag = joinService.createJoin(student, enterHolder );
+        boolean flag = joinService.createJoin( student, enterHolder );
         return MessageFactory.message( flag );
     }
 
@@ -73,6 +71,7 @@ public class JoinController {
 
     /**
      * 根据progressId获取参赛列表 以及比赛结果
+     *
      * @param progressId
      * @return
      */
@@ -80,5 +79,24 @@ public class JoinController {
     public Object getJoinListByProgressId(@PathVariable int progressId, @PathVariable int pageNum, @PathVariable int pageSize) {
         Page<JoinInProgress> res = joinInProgressService.getResultListByProgressId( new Page<>( pageNum, pageSize ), progressId );
         return MessageFactory.message( res );
+    }
+
+    /**
+     * 审核学生提交的比赛结果
+     *
+     * @param reviewState
+     * @param id
+     * @param editState
+     * @return
+     */
+    @PostMapping(value = "/join/progress/review/{id}/{reviewState}/{editState}")
+    public Object reviewJoinInProgress(@PathVariable Boolean reviewState, @PathVariable int id, @PathVariable Boolean editState) {
+        JoinInProgress jip = joinInProgressService.getById( id );
+        // 设置审核状态
+        jip.setReviewState( reviewState );
+        // 设置可编辑状态
+        jip.setEditState( editState );
+        boolean flag = jip.insertOrUpdate();
+        return MessageFactory.message( flag );
     }
 }

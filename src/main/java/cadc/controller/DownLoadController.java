@@ -30,6 +30,14 @@ public class DownLoadController {
     @Autowired
     private JoinService joinService;
 
+    /**
+     * 下载竞赛申请表
+     *
+     * @param response
+     * @param competitionId
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/download/{competitionId}", method = RequestMethod.POST)
     public Object getCompetitionWord(HttpServletResponse response, @PathVariable int competitionId) throws IOException {
         FileInputStream in = competitionService.getWord( competitionId );
@@ -49,33 +57,29 @@ public class DownLoadController {
         return MessageFactory.message( true );
     }
 
-    @RequestMapping(value = "/download/{competitionId}/enter/list", method = RequestMethod.POST)
-    public Object getEnterListExcel(HttpServletResponse response, @PathVariable int competitionId) {
-        String fileName = joinService.generateEnterListExcel( competitionId );
-        File file = ExcelUtils.getFile( fileName );
-        if (file.exists()) {
-            response.setContentType( "application/json;charset=UTF-8" );
-            response.addHeader( "Content-Length", "" + file.length() );
-            response.setHeader( "Access-Control-Expose-Headers", "Content-Disposition" );
-            response.setHeader( "Content-Disposition", "attachment;filename=" + competitionId + ".xlsx" );
-            try (
-                    OutputStream writer = response.getOutputStream();
-                    FileInputStream fis = new FileInputStream( file );
-                    FileChannel channel = fis.getChannel()
-            ) {
-                ByteBuffer byteBuffer = ByteBuffer.allocate( 512 );
-                while (channel.read( byteBuffer ) != -1) {
-                    byteBuffer.flip();
-                    writer.write( byteBuffer.array() );
-                    byteBuffer.clear();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    @PostMapping(value = "/download/budget/{competitionId}")
+    public ResponseEntity<byte[]> getBudgetWord(@PathVariable int competitionId) throws IOException {
+        ResponseEntity<byte[]> response;
+        try (
+                FileInputStream fis = competitionService.getBudgetWord( competitionId );
+                FileChannel channel = fis.getChannel()
+        ) {
+            ByteBuffer body = ByteBuffer.allocate( fis.available() );
+            channel.read( body );
+            HttpHeaders headers = new HttpHeaders();
+            headers.add( CONTENT_DISPOSITION, "attachment;filename=" + competitionId + ".doc" );
+            headers.add( ACCESS_CONTROL_ALLOW_HEADERS, CONTENT_DISPOSITION );
+            response = new ResponseEntity<>( body.array(), headers, HttpStatus.OK );
         }
-        return MessageFactory.message( true );
+        return response;
     }
 
+    /**
+     * @param competitionId
+     * @param progressId
+     * @return
+     * @throws IOException
+     */
     @PostMapping(value = "/download/{competitionId}/{progressId}/enter/list")
     public ResponseEntity<byte[]> getEnterListExcel(@PathVariable int competitionId, @PathVariable int progressId) throws IOException {
         ResponseEntity<byte[]> response;

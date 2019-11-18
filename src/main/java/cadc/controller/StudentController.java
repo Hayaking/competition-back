@@ -8,9 +8,12 @@ import cadc.service.StudentService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.log4j.Log4j2;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 import static cadc.bean.message.STATE.FAILED;
@@ -37,6 +40,22 @@ public class StudentController {
     public Object update(@RequestBody Student student) {
         boolean flag = studentService.saveOrUpdate( student );
         return MessageFactory.message( flag ? SUCCESS : FAILED );
+    }
+
+    /**
+     * 学生更新自己的基本信息
+     * @param student
+     * @return
+     */
+    @RequestMapping(value = "/student/info", method = RequestMethod.POST)
+    public Object updateInfo(@RequestBody Student student) {
+        Object principal = SecurityUtils.getSubject().getPrincipal();
+        Student stu = (Student) principal;
+        stu.setStuName( student.getStuName() );
+        stu.setStuClass( student.getStuClass() );
+        stu.setStuSex( student.getStuSex() );
+        boolean flag = stu.insertOrUpdate();
+        return MessageFactory.message( flag );
     }
 
     /**
@@ -112,4 +131,6 @@ public class StudentController {
         IPage<Student> res = studentService.find( new Page<>( pageNum, pageSize ), key );
         return MessageFactory.message( SUCCESS, res );
     }
+
+
 }

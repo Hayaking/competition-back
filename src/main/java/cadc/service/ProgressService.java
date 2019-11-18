@@ -2,6 +2,8 @@ package cadc.service;
 
 import cadc.bean.PRROGRESS_STATE;
 import cadc.entity.Progress;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -25,4 +27,6 @@ public interface ProgressService extends IService<Progress> {
     List<Progress> getByCompetitionId(int competitionId);
 
     List<Progress> getListByJoinId(int joinId);
+
+    IPage<Progress> getNeedReviewList(Page<Progress> page);
 }

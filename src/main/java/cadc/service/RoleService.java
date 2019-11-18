@@ -2,6 +2,7 @@ package cadc.service;
 
 import cadc.entity.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.shiro.subject.Subject;
 
 import java.util.List;
 
@@ -54,4 +55,6 @@ public interface RoleService extends IService<Role> {
      * @return
      */
     boolean deleteTeacher(int id, int roleId);
+
+    List<Role> getSelfRoleList(Subject subject);
 }

@@ -9,4 +9,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface PriceService extends IService<Price> {
     boolean create(boolean isWinPrice, Price price, Certificate certificate);
+
+    Price getByInProgressId(int joinInProgressId);
 }

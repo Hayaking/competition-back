@@ -1,8 +1,6 @@
 package cadc.service.impl;
 
-import cadc.entity.Role;
-import cadc.entity.RoleStudent;
-import cadc.entity.RoleTeacher;
+import cadc.entity.*;
 import cadc.mapper.RoleMapper;
 import cadc.mapper.RoleStudentMapper;
 import cadc.mapper.RoleTeacherMapper;
@@ -10,6 +8,7 @@ import cadc.service.RoleService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,5 +63,16 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         UpdateWrapper<RoleTeacher> wrapper = new UpdateWrapper<>();
         wrapper.eq( "teacher_id", id ).eq( "role_id", roleId );
         return roleTeacherMapper.delete( wrapper ) > 0;
+    }
+
+    @Override
+    public List<Role> getSelfRoleList(Subject subject) {
+        List<Role> list = null;
+        if (subject instanceof Student) {
+            list = findStudent( ((Student) subject).getId() );
+        } else if (subject instanceof Teacher){
+            list = findTeacher( ((Teacher) subject).getId() );
+        }
+        return list;
     }
 }

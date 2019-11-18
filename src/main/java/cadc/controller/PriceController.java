@@ -7,10 +7,7 @@ import cadc.entity.Price;
 import cadc.service.PriceService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static cadc.bean.message.STATE.STATE_APPLYING;
 
@@ -35,5 +32,11 @@ public class PriceController {
         Certificate certificate = resultHolder.getCertificate();
         priceService.create( isWinPrice, price, certificate );
         return MessageFactory.message( true );
+    }
+
+    @GetMapping(value = "/price/joinInProgress/{joinInProgressId}")
+    public Object getByJoinInProgress(@PathVariable int joinInProgressId) {
+        Price price = priceService.getByInProgressId( joinInProgressId );
+        return MessageFactory.message( price );
     }
 }

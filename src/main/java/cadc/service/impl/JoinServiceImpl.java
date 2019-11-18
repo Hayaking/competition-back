@@ -70,7 +70,7 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         int joinTypeId = enterHolder.getJoin().getJoinTypeId();
         int competitionId = enterHolder.getJoin().getCompetitionId();
         Competition competition = competitionMapper.selectById( competitionId );
-        Boolean isHaveWorks = competition.getIsHaveWorks();
+        Boolean isHaveWorks = competition.getIsNeedWorks();
         if (joinTypeId == 1) {
             // 个人赛
             return createSingleJoin( student, isHaveWorks, enterHolder );
@@ -223,53 +223,18 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     }
 
     @Override
-    public String generateEnterListExcel(int competitionId) {
-        Competition competition = competitionMapper.getById( competitionId );
-        // 竞赛是需要参赛作品
-        boolean isHaveWorks = competition.getIsHaveWorks();
-        // 参赛类型
-        int joinTypeId = competition.getJoinTypeId();
-        List<Join> joinList = joinMapper.getListByCompetitionId( competitionId );
-        List<ExcelModel> data = new LinkedList<>();
-        if (joinTypeId == 1) {
-            //小组赛
-            joinList.spliterator().forEachRemaining( item -> {
-                StringBuilder members = new StringBuilder();
-                item.getWorks().getStudentGroup().getMembers().spliterator().forEachRemaining( member -> {
-                    members.append( member.getStudent().getStuName() + "," );
-                } );
-                data.add( new EnterExcel( item.getId(), item.getWorks().getWorksName(), members.toString(), "" ) );
-            } );
-        } else if (joinTypeId == 2) {
-            //单人赛
-            joinList.spliterator().forEachRemaining( item -> {
-                data.add( isHaveWorks
-                        ? EnterExcel.builder()
-                            .index( item.getId() )
-                            .worksName( item.getWorks().getWorksName() )
-                            .member( item.getCreator().getStuName() )
-                            .lead1( "" ).build()
-                        : EnterExcel2.builder()
-                            .index( item.getId() )
-                            .member( item.getCreator().getStuName() )
-                            .lead1( "" ).build() );
-            } );
-        }
-        String fileName = LocalDate.now().toString() + competitionId;
-        ExcelUtils.generateExcel( fileName, "", data, isHaveWorks ? EnterExcel.class : EnterExcel2.class );
-        return fileName;
-    }
-
-    @Override
     public String generateEnterListExcel(int competitionId, int progressId) {
         Competition competition = competitionMapper.getById( competitionId );
         // 竞赛是需要参赛作品
-        boolean isHaveWorks = competition.getIsHaveWorks();
+        boolean isHaveWorks = competition.getIsNeedWorks();
+
         // 参赛类型
-        int joinTypeId = competition.getJoinTypeId();
+        Progress progress = progressService.getById( progressId );
+        Boolean isSingle = progress.getIsSingle();
+//        int joinTypeId = competition.getJoinTypeId();
         List<Join> joinList = joinMapper.getListByCompetitionIdProgressId( competitionId, progressId );
         List<ExcelModel> data = new LinkedList<>();
-        if (joinTypeId == 1) {
+        if (!isSingle) {
             //小组赛
             joinList.spliterator().forEachRemaining( item -> {
                 StringBuilder members = new StringBuilder();
@@ -288,7 +253,7 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
                 );
             } );
         }
-        else if (joinTypeId == 2) {
+        else {
             //单人赛
             joinList.spliterator().forEachRemaining( item -> {
                 data.add( isHaveWorks

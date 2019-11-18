@@ -21,20 +21,25 @@ public class Competition extends Model<Competition> {
     @TableId(type = IdType.AUTO)
     private int id;
     private String name;
-    private String groupNum;
-    private int stuNum;
+    private String exGroupNum;
+    private int exStuNum;
     private String exRes;
-    private String place;
-    private String org;
-    private String coOrg;
-    private String state;
-    private String personInCharge;
-    private String creator;
+    private String prePrice;
+    private int state;
     private String process;
     private String intro;
+    private String exCondition;
+    private int personInChargeId;
+    private int creatorId;
     private int teacherGroupId;
-    private int joinTypeId;
-    private Boolean isHaveWorks;
+    private Boolean isNeedWorks;
+    private Date createTime;
+
     @TableField(exist = false)
     private List<Progress> progressList;
+    @TableField(exist = false)
+    private Teacher personInCharge;
+    @TableField(exist = false)
+    private Teacher creator;
+
 }

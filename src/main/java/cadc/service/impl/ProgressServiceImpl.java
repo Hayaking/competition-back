@@ -5,6 +5,8 @@ import cadc.entity.Progress;
 import cadc.mapper.ProgressMapper;
 import cadc.service.ProgressService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,5 +82,12 @@ public class ProgressServiceImpl extends ServiceImpl<ProgressMapper, Progress> i
     @Override
     public List<Progress> getListByJoinId(int joinId) {
         return progressMapper.getListByJoinId( joinId );
+    }
+
+    @Override
+    public IPage<Progress> getNeedReviewList(Page<Progress> page) {
+        List<Progress> list = progressMapper.getNeedReviewList( page );
+        page.setRecords( list );
+        return page;
     }
 }

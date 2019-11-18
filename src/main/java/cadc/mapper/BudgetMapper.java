@@ -11,4 +11,7 @@ import org.apache.ibatis.annotations.Select;
 public interface BudgetMapper extends BaseMapper<Budget> {
     @Select( "select * from budget where id = #{id}" )
     Budget getById(int id);
+
+    @Select( "select * from budget where progress_id = #{id}" )
+    Budget getByProgressId(int id);
 }

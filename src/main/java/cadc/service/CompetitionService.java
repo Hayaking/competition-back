@@ -52,11 +52,9 @@ public interface CompetitionService extends IService<Competition> {
 
     boolean setEnterState(int id, String state);
 
-    String generateWord(int id);
-
-    String generateWord(Competition competition);
-
     FileInputStream getWord(int competitionId);
+
+    FileInputStream getBudgetWord(int competitionId);
 
     List<Competition> findByGroupId(int groupId);
 }

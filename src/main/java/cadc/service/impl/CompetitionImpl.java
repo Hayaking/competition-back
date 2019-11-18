@@ -3,7 +3,6 @@ package cadc.service.impl;
 import cadc.entity.*;
 import cadc.mapper.CompetitionMapper;
 import cadc.mapper.JoinMapper;
-import cadc.mapper.ProcessMapper;
 import cadc.mapper.ProgressMapper;
 import cadc.service.CompetitionService;
 import cadc.util.WordUtils;
@@ -12,16 +11,18 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import freemarker.template.TemplateException;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Resource;
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static cadc.bean.message.STATE.*;
@@ -32,7 +33,7 @@ import static cadc.bean.message.STATE.*;
 @Service
 @Log4j2
 @Transactional(rollbackFor = Exception.class)
-public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> implements CompetitionService {
+public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition> implements CompetitionService {
     @Resource
     private CompetitionMapper competitionMapper;
     @Resource
@@ -42,8 +43,9 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
 
     @Override
     public boolean createCompetition(Teacher teacher, Competition competition, List<Progress> progresses, List<Budget> budgets) {
-        competition.setState( STATE_APPLYING.toString() );
-        competition.setCreator( teacher.getAccount() );
+        competition.setState( 0 );
+        competition.setCreatorId( teacher.getId() );
+        competition.setCreateTime( new Date() );
         competitionMapper.insert( competition );
         AtomicInteger index = new AtomicInteger();
         progresses.forEach( item -> {
@@ -57,7 +59,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
             budget.setProgressId( item.getId() );
             budget.insert();
         } );
-        this.generateWord( competition );
+        this.getWord( competition.getId() );
         return true;
     }
 
@@ -93,18 +95,18 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     @Override
     public IPage<Competition> find(IPage<Competition> page, String key) {
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
-        wrapper.like("id", key).or()
-                .like("name", key);
-        return competitionMapper.selectPage(page, wrapper);
+        wrapper.like( "id", key ).or()
+                .like( "name", key );
+        return competitionMapper.selectPage( page, wrapper );
     }
 
     @Override
     public IPage<Competition> findPassByKey(IPage<Competition> page, String key) {
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
-        wrapper.eq("state", STATE_AGREE.toString())
-                .like("id", key).or()
-                .like("name", key);
-        return competitionMapper.selectPage(page, wrapper);
+        wrapper.eq( "state", STATE_AGREE.toString() )
+                .like( "id", key ).or()
+                .like( "name", key );
+        return competitionMapper.selectPage( page, wrapper );
     }
 
     @Override
@@ -137,7 +139,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     public List<Competition> get5ByType(int typeId) {
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
         // 查询已开始的
-        wrapper.eq( "state",STATE_AGREE.toString() )
+        wrapper.eq( "state", 1 )
                 .last( "LIMIT 5" );
         List<Competition> list = competitionMapper.selectList( wrapper );
         return list;
@@ -157,41 +159,34 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
     }
 
     @Override
-    public String generateWord(int id) {
-        Competition competition = competitionMapper.selectById( id );
-        return generateWord( competition );
-    }
-
-    @Override
-    public String generateWord(Competition competition) {
-        String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
-        // word模版路径
-        String templatePath = root + "template/";
-        // word输出路径
-        String outPath = root + "static/word/" + competition.getId() + ".doc";
-        try {
-            Map<String, String> res = BeanUtils.describe( competition );
-            log.warn( res );
-            WordUtils.generateWord( templatePath, outPath, res );
-        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return outPath;
-    }
-
-    @Override
     public FileInputStream getWord(int competitionId) {
+        Competition competition = competitionMapper.getWithProgressListById( competitionId );
+        String fileName = competitionId + "_" + competition.getName() + ".doc";
         String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
-        // word输出路径
-        String outPath = root + "static/word/" + competitionId + ".doc";
-        File file = new File( outPath );
-        FileInputStream in = null;
+        FileInputStream fis = null;
         try {
-            in = new FileInputStream( file );
-        } catch (FileNotFoundException e) {
+            Map<String, Object> prop = WordUtils.competitionMapToWord( competition );
+            fis = WordUtils.generateWord( root, fileName, prop );
+        } catch (TemplateException | IOException e) {
             e.printStackTrace();
         }
-        return in;
+        return fis;
+    }
+
+    @Override
+    public FileInputStream getBudgetWord(int competitionId) {
+        Competition competition = competitionMapper.getWithBudgetListById( competitionId );
+        String fileName = competitionId + "_" + competition.getName() + "_budget" + ".doc";
+        String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
+        FileInputStream fis = null;
+        try {
+            Map<String, Object> prop = WordUtils.budgetMapToWord( competition );
+            fis = WordUtils.generateBugetWord( root, fileName, prop );
+        } catch (TemplateException | IOException e) {
+            e.printStackTrace();
+        }
+        return fis;
+
     }
 
     @Override
@@ -199,7 +194,9 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper,Competition> 
         QueryWrapper<Competition> wrapper = new QueryWrapper<>();
         wrapper.eq( "teacher_group_id", groupId );
         List<Competition> list = competitionMapper.selectList( wrapper );
-        if (list.size()<=5) return list;
+        if (list.size() <= 5) {
+            return list;
+        }
         return list.subList( 0, 5 );
     }
 }
