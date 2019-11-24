@@ -40,7 +40,7 @@ public interface CompetitionService extends IService<Competition> {
 
     IPage<Competition> findPassAll(Page<Competition> page);
 
-    boolean setState(int id, String state);
+    boolean setState(int id, int state);
 
     boolean setStartState(int id, String state);
 
@@ -57,4 +57,6 @@ public interface CompetitionService extends IService<Competition> {
     FileInputStream getBudgetWord(int competitionId);
 
     List<Competition> findByGroupId(int groupId);
+
+    Competition getWithProgressById(int id);
 }

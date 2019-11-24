@@ -1,5 +1,6 @@
 package cadc.service.impl;
 
+import cadc.bean.PROGRESS_STATE;
 import cadc.entity.*;
 import cadc.mapper.CompetitionMapper;
 import cadc.mapper.JoinMapper;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static cadc.bean.PROGRESS_STATE.NO_START;
 import static cadc.bean.message.STATE.*;
 
 /**
@@ -51,7 +53,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
         progresses.forEach( item -> {
             item.setCompetitionId( competition.getId() );
             item.setEnterState( STATE_NOT_START.toString() );
-            item.setStartState( STATE_NOT_START.toString() );
+            item.setStartState( NO_START.getCode() );
             item.setIsScanEnterState( true );
             item.setIsScanStartState( true );
             progressMapper.insert( item );
@@ -118,7 +120,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
 
 
     @Override
-    public boolean setState(int id, String state) {
+    public boolean setState(int id, int state) {
         return competitionMapper.updateState( id, state ) > 0;
     }
 
@@ -198,5 +200,10 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
             return list;
         }
         return list.subList( 0, 5 );
+    }
+
+    @Override
+    public Competition getWithProgressById(int id) {
+        return competitionMapper.getWithProgressListById( id );
     }
 }

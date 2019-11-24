@@ -44,7 +44,7 @@ public class JoinController {
 
     @RequestMapping(value = "/join/{id}", method = RequestMethod.DELETE)
     public Object deleteJoin(@PathVariable int id) {
-        boolean flag = joinService.removeById( id );
+        boolean flag = joinService.deleteById( id );
         return MessageFactory.message( flag );
     }
 
@@ -70,7 +70,7 @@ public class JoinController {
     }
 
     /**
-     * 根据progressId获取参赛列表 以及比赛结果
+     * 工作组 根据progressId获取参赛列表 以及比赛结果
      *
      * @param progressId
      * @return
@@ -90,12 +90,12 @@ public class JoinController {
      * @return
      */
     @PostMapping(value = "/join/progress/review/{id}/{reviewState}/{editState}")
-    public Object reviewJoinInProgress(@PathVariable Boolean reviewState, @PathVariable int id, @PathVariable Boolean editState) {
+    public Object reviewJoinInProgress(@PathVariable Integer reviewState, @PathVariable int id, @PathVariable Boolean editState) {
         JoinInProgress jip = joinInProgressService.getById( id );
         // 设置审核状态
         jip.setReviewState( reviewState );
         // 设置可编辑状态
-        jip.setEditState( editState );
+        jip.setIsEditable( editState );
         boolean flag = jip.insertOrUpdate();
         return MessageFactory.message( flag );
     }

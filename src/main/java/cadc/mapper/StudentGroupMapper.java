@@ -69,4 +69,10 @@ public interface StudentGroupMapper extends BaseMapper<StudentGroup> {
             "WHERE stu_in_group.stu_id = #{id} " +
             "AND stu_in_group.state = '邀请中'")
     List<StudentGroup> getInvitingByStudentId(@Param("id") int id);
+
+    @Select( "SELECT * \n" +
+            "FROM `stu_group` \n" +
+            "JOIN stu_in_group ON stu_group.id = stu_in_group.group_id\n" +
+            "WHERE stu_in_group.state = '邀请成功' AND stu_in_group.stu_id =  #{id}" )
+    List<StudentGroup> getList(int id);
 }

@@ -25,7 +25,7 @@ public interface TeacherMapper extends BaseMapper<Teacher> {
     @Select( "SELECT account,teacher.teacher_name FROM teacher JOIN teacher_in_group on teacher_in_group.teacher_id = teacher.account where teacher_in_group.state = '邀请中' AND teacher_in_group.group_id = #{groupId}" )
     List<Teacher> getInvitingByGroupId(int groupId);
 
-    @Results({
+    @Results(id = "withoutPassword", value = {
             @Result(column = "account", property = "account"),
             @Result(column = "teacher_name", property = "teacherName"),
             @Result(column = "teacher_sex", property = "teacherSex"),
@@ -36,7 +36,9 @@ public interface TeacherMapper extends BaseMapper<Teacher> {
     @Select( "SELECT * FROM teacher JOIN role_teacher on teacher.id = role_teacher.teacher_id WHERE role_teacher.role_id =#{roleId}" )
     List<Teacher> getByRoleId(int roleId);
 
+    @ResultMap(value = "withoutPassword")
     @Select("Select * from teacher where id = #{id}")
     Teacher getById(int id);
+
 
 }

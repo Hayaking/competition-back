@@ -77,6 +77,7 @@ public interface JoinMapper extends BaseMapper<Join> {
     @Results(id = "withCompetition",
             value = {
                     @Result(column = "id", property = "id"),
+                    @Result(column = "id", property = "id"),
                     @Result(column = "works_id", property = "worksId"),
                     @Result(column = "competition_id", property = "competition",
                             one = @One(select = "cadc.mapper.CompetitionMapper.getById")),
@@ -105,7 +106,6 @@ public interface JoinMapper extends BaseMapper<Join> {
     List<Join> getEnterList(Page<Join> page,
                             @Param( "competitionId" ) int competitionId,
                             @Param( "progressId" ) int progressId);
-
 
     @Results({
             @Result(column = "id", property = "id"),

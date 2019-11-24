@@ -21,7 +21,7 @@ public class Competition extends Model<Competition> {
     @TableId(type = IdType.AUTO)
     private int id;
     private String name;
-    private String exGroupNum;
+    private int exGroupNum;
     private int exStuNum;
     private String exRes;
     private String prePrice;

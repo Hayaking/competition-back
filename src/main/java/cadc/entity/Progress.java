@@ -23,7 +23,7 @@ public class Progress extends Model<Progress> {
     private String name;
     private int competitionId;
     private int typeId;
-    private String startState;
+    private Integer startState;
     private String enterState;
 
     private Date startTime;

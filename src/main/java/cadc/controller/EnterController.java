@@ -23,7 +23,7 @@ public class EnterController {
     private JoinInProgressService joinInProgressService;
 
     /**
-     * 获取报名列表
+     * 工作组 获取报名列表
      *
      * @param competitionId
      * @param pageNum
@@ -44,16 +44,15 @@ public class EnterController {
     }
 
     /**
-     * 审核join的enterState
+     * 工作组 审核参赛的报名状态
      *
      * @param inProgressId
      * @param flag
      * @return
      */
     @PostMapping(value = "/enter/{inProgressId}/{flag}")
-    public Object reviewEnter(@PathVariable int inProgressId, @PathVariable boolean flag) {
+    public Object reviewEnter(@PathVariable int inProgressId, @PathVariable Integer flag) {
         boolean res = joinInProgressService.setEnterState( inProgressId, flag );
-//        boolean res = joinService.setEnterState( flag, joinId );
         return MessageFactory.message( res );
     }
 

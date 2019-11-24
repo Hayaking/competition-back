@@ -1,6 +1,6 @@
 package cadc.service.impl;
 
-import cadc.bean.PRROGRESS_STATE;
+import cadc.bean.PROGRESS_STATE;
 import cadc.entity.Progress;
 import cadc.mapper.ProgressMapper;
 import cadc.service.ProgressService;
@@ -59,16 +59,16 @@ public class ProgressServiceImpl extends ServiceImpl<ProgressMapper, Progress> i
     }
 
     @Override
-    public boolean setEnterState(int id, PRROGRESS_STATE state) {
+    public boolean setEnterState(int id, PROGRESS_STATE state) {
         Progress progress = progressMapper.selectById( id );
         progress.setEnterState( state.toString() );
         return progress.insertOrUpdate();
     }
 
     @Override
-    public boolean setStartState(int id, PRROGRESS_STATE state) {
+    public boolean setStartState(int id, PROGRESS_STATE state) {
         Progress progress = progressMapper.selectById( id );
-        progress.setStartState( state.toString() );
+        progress.setStartState( state.getCode() );
         return progress.insertOrUpdate();
     }
 

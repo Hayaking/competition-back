@@ -32,7 +32,7 @@ public class StudentGroupServiceImpl extends ServiceImpl<StudentGroupMapper, Stu
 
     @Override
     public List<StudentGroup> getListByStudentId(int id) {
-        List<StudentGroup> list = studentGroupMapper.getWithWorksByStudentId( id );
+        List<StudentGroup> list = studentGroupMapper.getList( id );
         return list;
     }
 }

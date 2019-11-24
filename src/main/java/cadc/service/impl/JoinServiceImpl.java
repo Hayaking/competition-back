@@ -1,6 +1,7 @@
 package cadc.service.impl;
 
 import cadc.bean.ENTER_STATE;
+import cadc.bean.IN_PROGRESS_STATE;
 import cadc.bean.JOIN_STATE;
 import cadc.bean.excel.EnterExcel;
 import cadc.bean.excel.EnterExcel2;
@@ -29,6 +30,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import static cadc.bean.IN_PROGRESS_STATE.*;
 import static cadc.bean.message.STATE.*;
 
 /**
@@ -52,6 +54,8 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     private StudentGroupMapper studentGroupMapper;
     @Autowired
     private ProgressService progressService;
+    @Resource
+    private ProgressMapper progressMapper;
 
     @Override
     public List<Join> getByGroupId(int groupId) {
@@ -67,33 +71,56 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
 
     @Override
     public boolean createJoin(Student student, EnterHolder enterHolder) {
-        int joinTypeId = enterHolder.getJoin().getJoinTypeId();
         int competitionId = enterHolder.getJoin().getCompetitionId();
-        Competition competition = competitionMapper.selectById( competitionId );
-        Boolean isHaveWorks = competition.getIsNeedWorks();
-        if (joinTypeId == 1) {
+        List<Progress> progressList = progressMapper.getListByCompetitionId( competitionId );
+        Progress progress = progressList.get( 0 );
+        Boolean isSingle = progress.getIsSingle();
+        Boolean isNeedWorks = progress.getIsNeedWorks();
+        if (isSingle) {
             // 个人赛
-            return createSingleJoin( student, isHaveWorks, enterHolder );
+            return createSingleJoin( student, isNeedWorks, enterHolder );
         } else {
             // 多人|小组赛
-            return createGroupJoin( student, isHaveWorks, enterHolder );
+            return createGroupJoin( student, isNeedWorks, enterHolder );
         }
+    }
+
+    @Override
+    public boolean deleteById(int id) {
+        joinInProgressMapper.deleteByJoinId( id );
+        Join join = joinMapper.selectById( id );
+        joinMapper.deleteById( id );
+        Integer worksId = join.getWorksId();
+        if (worksId!=null) {
+            worksMapper.deleteById( worksId );
+        }
+        return true;
     }
 
     private boolean createGroupJoin(Student student, Boolean isHaveWorks, EnterHolder enterHolder) {
         StudentGroup group = enterHolder.getGroup();
-        // 创建参赛小组
+        /* 1. 创建参赛小组*/
+        // 创建者id
         group.setCreatorId( student.getId() );
+        // 创建时间
         group.setCreateTime( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" ).format( new Date() ) );
         group.insert();
-        // 将创建者 添加进群组
-        new StudentInGroup( student.getId(), group.getId(), STATE_INVITE_SUCCESS.toString() ).insert();
-        // 邀请组员
+        //将创建者 添加进群组
+        new StudentInGroup() {{
+            setStuId( student.getId() );
+            setGroupId( group.getId() );
+            // 邀请成功
+            setState( STATE_INVITE_SUCCESS.toString() );
+        }}.insert();
+        /*2. 邀请组员*/
+        // 组员帐号list
         List<String> list = enterHolder.getList();
+        QueryWrapper<Student> wrapper = new QueryWrapper<>();
         for (String item : list) {
-            QueryWrapper<Student> wrapper = new QueryWrapper<>();
+            // 查询组员
             wrapper.eq( "account", item );
             Student stu = studentMapper.selectOne( wrapper );
+            // 将组员添加进小组，并设置状态为邀请中
             new StudentInGroup( stu.getId(), group.getId(), STATE_INVITING.toString() ).insert();
         }
         // 参赛
@@ -122,14 +149,17 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         return new JoinInProgress() {{
             setJoinId( join.getId() );
             setProgressId( progressList.get( 0 ).getId() );
-            // 得奖状态
-            setPriceState( false );
-            // 审核比赛结果状态
-            setReviewState( false );
-            // 晋级状态
-            setPromotionState( false );
-            // 报名状态
-            setEnterState( false );
+            // 得奖状态::未得奖
+            setIsPrice( NO_PRICE.getFlag() );
+            // 审核比赛结果状态::等待审核
+            setReviewState( REVIEW_WAIT.getCode() );
+            // 晋级状态::未晋级
+            setIsPromotion( NO_PROMOTION.getFlag() );
+            // 报名状态::等待审核
+            setEnterState( ENTER_WAIT.getCode() );
+            // 编辑状态::可编辑
+            setIsEditable( EDITABLE.getFlag() );
+            setIsSelfFunded( NO_FUNEDE.getFlag() );
         }}.insert();
     }
 
@@ -145,10 +175,10 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         }
         join.setGroupId( null );
         join.setJoinTypeId( 2 );
-        if (join.getTeacher1() != null) {
+        if (join.getTeacherId1() != null) {
             join.setApplyState( STATE_APPLYING.toString() );
         }
-        if (join.getTeacher2() != null) {
+        if (join.getTeacherId2() != null) {
             join.setApplyState2(  STATE_APPLYING.toString() );
         }
         join.setCreatorId( student.getId() );
@@ -159,13 +189,16 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
             setJoinId( join.getId() );
             setProgressId( progressList.get( 0 ).getId() );
             // 得奖状态
-            setPriceState( false );
+            setIsPrice( NO_PRICE.getFlag() );
             // 审核比赛结果状态
-            setReviewState( false );
+            setReviewState( REVIEW_WAIT.getCode() );
             // 晋级状态
-            setPromotionState( false );
+            setIsPromotion( NO_PROMOTION.getFlag() );
             // 报名状态
-            setEnterState( false );
+            setEnterState( ENTER_WAIT.getCode() );
+            // 编辑状态::可编辑
+            setIsEditable( EDITABLE.getFlag() );
+            setIsSelfFunded( NO_FUNEDE.getFlag() );
         }}.insert();
     }
 

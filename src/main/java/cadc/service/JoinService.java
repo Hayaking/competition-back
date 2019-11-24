@@ -68,4 +68,6 @@ public interface JoinService extends IService<Join> {
      * @return
      */
     boolean createJoin(Student student, EnterHolder enterHolder);
+
+    boolean deleteById(int id);
 }

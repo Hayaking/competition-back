@@ -3,7 +3,6 @@ package cadc.controller;
 import cadc.bean.message.MessageFactory;
 import cadc.entity.Student;
 import cadc.entity.StudentGroup;
-import cadc.entity.StudentInGroup;
 import cadc.service.StudentGroupService;
 import cadc.service.StudentInGroupService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -42,12 +40,14 @@ public class StudentGroupController {
         IPage<StudentGroup> res = studentGroupService.getPageByStudentId( new Page<>( pageNum, pageSize ), student.getId() );
         return MessageFactory.message( SUCCESS, res );
     }
+
     @RequestMapping(value = "/studentGroup", method = RequestMethod.GET)
     public Object getByPage() {
         Student student = (Student) SecurityUtils.getSubject().getPrincipal();
         List<StudentGroup> res = studentGroupService.getListByStudentId( student.getId() );
         return MessageFactory.message( res );
     }
+
     /**
      * 学生创建小组
      *

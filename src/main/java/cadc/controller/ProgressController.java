@@ -2,10 +2,8 @@ package cadc.controller;
 
 import cadc.bean.message.MessageFactory;
 import cadc.entity.JoinInProgress;
-import cadc.entity.Process;
 import cadc.entity.Progress;
 import cadc.service.JoinInProgressService;
-import cadc.service.ProcessService;
 import cadc.service.ProgressService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static cadc.bean.PROGRESS_STATE.HAD_END;
 
 /**
  * @author haya
@@ -32,24 +32,24 @@ public class ProgressController {
         return MessageFactory.message( res );
     }
 
-    @RequestMapping(value = "/progress", method = RequestMethod.POST)
-    public Object update( @RequestBody Progress progress) {
-        Progress obj = progressService.getById( progress.getId() );
-        if (progress.getIsScanEnterState()) {
-            obj.setIsScanStartState( true );
-        }else{
-            obj.setIsScanEnterState( false );
-            obj.setEnterState( progress.getEnterState() );
-        }
-        if (progress.getIsScanStartState()) {
-            obj.setIsScanStartState( true );
-        } else {
-            obj.setIsScanStartState( false );
-            obj.setStartState( progress.getStartState() );
-        }
-        boolean flag = obj.insertOrUpdate();
-        return MessageFactory.message( flag );
-    }
+//    @RequestMapping(value = "/progress", method = RequestMethod.POST)
+//    public Object update( @RequestBody Progress progress) {
+//        Progress obj = progressService.getById( progress.getId() );
+//        if (progress.getIsScanEnterState()) {
+//            obj.setIsScanStartState( true );
+//        }else{
+//            obj.setIsScanEnterState( false );
+//            obj.setEnterState( progress.getEnterState() );
+//        }
+//        if (progress.getIsScanStartState()) {
+//            obj.setIsScanStartState( true );
+//        } else {
+//            obj.setIsScanStartState( false );
+//            obj.setStartState( progress.getStartState() );
+//        }
+//        boolean flag = obj.insertOrUpdate();
+//        return MessageFactory.message( flag );
+//    }
 
     /**
      * 获取join 拥有的progress
@@ -71,7 +71,7 @@ public class ProgressController {
     @PostMapping(value = "/progress/{id}/end")
     public Object endProgress( @PathVariable int id) {
         Progress progress = progressService.getById( id );
-        progress.setStartState( "已结束" );
+        progress.setStartState( HAD_END.getCode() );
         return MessageFactory.message( progress.insertOrUpdate() );
     }
 
@@ -113,6 +113,44 @@ public class ProgressController {
     public Object reviewProgressResult(@PathVariable Integer id, @PathVariable Integer state) {
         Progress progress = progressService.getById( id );
         progress.setIsReviewResult( state );
+        boolean res = progress.insertOrUpdate();
+        return MessageFactory.message( res );
+    }
+
+    /**
+     * 工作组更新 阶段信息
+     * @param progress
+     * @return
+     */
+    @PostMapping(value = "/progress/update")
+    public Object update2(@RequestBody Progress progress) {
+        boolean res = progress.insertOrUpdate();
+        return MessageFactory.message( res );
+    }
+
+    /**
+     * 工作组更改自动扫描状态
+     * @param id
+     * @param flag
+     * @param name
+     * @return
+     */
+    @PostMapping(value = "/progress/{id}/update/scan/{name}/{flag}")
+    public Object update(@PathVariable Integer id, @PathVariable Boolean flag, @PathVariable String name) {
+        Progress progress = progressService.getById( id );
+        if ("start".equals( name )) {
+            progress.setIsScanStartState( flag );
+        } else if ("enter".equals( name )){
+            progress.setIsScanEnterState( flag );
+        }
+        boolean res = progress.insertOrUpdate();
+        return MessageFactory.message( res );
+    }
+
+    @PostMapping(value = "/progress/{id}/update/state/{state}")
+    public Object update(@PathVariable Integer id, @PathVariable Integer state) {
+        Progress progress = progressService.getById( id );
+        progress.setStartState( state );
         boolean res = progress.insertOrUpdate();
         return MessageFactory.message( res );
     }

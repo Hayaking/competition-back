@@ -26,7 +26,7 @@ public class JoinInProgressServiceImpl extends ServiceImpl<JoinInProgressMapper,
     @Override
     public Boolean promotion(Integer joinInProgressId, Boolean flag) {
         JoinInProgress joinInProgress = joinInProgressMapper.getById( joinInProgressId );
-        joinInProgress.setPromotionState( flag );
+        joinInProgress.setIsPromotion( flag );
         if (flag) {
             int joinId = joinInProgress.getJoinId();
             int progressId = joinInProgress.getProgressId();
@@ -66,9 +66,10 @@ public class JoinInProgressServiceImpl extends ServiceImpl<JoinInProgressMapper,
     }
 
     @Override
-    public boolean setEnterState(int inProgressId, boolean flag) {
+    public boolean setEnterState(int inProgressId, Integer flag) {
         JoinInProgress jip = joinInProgressMapper.selectById( inProgressId );
         jip.setEnterState( flag );
+//        jip.setIsEnter( flag );
         return jip.insertOrUpdate();
     }
 

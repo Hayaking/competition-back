@@ -30,7 +30,7 @@ public class PriceServiceImpl extends ServiceImpl<PriceMapper, Price> implements
     @Override
     public boolean create(boolean isWinPrice, Price price, Certificate certificate) {
         JoinInProgress jip = joinInProgressMapper.getById( price.getJoinInProgressId());
-        jip.setPriceState( isWinPrice );
+        jip.setIsPrice( isWinPrice );
         // 得奖了
         if (isWinPrice) {
             price.setPriceState( STATE_APPLYING.toString() );

@@ -13,7 +13,7 @@ import java.util.List;
 public interface CompetitionMapper extends BaseMapper<Competition> {
 
     @Update("update competition set state = #{state} where id=#{id}")
-    int updateState(int id, String state);
+    int updateState(int id, int state);
 
     @Update("update competition set start_state = #{state} where id=#{id}")
     int updateStartState(int id, String state);

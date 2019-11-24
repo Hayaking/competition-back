@@ -98,7 +98,7 @@ public class CompetitionController {
 
     @RequestMapping(value = "/competition/{id}", method = RequestMethod.GET)
     public Object getCompetitionById(@PathVariable int id) {
-        Competition res = competitionService.getById( id );
+        Competition res = competitionService.getWithProgressById( id );
         return MessageFactory.message( res );
     }
 
@@ -106,18 +106,13 @@ public class CompetitionController {
      * 设置审核状态
      *
      * @param id
-     * @param flag
+     * @param state
      * @return
      */
-    @RequestMapping(value = "/competition/state/{id}/{flag}", method = RequestMethod.POST)
-    public Object setState(@PathVariable int id, @PathVariable boolean flag) {
-        // true同意, false拒绝
-        if (flag) {
-            competitionService.setState( id, STATE_AGREE.toString() );
-        } else {
-            competitionService.setState( id, STATE_REFUSE.toString() );
-        }
-        return MessageFactory.message( SUCCESS, "" );
+    @RequestMapping(value = "/competition/state/{id}/{state}", method = RequestMethod.POST)
+    public Object setState(@PathVariable int id, @PathVariable int state) {
+        boolean flag = competitionService.setState( id, state );
+        return MessageFactory.message( flag);
     }
 
     /**
@@ -138,20 +133,20 @@ public class CompetitionController {
         return MessageFactory.message( SUCCESS, "" );
     }
 
-    @RequestMapping(value = "/competition/judge/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    @GetMapping(value = "/competition/judge/search/{key}/{pageNum}/{pageSize}")
     public Object searchJudge(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<Competition> res = competitionService.find( new Page<>( pageNum, pageSize ), key );
         return MessageFactory.message( SUCCESS, res );
     }
 
-    @RequestMapping(value = "/competition/pass/search/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
+    @GetMapping(value = "/competition/pass/search/{key}/{pageNum}/{pageSize}")
     public Object searchPass(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<Competition> res = competitionService.findPassByKey( new Page<>( pageNum, pageSize ), key );
         return MessageFactory.message( SUCCESS, res );
     }
 
     /**
-     * 分获取所有审核通过的比赛
+     * 所有人 分页获取所有审核通过的比赛
      *
      * @param pageNum
      * @param pageSize
@@ -164,7 +159,7 @@ public class CompetitionController {
     }
 
     /**
-     * 申请竞赛
+     * 工作组组长 申请竞赛
      * @param holder
      * @return
      */
@@ -177,6 +172,18 @@ public class CompetitionController {
                 holder.getCompetition(),
                 holder.getProgresses(),
                 holder.getBudgets() );
+        return MessageFactory.message( flag );
+    }
+
+    /**
+     * 工作组更新竞赛信息
+     * @param competition
+     * @return
+     */
+    @PostMapping(value = "/competition/update")
+    public Object update(@RequestBody Competition competition) {
+        competition.setState( 0 );
+        boolean flag = competition.insertOrUpdate();
         return MessageFactory.message( flag );
     }
 }

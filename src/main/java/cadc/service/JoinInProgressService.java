@@ -18,7 +18,7 @@ public interface JoinInProgressService extends IService<JoinInProgress> {
 
     Page<JoinInProgress> getEnterPage(Page<JoinInProgress> page, int competitionId, int progressId);
 
-    boolean setEnterState(int inProgressId, boolean flag);
+    boolean setEnterState(int inProgressId, Integer flag);
 
     Page<JoinInProgress>getResultListByProgressId(Page<JoinInProgress> page, int progressId);
 }

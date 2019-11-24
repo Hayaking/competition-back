@@ -73,7 +73,7 @@ public class WordUtils {
         HashMap<String, Object> map = new HashMap<>();
         map.put( "name", competition.getName() );
         map.put( "personIncharge", competition.getPersonInCharge().getTeacherName() );
-        map.put( "groupNum", competition.getExGroupNum() );
+        map.put( "groupNum", String.valueOf( competition.getExGroupNum() ) );
         map.put( "stuNum", String.valueOf( competition.getExStuNum() ) );
         map.put( "exRes", competition.getExRes() );
         map.put( "intro", competition.getIntro() );
@@ -89,7 +89,7 @@ public class WordUtils {
                 map.put( "p" + i + "Name", progress.getName() );
                 map.put( "p" + i + "Type", progress.getType().getTypeName() );
                 map.put( "p" + i + "Date", new SimpleDateFormat( "yyyy年MM月dd日" ).format( progress.getStartTime() ) );
-                map.put( "orgAndCoorg" + i, "" );
+                map.put( "orgAndCoorg" + i, progress.getOrg() + ";" + progress.getCoOrg() );
             } else {
                 map.put( "p" + i + "Name", "" );
                 map.put( "p" + i + "Type", "" );
