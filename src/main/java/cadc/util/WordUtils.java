@@ -73,33 +73,20 @@ public class WordUtils {
         HashMap<String, Object> map = new HashMap<>();
         map.put( "name", competition.getName() );
         map.put( "personIncharge", competition.getPersonInCharge().getTeacherName() );
+        map.put( "phone", competition.getPersonInCharge().getTeacherPhone() );
         map.put( "groupNum", String.valueOf( competition.getExGroupNum() ) );
         map.put( "stuNum", String.valueOf( competition.getExStuNum() ) );
         map.put( "exRes", competition.getExRes() );
         map.put( "intro", competition.getIntro() );
         map.put( "process", competition.getProcess() );
+        map.put( "exCondition", competition.getExCondition() );
         map.put( "createDate", new SimpleDateFormat( "yyyy年MM月dd日" ).format( competition.getCreateTime() ) );
         List<Progress> progressList = competition.getProgressList();
+        map.put( "progress", progressList );
         Progress highestLevel = progressList.get( progressList.size() - 1 );
         map.put( "highestLevel", String.valueOf( highestLevel.getType().getTypeName() ) );
-        for (int i = 1; i <= 4; i++) {
-            Progress progress = null;
-            if (progressList.size() >= i) {
-                progress = progressList.get( i - 1 );
-                map.put( "p" + i + "Name", progress.getName() );
-                map.put( "p" + i + "Type", progress.getType().getTypeName() );
-                map.put( "p" + i + "Date", new SimpleDateFormat( "yyyy年MM月dd日" ).format( progress.getStartTime() ) );
-                map.put( "orgAndCoorg" + i, progress.getOrg() + ";" + progress.getCoOrg() );
-            } else {
-                map.put( "p" + i + "Name", "" );
-                map.put( "p" + i + "Type", "" );
-                map.put( "p" + i + "Date", "" );
-                map.put( "orgAndCoorg" + i, "" );
-            }
-        }
         return map;
     }
-
     public static Map<String, Object> budgetMapToWord(Competition competition) {
         HashMap<String, Object> map = new HashMap<>();
         map.put( "competitionName", competition.getName() );

@@ -54,6 +54,9 @@ public interface CompetitionService extends IService<Competition> {
 
     FileInputStream getWord(int competitionId);
 
+
+    FileInputStream getBudgetWord2(int competitionId);
+
     FileInputStream getBudgetWord(int competitionId);
 
     List<Competition> findByGroupId(int groupId);

@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,30 +34,33 @@ public class DownLoadController {
     /**
      * 下载竞赛申请表
      *
-     * @param response
      * @param competitionId
      * @return
      * @throws IOException
      */
     @RequestMapping(value = "/download/{competitionId}", method = RequestMethod.POST)
-    public Object getCompetitionWord(HttpServletResponse response, @PathVariable int competitionId) throws IOException {
-        FileInputStream in = competitionService.getWord( competitionId );
-        response.setHeader( "Access-Control-Expose-Headers", "Content-Disposition" );
-        response.setHeader( "Content-Disposition", "attachment;filename=" + competitionId + ".doc" );
-        response.setContentType( "application/octet-stream;charset=UTF-8" );
-        // 形成输出流
-        BufferedOutputStream out = new BufferedOutputStream( response.getOutputStream() );
-
-        byte[] bys = new byte[1024];
-        int len = 0;
-        while ((len = in.read( bys )) != -1) {
-            out.write( bys, 0, len );
+    public ResponseEntity<byte[]>  getCompetitionWord( @PathVariable int competitionId) throws IOException {
+        ResponseEntity<byte[]> response;
+        try (
+                FileInputStream fis = competitionService.getWord( competitionId );
+                FileChannel channel = fis.getChannel()
+        ) {
+            ByteBuffer body = ByteBuffer.allocate( fis.available() );
+            channel.read( body );
+            HttpHeaders headers = new HttpHeaders();
+            headers.add( "Access-Control-Expose-Headers", "Content-Disposition" );
+            headers.add( "Content-Disposition", "attachment;filename=" + competitionId + ".docx" );
+            response = new ResponseEntity<>( body.array(), headers, HttpStatus.OK );
         }
-        in.close();
-        out.close();
-        return MessageFactory.message( true );
+        return response;
     }
 
+    /**
+     * 下载预算表
+     * @param competitionId
+     * @return
+     * @throws IOException
+     */
     @PostMapping(value = "/download/budget/{competitionId}")
     public ResponseEntity<byte[]> getBudgetWord(@PathVariable int competitionId) throws IOException {
         ResponseEntity<byte[]> response;
@@ -67,8 +71,8 @@ public class DownLoadController {
             ByteBuffer body = ByteBuffer.allocate( fis.available() );
             channel.read( body );
             HttpHeaders headers = new HttpHeaders();
-            headers.add( CONTENT_DISPOSITION, "attachment;filename=" + competitionId + ".doc" );
-            headers.add( ACCESS_CONTROL_ALLOW_HEADERS, CONTENT_DISPOSITION );
+            headers.add( "Access-Control-Expose-Headers", "Content-Disposition" );
+            headers.add( "Content-Disposition", "attachment;filename=" + competitionId + ".docx" );
             response = new ResponseEntity<>( body.array(), headers, HttpStatus.OK );
         }
         return response;

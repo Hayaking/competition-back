@@ -147,10 +147,14 @@ public class ProgressController {
         return MessageFactory.message( res );
     }
 
-    @PostMapping(value = "/progress/{id}/update/state/{state}")
-    public Object update(@PathVariable Integer id, @PathVariable Integer state) {
+    @PostMapping(value = "/progress/{id}/update/state/{name}/{state}")
+    public Object update(@PathVariable Integer id, @PathVariable Integer state, @PathVariable String name) {
         Progress progress = progressService.getById( id );
-        progress.setStartState( state );
+        if ("start".equals( name )) {
+            progress.setStartState( state );
+        } else if ("enter".equals( name )) {
+            progress.setEnterState( state );
+        }
         boolean res = progress.insertOrUpdate();
         return MessageFactory.message( res );
     }

@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 
+import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
@@ -28,9 +29,9 @@ public class CompetitionImplTest {
     private CompetitionService competitionService;
     @Test
     public void get() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        Competition c = competitionMapper.getWithProgressListById( 84 );
-        Map<String, String> map = BeanUtils.describe( c );
-        log.info( map );
+        FileInputStream fis = competitionService.getWord( 98 );
+        log.warn( fis == null );
+
     }
 
     @Test

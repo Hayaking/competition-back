@@ -61,7 +61,7 @@ public class ProgressServiceImpl extends ServiceImpl<ProgressMapper, Progress> i
     @Override
     public boolean setEnterState(int id, PROGRESS_STATE state) {
         Progress progress = progressMapper.selectById( id );
-        progress.setEnterState( state.toString() );
+        progress.setEnterState( state.getCode() );
         return progress.insertOrUpdate();
     }
 

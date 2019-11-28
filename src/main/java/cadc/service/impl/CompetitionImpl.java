@@ -1,6 +1,8 @@
 package cadc.service.impl;
 
 import cadc.bean.PROGRESS_STATE;
+import cadc.bean.word.BudgetPolicy;
+import cadc.bean.word.CompetitionApplyPolicy;
 import cadc.entity.*;
 import cadc.mapper.CompetitionMapper;
 import cadc.mapper.JoinMapper;
@@ -12,6 +14,8 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.deepoove.poi.XWPFTemplate;
+import com.deepoove.poi.config.Configure;
 import freemarker.template.TemplateException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -19,9 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,7 +59,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
         AtomicInteger index = new AtomicInteger();
         progresses.forEach( item -> {
             item.setCompetitionId( competition.getId() );
-            item.setEnterState( STATE_NOT_START.toString() );
+            item.setEnterState( NO_START.getCode() );
             item.setStartState( NO_START.getCode() );
             item.setIsScanEnterState( true );
             item.setIsScanStartState( true );
@@ -163,13 +170,45 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
     @Override
     public FileInputStream getWord(int competitionId) {
         Competition competition = competitionMapper.getWithProgressListById( competitionId );
-        String fileName = competitionId + "_" + competition.getName() + ".doc";
+        Map<String, Object> props = WordUtils.competitionMapToWord( competition );
+        Configure config = Configure
+                .newBuilder()
+                .customPolicy( "progress", new CompetitionApplyPolicy() )
+                .build();
         String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
+        String fileName = competition.getName() +".docx";
         FileInputStream fis = null;
         try {
-            Map<String, Object> prop = WordUtils.competitionMapToWord( competition );
-            fis = WordUtils.generateWord( root, fileName, prop );
-        } catch (TemplateException | IOException e) {
+            XWPFTemplate.compile( root + "template/competition.docx", config )
+                    .render( props )
+                    .writeToFile( root + fileName );
+             fis = new FileInputStream( new File( root + fileName ) );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fis;
+    }
+
+    @Override
+    public FileInputStream getBudgetWord2(int competitionId) {
+        Competition competition = competitionMapper.getWithBudgetListById( competitionId );
+        Map<String, Object> props = new HashMap<String, Object>(){{
+            put( "name", competition.getName() );
+            put( "budget", competition.getProgressList() );
+        }};
+        String fileName = competitionId + "_" + competition.getName() + "_budget" + ".doc";
+        String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
+        Configure config = Configure
+                .newBuilder()
+                .customPolicy( "budget", new BudgetPolicy() )
+                .build();
+        FileInputStream fis = null;
+        try {
+            XWPFTemplate.compile( root + "template/budget.docx", config )
+                    .render(props)
+                    .writeToFile( root + fileName );
+            fis = new FileInputStream( new File( root + fileName ) );
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return fis;
@@ -178,18 +217,42 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
     @Override
     public FileInputStream getBudgetWord(int competitionId) {
         Competition competition = competitionMapper.getWithBudgetListById( competitionId );
-        String fileName = competitionId + "_" + competition.getName() + "_budget" + ".doc";
+        String fileName = competitionId + "_" + competition.getName() + "_budget" + ".docx";
         String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
         FileInputStream fis = null;
+        Map<String, Object> props = new HashMap<String, Object>(){{
+            put( "name", competition.getName() );
+            put( "budget", competition.getProgressList() );
+        }};
+        Configure config = Configure
+                .newBuilder()
+                .customPolicy( "budget", new BudgetPolicy() )
+                .build();
         try {
-            Map<String, Object> prop = WordUtils.budgetMapToWord( competition );
-            fis = WordUtils.generateBugetWord( root, fileName, prop );
-        } catch (TemplateException | IOException e) {
+            XWPFTemplate.compile( root + "template/budget.docx", config )
+                    .render( props )
+                    .writeToFile( root + fileName );
+            fis = new FileInputStream( new File( root + fileName ) );
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return fis;
-
     }
+
+//    @Override
+//    public FileInputStream getBudgetWord(int competitionId) {
+//        Competition competition = competitionMapper.getWithBudgetListById( competitionId );
+//        String fileName = competitionId + "_" + competition.getName() + "_budget" + ".doc";
+//        String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
+//        FileInputStream fis = null;
+//        try {
+//            Map<String, Object> prop = WordUtils.budgetMapToWord( competition );
+//            fis = WordUtils.generateBugetWord( root, fileName, prop );
+//        } catch (TemplateException | IOException e) {
+//            e.printStackTrace();
+//        }
+//        return fis;
+//    }
 
     @Override
     public List<Competition> findByGroupId(int groupId) {
