@@ -1,5 +1,6 @@
 package cadc.controller;
 
+import cadc.bean.holder.ResultSummaryHolder;
 import cadc.bean.message.MessageFactory;
 import cadc.entity.JoinInProgress;
 import cadc.entity.Progress;
@@ -26,30 +27,11 @@ public class ProgressController {
     @Autowired
     private JoinInProgressService joinInProgressService;
 
-    @RequestMapping(value = "/progress/list/competition/{competitionId}", method = RequestMethod.GET)
-    public Object create( @PathVariable int competitionId) {
+    @GetMapping(value = "/progress/list/competition/{competitionId}")
+    public Object getProgressByCompetitionId( @PathVariable int competitionId) {
         List<Progress> res = progressService.getByCompetitionId( competitionId );
         return MessageFactory.message( res );
     }
-
-//    @RequestMapping(value = "/progress", method = RequestMethod.POST)
-//    public Object update( @RequestBody Progress progress) {
-//        Progress obj = progressService.getById( progress.getId() );
-//        if (progress.getIsScanEnterState()) {
-//            obj.setIsScanStartState( true );
-//        }else{
-//            obj.setIsScanEnterState( false );
-//            obj.setEnterState( progress.getEnterState() );
-//        }
-//        if (progress.getIsScanStartState()) {
-//            obj.setIsScanStartState( true );
-//        } else {
-//            obj.setIsScanStartState( false );
-//            obj.setStartState( progress.getStartState() );
-//        }
-//        boolean flag = obj.insertOrUpdate();
-//        return MessageFactory.message( flag );
-//    }
 
     /**
      * 获取join 拥有的progress
@@ -156,6 +138,18 @@ public class ProgressController {
             progress.setEnterState( state );
         }
         boolean res = progress.insertOrUpdate();
+        return MessageFactory.message( res );
+    }
+
+    /**
+     * 工作组 提交比赛结果
+     * @param progressId
+     * @param holder
+     * @return
+     */
+    @PostMapping(value = "/progress/{progressId}/result")
+    public Object submitResult(@PathVariable Integer progressId, @RequestBody ResultSummaryHolder holder) {
+        boolean res = progressService.generateResultWord( progressId, holder );
         return MessageFactory.message( res );
     }
 }

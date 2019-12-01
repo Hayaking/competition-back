@@ -4,6 +4,7 @@ import cadc.entity.Progress;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -80,4 +81,8 @@ public interface ProgressMapper extends BaseMapper<Progress> {
     })
     @Select("select * from progress where is_submit_result = true ")
     List<Progress> getNeedReviewList(Page<Progress> page);
+
+    @ResultMap( value = "withCompetition")
+    @Select("select * from progress where is_submit_result = true and id = #{id}")
+    Progress getNeedReviewById(int id);
 }

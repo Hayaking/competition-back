@@ -1,6 +1,7 @@
 package cadc.service;
 
 import cadc.bean.PROGRESS_STATE;
+import cadc.bean.holder.ResultSummaryHolder;
 import cadc.entity.Progress;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -29,4 +30,8 @@ public interface ProgressService extends IService<Progress> {
     List<Progress> getListByJoinId(int joinId);
 
     IPage<Progress> getNeedReviewList(Page<Progress> page);
+
+    Progress getNeedReviewById(int id);
+
+    boolean generateResultWord(Integer progressId, ResultSummaryHolder holder);
 }

@@ -1,24 +1,17 @@
 package cadc.controller;
 
-import cadc.bean.message.MessageFactory;
-import cadc.service.CompetitionService;
-import cadc.service.JoinService;
-import cadc.util.ExcelUtils;
+import cadc.service.DownLoadService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS;
-import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 
 /**
  * @author haya
@@ -27,9 +20,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
 @RestController
 public class DownLoadController {
     @Autowired
-    private CompetitionService competitionService;
-    @Autowired
-    private JoinService joinService;
+    private DownLoadService downLoadService;
 
     /**
      * 下载竞赛申请表
@@ -42,7 +33,7 @@ public class DownLoadController {
     public ResponseEntity<byte[]>  getCompetitionWord( @PathVariable int competitionId) throws IOException {
         ResponseEntity<byte[]> response;
         try (
-                FileInputStream fis = competitionService.getWord( competitionId );
+                FileInputStream fis = downLoadService.getCompetitionApplyWord(  competitionId );
                 FileChannel channel = fis.getChannel()
         ) {
             ByteBuffer body = ByteBuffer.allocate( fis.available() );
@@ -65,7 +56,7 @@ public class DownLoadController {
     public ResponseEntity<byte[]> getBudgetWord(@PathVariable int competitionId) throws IOException {
         ResponseEntity<byte[]> response;
         try (
-                FileInputStream fis = competitionService.getBudgetWord( competitionId );
+                FileInputStream fis = downLoadService.getBudgetApplyWord( competitionId );
                 FileChannel channel = fis.getChannel()
         ) {
             ByteBuffer body = ByteBuffer.allocate( fis.available() );
@@ -79,6 +70,7 @@ public class DownLoadController {
     }
 
     /**
+     * 下载报名列表
      * @param competitionId
      * @param progressId
      * @return
@@ -87,22 +79,40 @@ public class DownLoadController {
     @PostMapping(value = "/download/{competitionId}/{progressId}/enter/list")
     public ResponseEntity<byte[]> getEnterListExcel(@PathVariable int competitionId, @PathVariable int progressId) throws IOException {
         ResponseEntity<byte[]> response;
-        String fileName = joinService.generateEnterListExcel( competitionId, progressId );
-        File file = ExcelUtils.getFile( fileName );
-        if (file.exists()) {
-            try (
-                    FileInputStream fis = new FileInputStream( file );
-                    FileChannel channel = fis.getChannel()
-            ) {
-                ByteBuffer body = ByteBuffer.allocate( fis.available() );
-                channel.read( body );
-                HttpHeaders headers = new HttpHeaders();
-                headers.add( CONTENT_DISPOSITION, "attachment;filename=" + fileName + ".xlsx" );
-                headers.add( ACCESS_CONTROL_ALLOW_HEADERS, CONTENT_DISPOSITION );
-                response = new ResponseEntity<>( body.array(), headers, HttpStatus.OK );
-            }
-        } else {
-            response = new ResponseEntity<>( HttpStatus.NOT_FOUND );
+
+        try (
+                FileInputStream fis = downLoadService.getEnterListExcel( competitionId, progressId );
+                FileChannel channel = fis.getChannel()
+        ) {
+            ByteBuffer body = ByteBuffer.allocate( fis.available() );
+            channel.read( body );
+            HttpHeaders headers = new HttpHeaders();
+            headers.add( "Access-Control-Expose-Headers", "Content-Disposition" );
+            headers.add( "Content-Disposition", "attachment;filename=" + progressId + ".xlsx" );
+            response = new ResponseEntity<>( body.array(), headers, HttpStatus.OK );
+        }
+        return response;
+    }
+
+    /**
+     * 下载比赛结果
+     * @param progressId
+     * @return
+     * @throws IOException
+     */
+    @PostMapping(value = "/download/result/{progressId}")
+    public ResponseEntity<byte[]> getResult( @PathVariable int progressId) throws IOException {
+        ResponseEntity<byte[]> response;
+        try (
+                FileInputStream fis = downLoadService.getProgressResult(progressId);
+                FileChannel channel = fis.getChannel()
+        ) {
+            ByteBuffer body = ByteBuffer.allocate( fis.available() );
+            channel.read( body );
+            HttpHeaders headers = new HttpHeaders();
+            headers.add( "Access-Control-Expose-Headers", "Content-Disposition" );
+            headers.add( "Content-Disposition", "attachment;filename=" + progressId + ".docx" );
+            response = new ResponseEntity<>( body.array(), headers, HttpStatus.OK );
         }
         return response;
     }

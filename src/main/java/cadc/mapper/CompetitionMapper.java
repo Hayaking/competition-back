@@ -21,6 +21,24 @@ public interface CompetitionMapper extends BaseMapper<Competition> {
     @Update("update competition set enter_state = #{state} where id=#{id}")
     int updateEnterState(int id, String state);
 
+    @Results( value = {
+            @Result(column = "id", property = "id"),
+            @Result(column = "name", property = "name"),
+            @Result(column = "ex_group_num", property = "exGroupNum"),
+            @Result(column = "ex_stu_num", property = "exStuNum"),
+            @Result(column = "ex_res", property = "exRes"),
+            @Result(column = "state", property = "state"),
+            @Result(column = "person_in_charge_id", property = "personInChargeId"),
+            @Result(column = "person_in_charge_id", property = "personInCharge", one = @One(select = "cadc.mapper.TeacherMapper.getById")),
+            @Result(column = "creator_id", property = "creatorId"),
+            @Result(column = "process", property = "process"),
+            @Result(column = "intro", property = "intro"),
+            @Result(column = "ex_condition", property = "exCondition"),
+            @Result(column = "is_need_works", property = "isNeedWorks"),
+            @Result(column = "teacher_group_id", property = "teacherGroupId"),
+            @Result(column = "join_type_id", property = "joinTypeId"),
+            @Result(column = "crate_time", property = "crateTime"),
+    })
     @Select("select * from competition where id =#{id}")
     Competition getById(@Param("id") int id);
 

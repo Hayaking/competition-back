@@ -259,12 +259,11 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
     public String generateEnterListExcel(int competitionId, int progressId) {
         Competition competition = competitionMapper.getById( competitionId );
         // 竞赛是需要参赛作品
-        boolean isHaveWorks = competition.getIsNeedWorks();
-
+//        boolean isHaveWorks = competition.getIsNeedWorks();
         // 参赛类型
         Progress progress = progressService.getById( progressId );
+        Boolean isNeedWorks = progress.getIsNeedWorks();
         Boolean isSingle = progress.getIsSingle();
-//        int joinTypeId = competition.getJoinTypeId();
         List<Join> joinList = joinMapper.getListByCompetitionIdProgressId( competitionId, progressId );
         List<ExcelModel> data = new LinkedList<>();
         if (!isSingle) {
@@ -289,7 +288,7 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         else {
             //单人赛
             joinList.spliterator().forEachRemaining( item -> {
-                data.add( isHaveWorks
+                data.add( isNeedWorks
                         ? EnterExcel.builder()
                         .index( item.getId() )
                         .worksName( item.getWorks().getWorksName() )
@@ -302,7 +301,7 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
             } );
         }
         String fileName = LocalDate.now().toString() + competitionId;
-        ExcelUtils.generateExcel( fileName, "", data, isHaveWorks ? EnterExcel.class : EnterExcel2.class );
+        ExcelUtils.generateExcel( fileName, "", data, isNeedWorks ? EnterExcel.class : EnterExcel2.class );
         return fileName;
     }
 

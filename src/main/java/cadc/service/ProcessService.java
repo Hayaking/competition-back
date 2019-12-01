@@ -13,4 +13,5 @@ public interface ProcessService extends IService<Process> {
 
     Page<Process> getByCompetitionId(Page<Process> page, int competitionId);
 
+    List<Process> getListByProcessId(String progressId);
 }

@@ -12,10 +12,11 @@ import java.util.List;
  */
 public class ExcelUtils {
 
-    public static boolean generateExcel(String name, String sheetName, List<?> data, Class<?> clazz) {
+    public static FileInputStream generateExcel(String name, String sheetName, List<?> data, Class<?> clazz) {
         if (sheetName == null || StringUtils.isBlank( sheetName )) {
             sheetName = "sheet1";
         }
+        FileInputStream fis = null;
         try {
             String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
             String outPath = root + "static/excel/" + name + ".xlsx";
@@ -25,10 +26,11 @@ public class ExcelUtils {
                 outFile.createNewFile();
             }
             EasyExcel.write( outPath, clazz ).sheet( sheetName ).doWrite( data );
+            fis = new FileInputStream( new File( outPath ) );
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return true;
+        return fis;
     }
 
     public static InputStream getExcel(String name) {

@@ -21,16 +21,33 @@ public class ProcessController {
     @Autowired
     private ProcessService processService;
 
-    @RequestMapping(value = "/process", method = RequestMethod.POST)
+    /**
+     * 工作组 上传比赛过程
+     * @param process
+     * @return
+     */
+    @PostMapping(value = "/process")
     public Object create(@RequestBody Process process) {
         boolean flag = process.insert();
         return MessageFactory.message( flag );
     }
 
-    @RequestMapping(value = "/process/{competitionId}/{pageNum}/{pageSize}", method = RequestMethod.GET)
-    public Object create(@PathVariable int competitionId, @PathVariable int pageNum, @PathVariable int pageSize) {
+    /**
+     * 工作组 分页获取比赛过程
+     * @param competitionId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @GetMapping(value = "/process/{competitionId}/{pageNum}/{pageSize}")
+    public Object getPage(@PathVariable int competitionId, @PathVariable int pageNum, @PathVariable int pageSize) {
         Page<Process> res = processService.getByCompetitionId( new Page<>( pageNum, pageSize ), competitionId );
         return MessageFactory.message( res );
     }
 
+    @GetMapping(value = "/process/{progressId}")
+    public Object getList(@PathVariable String progressId) {
+        List<Process> res = processService.getListByProcessId( progressId );
+        return MessageFactory.message( res );
+    }
 }

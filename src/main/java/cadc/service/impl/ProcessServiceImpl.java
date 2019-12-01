@@ -26,4 +26,11 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
         page.setRecords( list );
         return page;
     }
+
+    @Override
+    public List<Process> getListByProcessId(String progressId) {
+        QueryWrapper<Process> wrapper = new QueryWrapper<>();
+        wrapper.eq( "progress_id", progressId );
+        return processMapper.selectList( wrapper );
+    }
 }

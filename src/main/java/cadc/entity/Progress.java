@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author haya
@@ -41,6 +42,8 @@ public class Progress extends Model<Progress> {
     private String coOrg;
     private String place;
 
+    @TableField(exist = false)
+    private List<Process> processList;
     @TableField(exist = false)
     private Budget budget;
     @TableField(exist = false)
