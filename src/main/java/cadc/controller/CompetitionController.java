@@ -96,14 +96,20 @@ public class CompetitionController {
         return MessageFactory.message( SUCCESS, res );
     }
 
-    @RequestMapping(value = "/competition/{id}", method = RequestMethod.GET)
+    /**
+     * 点击参赛后 请求获得竞赛信息
+     * @param id
+     * @return
+     */
+    @RequiresRoles("学生")
+    @GetMapping(value = "/competition/{id}")
     public Object getCompetitionById(@PathVariable int id) {
         Competition res = competitionService.getWithProgressById( id );
         return MessageFactory.message( res );
     }
 
     /**
-     * 设置审核状态
+     * 管理员 设置审核状态
      *
      * @param id
      * @param state

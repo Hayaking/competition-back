@@ -95,6 +95,9 @@ public class ProgressController {
     public Object reviewProgressResult(@PathVariable Integer id, @PathVariable Integer state) {
         Progress progress = progressService.getById( id );
         progress.setIsReviewResult( state );
+        if (state == 3) {
+            progressService.endProgress(id);
+        }
         boolean res = progress.insertOrUpdate();
         return MessageFactory.message( res );
     }

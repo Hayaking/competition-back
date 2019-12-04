@@ -51,6 +51,10 @@ public interface JoinInProgressMapper extends BaseMapper<JoinInProgress> {
     @Select( value = "select * from join_in_progress where progress_id = #{progressId}" )
     List<JoinInProgress> getEnterList(Page<JoinInProgress> page, int progressId);
 
+    @ResultMap( value = "withProgressAndJoin")
+    @Select( value = "select * from join_in_progress where progress_id = #{progressId}" )
+    List<JoinInProgress> getEnterList(int progressId);
+
     @Results(value = {
             @Result(column = "id", property = "id"),
             @Result(column = "progress_id", property = "progressId"),

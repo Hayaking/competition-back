@@ -34,4 +34,11 @@ public interface ProgressService extends IService<Progress> {
     Progress getNeedReviewById(int id);
 
     boolean generateResultWord(Integer progressId, ResultSummaryHolder holder);
+
+    /**
+     * 结束指定比赛阶段 计算工作量
+     * @param progressId
+     * @return
+     */
+    boolean endProgress(int progressId);
 }

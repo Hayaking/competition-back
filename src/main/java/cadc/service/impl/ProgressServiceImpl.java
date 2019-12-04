@@ -5,9 +5,11 @@ import cadc.bean.holder.ResultSummaryHolder;
 import cadc.bean.word.BudgetPolicy;
 import cadc.bean.word.CostPolicy;
 import cadc.bean.word.ProcessPolicy;
+import cadc.entity.*;
 import cadc.entity.Process;
-import cadc.entity.Progress;
+import cadc.mapper.JoinInProgressMapper;
 import cadc.mapper.ProgressMapper;
+import cadc.mapper.WorkLoadMapper;
 import cadc.service.ProgressService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -38,7 +40,10 @@ import static cadc.bean.message.STATE.STATE_NOT_START;
 public class ProgressServiceImpl extends ServiceImpl<ProgressMapper, Progress> implements ProgressService {
     @Resource
     private ProgressMapper progressMapper;
-
+    @Resource
+    private JoinInProgressMapper joinInProgressMapper;
+    @Resource
+    private WorkLoadMapper workLoadMapper;
     @Override
     public List<Progress> getEnterNoStart() {
         QueryWrapper<Progress> wrapper = new QueryWrapper<>();
@@ -142,6 +147,49 @@ public class ProgressServiceImpl extends ServiceImpl<ProgressMapper, Progress> i
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean endProgress(int progressId) {
+        double H = 0,F;
+        //1.获取当前阶段
+        Progress progress = progressMapper.getById( progressId );
+        // 获取竞赛级别
+        int typeId = progress.getTypeId();
+        if (typeId == 3 || typeId == 4) {
+            H = 1D;
+        } else if (typeId == 2) {
+            H = 0.8D;
+        }
+        // 获取参赛形式
+        Boolean isSingle = progress.getIsSingle();
+        Boolean isNeedWorks = progress.getIsNeedWorks();
+        if (isSingle && !isNeedWorks) {
+            F = 0.3D;
+        } else {
+            F = 1;
+        }
+        //2.获取报名列表
+        List<JoinInProgress> enterList = joinInProgressMapper.getEnterList( progressId );
+
+        for (JoinInProgress item : enterList) {
+            double L;
+            //获取获奖级别
+            int priceType = item.getPrice().getTypeId();
+            if (priceType <= 3) {
+                L = 1D;
+            } else {
+                L = 0.6D;
+            }
+            Teacher teacher = item.getJoin().getTeacher1();
+            WorkLoad workLoad = new WorkLoad();
+            workLoad.setJoinId( item.getJoinId() );
+            workLoad.setTeacherId( teacher.getId() );
+            //计算工作量
+            workLoad.setVal( 20 * H + F + L );
+            workLoad.insert();
         }
         return true;
     }
