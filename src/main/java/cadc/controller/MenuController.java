@@ -5,6 +5,7 @@ import cadc.entity.Menu1;
 import cadc.service.Menu1Service;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ public class MenuController {
      *
      * @return
      */
+    @RequiresAuthentication
     @RequestMapping(value = "/menu", method = RequestMethod.GET)
     public Object getMenu() {
         Subject subject = SecurityUtils.getSubject();

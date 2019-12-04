@@ -2,21 +2,25 @@ package cadc.service.impl;
 
 import cadc.entity.Teacher;
 import cadc.entity.TeacherGroup;
+import cadc.entity.TeacherGroupLog;
 import cadc.entity.TeacherInGroup;
 import cadc.mapper.TeacherGroupMapper;
 import cadc.mapper.TeacherInGroupMapper;
 import cadc.mapper.TeacherMapper;
+import cadc.service.TeacherGroupLogService;
 import cadc.service.TeacherGroupService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,32 +39,35 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     private TeacherInGroupMapper teacherInGroupMapper;
     @Resource
     private TeacherMapper teacherMapper;
-
-    @Override
-    public Integer add(String groupName, String account, String state) {
-//        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-//        TeacherGroup teacherGroup = new TeacherGroup( groupName, account, STATE_APPLYING.toString(), sdf.format( new Date() ) );
-//        boolean flag = teacherGroupMapper.add( teacherGroup ) > 0;
-//        return flag ? teacherGroup.getId() : null;
-        return 1;
-    }
+    @Autowired
+    private TeacherGroupLogService teacherGroupLogService;
 
     @Override
     public Boolean create(TeacherGroup group, int teacherId) {
-        if (group == null) {
-            throw new IllegalArgumentException( "空" );
+        // 1.检查参数
+        if (group == null || StringUtils.isBlank( group.getName() )) {
+            return false;
         }
-        if (StringUtils.isBlank( group.getName() )) {
-            throw new IllegalArgumentException( "字符串空" );
+        Teacher teacher = teacherMapper.selectById( teacherId );
+        if (teacher == null) {
+            return false;
         }
-        // 创建小组
+        // 2.创建小组
         group.setState( STATE_APPLYING.toString() );
         group.setCreatorId( teacherId );
         group.setCreateTime( LocalDateTime.now().toString() );
         boolean flag = group.insert();
-        // 将创建人添加进入小组
+        // 3.将创建人添加进入小组
         if (flag) {
-            return new TeacherInGroup( group.getId(), teacherId, STATE_INVITE_SUCCESS.toString() ).insert();
+            new TeacherInGroup( group.getId(), teacherId, STATE_INVITE_SUCCESS.toString() ).insert();
+            //4.日志
+            teacherGroupLogService.add( new TeacherGroupLog() {{
+                setGroupId( group.getId() );
+                setCreateTime( new Date() );
+                setOperatorId( teacherId );
+                setAction( teacher.getTeacherName() + "创建工作组：" + group.getName() );
+            }} );
+            return true;
         }
         return false;
     }
@@ -94,9 +101,20 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     }
 
     @Override
-    public boolean inviteTeacher(int groupId, int teacherId) {
-        return teacherInGroupMapper
-                .insert( new TeacherInGroup( groupId, teacherId, STATE_INVITING.toString() ) ) > 0;
+    public boolean inviteTeacher(Teacher leader,int groupId, int teacherId) {
+        Teacher teacher = teacherMapper.selectById( teacherId );
+        // 1.添加目标进工作组 设置状态为邀请中
+        boolean res = teacherInGroupMapper.insert( new TeacherInGroup( groupId, teacherId, STATE_INVITING.toString() ) ) > 0;
+        if (res) {
+            // 2.日志
+            teacherGroupLogService.add( new TeacherGroupLog(){{
+                setOperatorId( leader.getId() );
+                setCreateTime( new Date() );
+                setGroupId( groupId );
+                setAction( leader.getTeacherName() + ",邀请" + teacher.getTeacherName() + "加入工作组" );
+            }} );
+        }
+        return res;
     }
 
     @Override
@@ -105,7 +123,7 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     }
 
     @Override
-    public boolean updateState(int groupId,  int teacherId, String state) {
+    public boolean updateState(int groupId, int teacherId, String state) {
         return teacherInGroupMapper.updateState( groupId, teacherId, state ) > 0;
     }
 

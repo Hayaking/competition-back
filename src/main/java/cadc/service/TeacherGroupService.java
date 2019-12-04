@@ -1,5 +1,6 @@
 package cadc.service;
 
+import cadc.entity.Teacher;
 import cadc.entity.TeacherGroup;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -11,8 +12,6 @@ import java.util.List;
  * @author haya
  */
 public interface TeacherGroupService extends IService<TeacherGroup> {
-
-    Integer add(String groupName, String account, String state);
 
     Boolean create(TeacherGroup group, int teacherId);
     /**
@@ -31,7 +30,7 @@ public interface TeacherGroupService extends IService<TeacherGroup> {
      * @param account
      * @return
      */
-    boolean inviteTeacher(int groupId, int account);
+    boolean inviteTeacher(Teacher leader,int groupId, int account);
 
     List<TeacherGroup> getInviting(int id);
 

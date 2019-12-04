@@ -102,16 +102,18 @@ public class TeacherGroupController {
     }
 
     /**
-     * 邀请工作组成员
+     * 组长 邀请工作组成员
      *
      * @param groupId
      * @param teacherId
      * @return
      */
-    @RequestMapping(value = "/teacherGroup/invite/{groupId}/{teacherId}", method = RequestMethod.POST)
+    @RequiresRoles( "老师" )
+    @PostMapping(value = "/teacherGroup/invite/{groupId}/{teacherId}")
     public Object invite(@PathVariable int groupId, @PathVariable int teacherId) {
-        boolean flag = teacherGroupService.inviteTeacher( groupId, teacherId );
-        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
+        Teacher leader = (Teacher) SecurityUtils.getSubject().getPrincipal();
+        boolean flag = teacherGroupService.inviteTeacher(leader, groupId, teacherId );
+        return MessageFactory.message( flag );
     }
 
     /**
@@ -132,7 +134,7 @@ public class TeacherGroupController {
      * @param groupId
      * @return
      */
-    @RequestMapping(value = "/teacherGroup/agree/{groupId}", method = RequestMethod.POST)
+    @PostMapping(value = "/teacherGroup/agree/{groupId}")
     public Object agree(@PathVariable int groupId) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         int id = teacher.getId();

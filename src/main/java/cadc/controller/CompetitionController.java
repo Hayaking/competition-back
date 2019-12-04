@@ -169,9 +169,8 @@ public class CompetitionController {
      * @param holder
      * @return
      */
-    @RequestMapping(value = "/competition", method = RequestMethod.POST)
+    @PostMapping(value = "/competition")
     public Object save(@RequestBody CompetitionHolder holder) {
-        log.warn( holder );
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         boolean flag = competitionService.createCompetition(
                 teacher,

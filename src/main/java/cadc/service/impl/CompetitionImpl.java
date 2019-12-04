@@ -1,13 +1,14 @@
 package cadc.service.impl;
 
-import cadc.bean.PROGRESS_STATE;
 import cadc.bean.word.BudgetPolicy;
 import cadc.bean.word.CompetitionApplyPolicy;
 import cadc.entity.*;
 import cadc.mapper.CompetitionMapper;
 import cadc.mapper.JoinMapper;
 import cadc.mapper.ProgressMapper;
+import cadc.mapper.TeacherGroupMapper;
 import cadc.service.CompetitionService;
+import cadc.service.TeacherGroupLogService;
 import cadc.util.WordUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -16,8 +17,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.config.Configure;
-import freemarker.template.TemplateException;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ClassUtils;
@@ -25,7 +27,6 @@ import org.springframework.util.ClassUtils;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static cadc.bean.PROGRESS_STATE.NO_START;
-import static cadc.bean.message.STATE.*;
+import static cadc.bean.message.STATE.STATE_AGREE;
 
 /**
  * @author haya
@@ -49,13 +50,27 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
     private JoinMapper joinMapper;
     @Resource
     private ProgressMapper progressMapper;
+    @Resource
+    private TeacherGroupMapper teacherGroupMapper;
+    @Autowired
+    private TeacherGroupLogService teacherGroupLogService;
 
     @Override
     public boolean createCompetition(Teacher teacher, Competition competition, List<Progress> progresses, List<Budget> budgets) {
+        //1. 判断是不是组长
+        int groupId = competition.getTeacherGroupId();
+        TeacherGroup teacherGroup = teacherGroupMapper.selectById( groupId );
+        int creatorId = teacherGroup.getCreatorId();
+        int teacherId = teacher.getId();
+        if (creatorId != teacherId) {
+            return false;
+        }
+        // 2.创建竞赛
         competition.setState( 0 );
-        competition.setCreatorId( teacher.getId() );
+        competition.setCreatorId( teacherId );
         competition.setCreateTime( new Date() );
         competitionMapper.insert( competition );
+        // 3.创建比赛阶段
         AtomicInteger index = new AtomicInteger();
         progresses.forEach( item -> {
             item.setCompetitionId( competition.getId() );
@@ -64,11 +79,20 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
             item.setIsScanEnterState( true );
             item.setIsScanStartState( true );
             progressMapper.insert( item );
+            // 创建预算
             Budget budget = budgets.get( index.getAndIncrement() );
             budget.setProgressId( item.getId() );
             budget.insert();
         } );
+        // 4.生成word
         this.getWord( competition.getId() );
+        // 5.日志
+        teacherGroupLogService.add( new TeacherGroupLog() {{
+            setGroupId( groupId );
+            setOperatorId( teacherId );
+            setCreateTime( new Date() );
+            setAction( teacher.getTeacherName() + ",创建了" + competition.getName() );
+        }} );
         return true;
     }
 
@@ -167,6 +191,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
         return competitionMapper.updateEnterState( id, state ) > 0;
     }
 
+    @Async
     @Override
     public FileInputStream getWord(int competitionId) {
         Competition competition = competitionMapper.getWithProgressListById( competitionId );
@@ -176,13 +201,13 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
                 .customPolicy( "progress", new CompetitionApplyPolicy() )
                 .build();
         String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
-        String fileName = competition.getName() +".docx";
+        String fileName = competition.getName() + ".docx";
         FileInputStream fis = null;
         try {
             XWPFTemplate.compile( root + "template/competition.docx", config )
                     .render( props )
                     .writeToFile( root + fileName );
-             fis = new FileInputStream( new File( root + fileName ) );
+            fis = new FileInputStream( new File( root + fileName ) );
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -192,7 +217,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
     @Override
     public FileInputStream getBudgetWord2(int competitionId) {
         Competition competition = competitionMapper.getWithBudgetListById( competitionId );
-        Map<String, Object> props = new HashMap<String, Object>(){{
+        Map<String, Object> props = new HashMap<String, Object>() {{
             put( "name", competition.getName() );
             put( "budget", competition.getProgressList() );
         }};
@@ -205,7 +230,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
         FileInputStream fis = null;
         try {
             XWPFTemplate.compile( root + "template/budget.docx", config )
-                    .render(props)
+                    .render( props )
                     .writeToFile( root + fileName );
             fis = new FileInputStream( new File( root + fileName ) );
         } catch (IOException e) {
@@ -220,7 +245,7 @@ public class CompetitionImpl extends ServiceImpl<CompetitionMapper, Competition>
         String fileName = competitionId + "_" + competition.getName() + "_budget" + ".docx";
         String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
         FileInputStream fis = null;
-        Map<String, Object> props = new HashMap<String, Object>(){{
+        Map<String, Object> props = new HashMap<String, Object>() {{
             put( "name", competition.getName() );
             put( "budget", competition.getProgressList() );
         }};
