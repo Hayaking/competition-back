@@ -3,6 +3,7 @@ package cadc.config;
 import com.corundumstudio.socketio.SocketConfig;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.SpringAnnotationScanner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,11 +18,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Configuration
 public class WebSocketConfig {
     @Bean
+    @Autowired
     public SpringAnnotationScanner springAnnotationScanner(SocketIOServer socketServer) {
         return new SpringAnnotationScanner(socketServer);
     }
 
-    @Bean
+    @Bean(initMethod = "start")
     public SocketIOServer socketIOServer() {
         SocketConfig socketConfig = new SocketConfig();
         socketConfig.setTcpNoDelay(true);
@@ -41,6 +43,11 @@ public class WebSocketConfig {
 
     @Bean
     public Map<UUID, Serializable> uuidPoll() {
+        return new ConcurrentHashMap<>();
+    }
+
+    @Bean
+    public Map<Serializable,UUID> idPoll() {
         return new ConcurrentHashMap<>();
     }
 }

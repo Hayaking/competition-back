@@ -1,17 +1,14 @@
 package cadc.service.impl;
 
-import cadc.bean.message.STATE;
+import cadc.entity.Message;
 import cadc.entity.Student;
-import cadc.entity.StudentInGroup;
 import cadc.entity.Teacher;
+import cadc.mapper.MessageMapper;
 import cadc.mapper.StudentGroupMapper;
-import cadc.mapper.StudentInGroupMapper;
 import cadc.mapper.TeacherGroupMapper;
 import cadc.service.MessageService;
-import cadc.service.TeacherGroupService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.apache.ibatis.annotations.Results;
-import org.apache.shiro.SecurityUtils;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +21,12 @@ import java.util.Map;
  * @author haya
  */
 @Service
-public class MessageServiceImpl implements MessageService {
+public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> implements MessageService {
 
     @Resource
+    private MessageMapper messageMapper;
+    @Resource
     private TeacherGroupMapper teacherGroupMapper;
-
     @Resource
     private StudentGroupMapper studentGroupMapper;
 
@@ -53,6 +51,27 @@ public class MessageServiceImpl implements MessageService {
             return getTeacherMessage( ((Teacher) principal).getId() );
         }
         return null;
+    }
+
+    @Override
+    public List<Message> getList(String toId) {
+        QueryWrapper<Message> wrapper = new QueryWrapper<>();
+        wrapper.eq( "to", toId );
+        return messageMapper.selectList( wrapper );
+    }
+
+    @Override
+    public List<Message> getSystemMessageList(String toId) {
+        QueryWrapper<Message> wrapper = new QueryWrapper<>();
+        wrapper.eq( "`to`", toId ).eq( "code", 0 );
+        return messageMapper.selectList( wrapper );
+    }
+
+    @Override
+    public List<Message> getInviteMessageList(String toId) {
+        QueryWrapper<Message> wrapper = new QueryWrapper<>();
+        wrapper.eq( "`to`", toId ).eq( "code", 1 );
+        return messageMapper.selectList( wrapper );
     }
 
 }

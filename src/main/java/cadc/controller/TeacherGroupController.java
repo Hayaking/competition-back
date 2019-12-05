@@ -128,33 +128,44 @@ public class TeacherGroupController {
         return MessageFactory.message( SUCCESS, list );
     }
 
-    /**
-     * 同意邀请
-     *
-     * @param groupId
-     * @return
-     */
-    @PostMapping(value = "/teacherGroup/agree/{groupId}")
-    public Object agree(@PathVariable int groupId) {
+    @PostMapping(value = "/teacherGroup/{groupId}/review/{flag}")
+    public Object review(@PathVariable int groupId, @PathVariable Boolean flag) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
         int id = teacher.getId();
-        boolean flag = teacherGroupService.updateState( groupId, id, STATE_INVITE_SUCCESS.toString() );
-        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
+        if (flag) {
+            flag = teacherGroupService.updateState( groupId, id, STATE_INVITE_SUCCESS.toString() );
+        } else {
+            flag = teacherGroupService.updateState( groupId, id, STATE_INVITE_FAILED.toString()  );
+        }
+        return MessageFactory.message( flag );
     }
-
-    /**
-     * 拒绝邀请
-     *
-     * @param groupId
-     * @return
-     */
-    @RequestMapping(value = "/teacherGroup/refuse/{groupId}", method = RequestMethod.POST)
-    public Object refuse(@PathVariable int groupId) {
-        Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
-        int id = teacher.getId();
-        boolean flag = teacherGroupService.updateState( groupId, id, STATE_INVITE_FAILED.toString() );
-        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
-    }
+//    /**
+//     * 同意邀请
+//     *
+//     * @param groupId
+//     * @return
+//     */
+//    @PostMapping(value = "/teacherGroup/agree/{groupId}")
+//    public Object agree(@PathVariable int groupId) {
+//        Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
+//        int id = teacher.getId();
+//        boolean flag = teacherGroupService.updateState( groupId, id, STATE_INVITE_SUCCESS.toString() );
+//        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
+//    }
+//
+//    /**
+//     * 拒绝邀请
+//     *
+//     * @param groupId
+//     * @return
+//     */
+//    @RequestMapping(value = "/teacherGroup/refuse/{groupId}", method = RequestMethod.POST)
+//    public Object refuse(@PathVariable int groupId) {
+//        Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();
+//        int id = teacher.getId();
+//        boolean flag = teacherGroupService.updateState( groupId, id, STATE_INVITE_FAILED.toString() );
+//        return MessageFactory.message( flag ? SUCCESS : FAILED, "" );
+//    }
 
     /**
      * 审核

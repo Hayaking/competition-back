@@ -1,6 +1,7 @@
 package cadc.controller;
 
 import cadc.bean.message.MessageFactory;
+import cadc.entity.Message;
 import cadc.entity.Student;
 import cadc.entity.Teacher;
 import cadc.entity.TeacherGroup;
@@ -12,9 +13,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -37,5 +36,13 @@ public class MessageController {
         Subject subject = SecurityUtils.getSubject();
         Map<String, Object> res = messageService.getMessage(subject);
         return MessageFactory.message( res != null, res );
+    }
+
+    @PostMapping(value = "/message/{id}")
+    public Object setRead(@PathVariable String id) {
+        Message message = messageService.getById( id );
+        message.setIsRead( true );
+        boolean res = message.insertOrUpdate();
+        return MessageFactory.message( res );
     }
 }

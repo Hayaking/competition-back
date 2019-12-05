@@ -1,14 +1,12 @@
 package cadc.service.impl;
 
-import cadc.entity.Teacher;
-import cadc.entity.TeacherGroup;
-import cadc.entity.TeacherGroupLog;
-import cadc.entity.TeacherInGroup;
+import cadc.entity.*;
 import cadc.mapper.TeacherGroupMapper;
 import cadc.mapper.TeacherInGroupMapper;
 import cadc.mapper.TeacherMapper;
 import cadc.service.TeacherGroupLogService;
 import cadc.service.TeacherGroupService;
+import cadc.websocket.WebSocketHandler;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -41,6 +39,8 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
     private TeacherMapper teacherMapper;
     @Autowired
     private TeacherGroupLogService teacherGroupLogService;
+    @Autowired
+    private WebSocketHandler webSocketHandler;
 
     @Override
     public Boolean create(TeacherGroup group, int teacherId) {
@@ -102,10 +102,31 @@ public class TeacherGroupServiceImpl extends ServiceImpl<TeacherGroupMapper, Tea
 
     @Override
     public boolean inviteTeacher(Teacher leader,int groupId, int teacherId) {
+        log.warn( "邀请组员" );
         Teacher teacher = teacherMapper.selectById( teacherId );
+        TeacherGroup group = teacherGroupMapper.selectById( groupId );
         // 1.添加目标进工作组 设置状态为邀请中
         boolean res = teacherInGroupMapper.insert( new TeacherInGroup( groupId, teacherId, STATE_INVITING.toString() ) ) > 0;
         if (res) {
+            // 3.判断在线不
+            //在线发送websocket
+            if (webSocketHandler.isOnLine( teacherId )) {
+                log.warn( "在线" );
+                webSocketHandler.send( "invite", new Message() {{
+                    setIsRead( false );
+                    setIsFromStudent( false );
+                    setIsToStudent( false );
+                    setCreateTime( new Date() );
+                    setTo( String.valueOf( teacherId ) );
+                    setFrom( String.valueOf( leader.getId() ) );
+                    setExtra( String.valueOf( groupId ) );
+                    setBody( teacher.getTeacherName() + "邀请你加入" + group.getName() );
+                }} );
+            } else {
+                log.warn( "不在线" );
+                // 不在线则发送邮件
+                // 添加到未读消息
+            }
             // 2.日志
             teacherGroupLogService.add( new TeacherGroupLog(){{
                 setOperatorId( leader.getId() );

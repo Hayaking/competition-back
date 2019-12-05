@@ -57,8 +57,6 @@ public class TeacherController {
         return MessageFactory.message( SUCCESS, list );
     }
 
-
-
     /**
      * 获取指定教师的角色
      * @param id
