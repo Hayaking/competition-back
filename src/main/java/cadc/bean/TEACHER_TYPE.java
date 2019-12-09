@@ -1,8 +1,8 @@
 package cadc.bean;
 
 public enum TEACHER_TYPE {
-    TACHER_ADMIN(2),
     TEACHER_NORMAL(1),
+    TACHER_ADMIN(2),
     TEACHER_LEAD(4);
 
     private int val;

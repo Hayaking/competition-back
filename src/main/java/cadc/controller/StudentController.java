@@ -1,6 +1,7 @@
 package cadc.controller;
 
 import cadc.bean.message.MessageFactory;
+import cadc.entity.Message;
 import cadc.entity.Role;
 import cadc.entity.Student;
 import cadc.service.RoleService;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.security.Security;
 import java.util.List;
 
 import static cadc.bean.message.STATE.FAILED;
@@ -57,6 +59,19 @@ public class StudentController {
         boolean flag = stu.insertOrUpdate();
         return MessageFactory.message( flag );
     }
+
+    @RequestMapping(value = "/student/securityinfo", method = RequestMethod.POST)
+    public Object updateSecurityInfo(@RequestBody Student student){
+        Object principal = SecurityUtils.getSubject().getPrincipal();
+        Student stu = (Student) principal;
+        System.out.printf(student.getPassword() + student.getStuBankCardNo()+student.getStuPhone());
+        stu.setPassword(studentService.encryptPassword(student.getSignTime(), student.getPassword()));
+        stu.setStuBankCardNo(student.getStuBankCardNo());
+        stu.setStuPhone(student.getStuPhone());
+        boolean flag = stu.insertOrUpdate();
+        return MessageFactory.message(flag);
+    }
+
 
     /**
      * 根据账号查看学生是否存在

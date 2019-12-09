@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,36 +34,43 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
     public boolean sign(Student student) {
         // 拿注册时间当盐
         Date signTime = new Date();
-        student.setSignTime( signTime );
-        ByteSource salt = ByteSource.Util.bytes( Long.toString( signTime.getTime()  ) );
-        SimpleHash result = new SimpleHash( "MD5", student.getPassword(), salt, 10 );
-        student.setPassword( result.toHex() );
+        student.setSignTime(signTime);
+        ByteSource salt   = ByteSource.Util.bytes(Long.toString(signTime.getTime()));
+        SimpleHash result = new SimpleHash("MD5", student.getPassword(), salt, 10);
+        student.setPassword(result.toHex());
         return student.insert();
     }
 
     @Override
+    public  String encryptPassword(Date signtime, String password) {
+        ByteSource salt   = ByteSource.Util.bytes(Long.toString(signtime.getTime()));
+        SimpleHash result = new SimpleHash("MD5", password, salt, 10);
+        return result.toHex();
+    }
+
+    @Override
     public Student find(String account, String password) {
-        return studentMapper.find( account, password );
+        return studentMapper.find(account, password);
     }
 
     @Override
     public Student find(String account) {
         QueryWrapper<Student> wrapper = new QueryWrapper<>();
-        wrapper.eq( "account", account );
-        return studentMapper.selectOne( wrapper );
+        wrapper.eq("account", account);
+        return studentMapper.selectOne(wrapper);
     }
 
     @Override
     public List<String> exist(List<String> list) {
         QueryWrapper<Student> wrapper;
-        Student student;
-        List<String> res = new LinkedList<>();
+        Student               student;
+        List<String>          res = new LinkedList<>();
         for (String item : list) {
             wrapper = new QueryWrapper<>();
-            wrapper.eq( "account", item );
-            student = studentMapper.selectOne( wrapper );
+            wrapper.eq("account", item);
+            student = studentMapper.selectOne(wrapper);
             if (student == null) {
-                res.add( item );
+                res.add(item);
             }
         }
         return res;
@@ -69,28 +78,28 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
 
     @Override
     public boolean insert(Student student) {
-        int res = studentMapper.insertStudent( student.getAccount(), student.getPassword() );
+        int res = studentMapper.insertStudent(student.getAccount(), student.getPassword());
         return res > 0;
     }
 
     @Override
     public IPage<Student> findAll(Page<Student> page) {
-        return studentMapper.selectPage( page, new QueryWrapper<>() );
+        return studentMapper.selectPage(page, new QueryWrapper<>());
     }
 
     @Override
     public IPage<Student> find(Page<Student> page, String key) {
         QueryWrapper<Student> wrapper = new QueryWrapper<>();
-        wrapper.like( "account", key ).or()
-                .like( "stu_name", key );
-        return studentMapper.selectPage( page, wrapper );
+        wrapper.like("account", key).or()
+                .like("stu_name", key);
+        return studentMapper.selectPage(page, wrapper);
     }
 
     @Override
     public boolean isExistByAccount(String account) {
         QueryWrapper<Student> wrapper = new QueryWrapper<>();
-        wrapper.eq( "account", account );
-        Student student = studentMapper.selectOne( wrapper );
+        wrapper.eq("account", account);
+        Student student = studentMapper.selectOne(wrapper);
         return student != null;
     }
 }

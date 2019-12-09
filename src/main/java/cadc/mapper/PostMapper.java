@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 /**
- * @Author nobugexist
+ * @Author syh
  * @Date 2019/11/7
  */
 public interface PostMapper extends BaseMapper<Post> {

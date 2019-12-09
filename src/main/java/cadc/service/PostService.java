@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import java.util.List;
 
 /**
- * @Author nobugexist
+ * @Author syh
  * @Date 2019/11/7
  */
 public interface PostService extends IService<Post> {

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,11 +17,12 @@ public interface StudentService extends IService<Student> {
 
     /**
      * 根据帐号密码找到学生
+     *
      * @param account
      * @param password
      * @return
      */
-    Student find(String account,String password);
+    Student find(String account, String password);
 
     Student find(String account);
 
@@ -28,10 +30,13 @@ public interface StudentService extends IService<Student> {
 
     /**
      * 增加学生
+     *
      * @param student
      * @return
      */
     boolean insert(Student student);
+
+    String encryptPassword(Date signtime, String password);
 
     /**
      * 分页获取所有学生
@@ -45,9 +50,11 @@ public interface StudentService extends IService<Student> {
 
     /**
      * 根据账号查看学生存在否
+     *
      * @param account
      * @return
      */
     boolean isExistByAccount(String account);
+
 
 }

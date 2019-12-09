@@ -4,6 +4,7 @@ import cadc.bean.UserToken;
 import cadc.bean.message.MessageFactory;
 import cadc.entity.Student;
 import cadc.entity.Teacher;
+import cadc.service.RoleService;
 import cadc.service.StudentService;
 import cadc.service.TeacherService;
 import lombok.extern.log4j.Log4j2;
@@ -27,6 +28,8 @@ public class LoginController {
     private StudentService studentService;
     @Autowired
     private TeacherService teacherService;
+    @Autowired
+    private RoleService roleService;
 
     /**
      * 登录
@@ -78,6 +81,8 @@ public class LoginController {
         boolean isExist = studentService.isExistByAccount( student.getAccount() );
         if (!isExist) {
             boolean flag = studentService.sign( student );
+            if (flag)
+                roleService.addStudent(student.getId(), 5);
             return MessageFactory.message( flag, flag ? "登录成功" : "登录失败" );
         } else {
             return MessageFactory.message( false, "帐号已存在" );
