@@ -35,7 +35,14 @@ public class EnterController {
         IPage<Join> res = joinService.getByCompetitionId( new Page<>( pageNum, pageSize ), competitionId );
         return MessageFactory.message( res );
     }
-
+    /**
+     * 工作组 获取报名列表
+     *
+     * @param competitionId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @GetMapping(value = "/enter/{competitionId}/{progressId}/{pageNum}/{pageSize}")
     public Object getEnterList(@PathVariable int competitionId, @PathVariable int progressId, @PathVariable int pageNum, @PathVariable int pageSize) {
         Page<JoinInProgress> res = joinInProgressService.getEnterPage( new Page<>( pageNum, pageSize ), competitionId, progressId );

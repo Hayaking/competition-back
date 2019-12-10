@@ -22,6 +22,21 @@ public interface JoinMapper extends BaseMapper<Join> {
             @Result(column = "works_id", property = "works",
                     one = @One(select = "cadc.mapper.WorksMapper.getById")),
             @Result(column = "competition_id", property = "competitionId"),
+            @Result(column = "teacher_id1", property = "teacher1",
+                    one = @One(select = "cadc.mapper.TeacherMapper.getById")),
+            @Result(column = "teacher_id2", property = "teacher2",
+                    one = @One(select = "cadc.mapper.TeacherMapper.getById")),
+            @Result(column = "apply_state", property = "applyState"),
+            @Result(column = "apply_state2", property = "applyState2")
+    })
+    @Select(value = "select * from `join` where id =#{id}")
+    Join getWithWorksTeacherById(int id);
+
+    @Results({
+            @Result(column = "id", property = "id"),
+            @Result(column = "works_id", property = "works",
+                    one = @One(select = "cadc.mapper.WorksMapper.getById")),
+            @Result(column = "competition_id", property = "competitionId"),
             @Result(column = "competition_id", property = "competition",
                     one = @One(select = "cadc.mapper.CompetitionMapper.getById")),
             @Result(column = "teacher_id1", property = "teacher1",

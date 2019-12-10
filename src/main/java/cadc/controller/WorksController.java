@@ -32,4 +32,10 @@ public class WorksController {
         List<Works> list = worksService.getByGroupId( groupId );
         return MessageFactory.message( list );
     }
+
+    @GetMapping(value = "/works/{id}")
+    public Object getByGroupId(@PathVariable Integer id) {
+        Works res = worksService.getById( id );
+        return MessageFactory.message( res );
+    }
 }

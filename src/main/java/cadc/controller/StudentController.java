@@ -31,6 +31,13 @@ public class StudentController {
     @Autowired
     private RoleService roleService;
 
+    @GetMapping(value = "/student/id/{id}")
+    public Object update(@PathVariable Integer id) {
+        Student res = studentService.getById( id );
+        res.setPassword( "" );
+        return MessageFactory.message( res);
+    }
+
     /**
      * 更新学生信息
      * @param student

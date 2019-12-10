@@ -32,7 +32,7 @@ public class LeadController {
      * @param pageNum
      * @return
      */
-    @RequiresRoles( "指导教师" )
+    @RequiresRoles( "指导老师" )
     @RequestMapping(path = "/lead/apply/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object getApply(@PathVariable int pageSize, @PathVariable int pageNum) {
         Subject subject = SecurityUtils.getSubject();
@@ -55,7 +55,7 @@ public class LeadController {
         return MessageFactory.message( flag );
     }
 
-    @RequiresRoles("指导教师")
+    @RequiresRoles("指导老师")
     @RequestMapping(path = "/lead/apply/{key}/{pageNum}/{pageSize}", method = RequestMethod.GET)
     public Object searchApply(@PathVariable String key, @PathVariable int pageSize, @PathVariable int pageNum) {
         Teacher teacher = (Teacher) SecurityUtils.getSubject().getPrincipal();

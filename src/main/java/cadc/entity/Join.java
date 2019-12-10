@@ -26,8 +26,6 @@ public class Join extends Model<Join> {
     private Integer groupId;
     private String applyState;
     private String applyState2;
-//    private String enterState;
-//    private String joinState;
     private Integer joinTypeId;
     private Integer creatorId;
     private Date createTime;
