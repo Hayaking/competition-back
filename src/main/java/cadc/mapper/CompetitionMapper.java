@@ -21,6 +21,9 @@ public interface CompetitionMapper extends BaseMapper<Competition> {
     @Update("update competition set enter_state = #{state} where id=#{id}")
     int updateEnterState(int id, String state);
 
+    @Select("select * from competition where id =#{id}")
+    Competition getById(@Param("id") int id);
+
     @Results( value = {
             @Result(column = "id", property = "id"),
             @Result(column = "name", property = "name"),
@@ -40,7 +43,7 @@ public interface CompetitionMapper extends BaseMapper<Competition> {
             @Result(column = "crate_time", property = "crateTime"),
     })
     @Select("select * from competition where id =#{id}")
-    Competition getById(@Param("id") int id);
+    Competition getWithPersonInChargeById(@Param("id") int id);
 
     @ResultMap(value = "withProgressList")
     @Select("select * from competition where id =#{id}")

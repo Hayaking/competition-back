@@ -66,7 +66,7 @@ public interface ProgressMapper extends BaseMapper<Progress> {
             @Result(column = "id", property = "id"),
             @Result(column = "name", property = "name"),
             @Result(column = "competition_id", property = "competitionId"),
-            @Result(column = "competition_id", property = "competition", one = @One(select = "cadc.mapper.CompetitionMapper.getById")),
+            @Result(column = "competition_id", property = "competition", one = @One(select = "cadc.mapper.CompetitionMapper.getWithPersonInChargeById")),
             @Result(column = "type_id", property = "typeId"),
             @Result(column = "type_id", property = "type", one = @One(select = "cadc.mapper.CompetitionTypeMapper.getById")),
             @Result(column = "start_state", property = "startState"),

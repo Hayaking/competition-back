@@ -17,7 +17,11 @@ public interface JoinMapper extends BaseMapper<Join> {
     @Select(value = "select * from `join` where id =#{id}")
     Join getById(int id);
 
-    @Results({
+    @ResultMap( value = "competition")
+    @Select(value = "select * from `join` where id =#{id}")
+    Join getWithCompetitionById(int id);
+
+    @Results(id="works$Teacher1$Teacher2",value = {
             @Result(column = "id", property = "id"),
             @Result(column = "works_id", property = "works",
                     one = @One(select = "cadc.mapper.WorksMapper.getById")),
@@ -32,13 +36,13 @@ public interface JoinMapper extends BaseMapper<Join> {
     @Select(value = "select * from `join` where id =#{id}")
     Join getWithWorksTeacherById(int id);
 
-    @Results({
+    @Results(id="works$Competition$Teacher1$Teacher2",value = {
             @Result(column = "id", property = "id"),
             @Result(column = "works_id", property = "works",
                     one = @One(select = "cadc.mapper.WorksMapper.getById")),
             @Result(column = "competition_id", property = "competitionId"),
             @Result(column = "competition_id", property = "competition",
-                    one = @One(select = "cadc.mapper.CompetitionMapper.getById")),
+                    one = @One(select = "cadc.mapper.CompetitionMapper.getWithPersonInChargeById")),
             @Result(column = "teacher_id1", property = "teacher1",
                     one = @One(select = "cadc.mapper.TeacherMapper.getById")),
             @Result(column = "teacher_id2", property = "teacher2",
@@ -49,17 +53,20 @@ public interface JoinMapper extends BaseMapper<Join> {
     @Select(GET_LIST_STU_ACCOUNT)
     List<Join> getJoinListByStudentId(Page<Join> page, int id);
 
-    @ResultMap(value = {"withWorksAndCompetition"})
+    @Select( "SELECT * FROM `join` WHERE creator_id = #{id} OR group_id in (SELECT id FROM stu_in_group WHERE stu_id = #{id})" )
+    List<Join> getListByStudentId(int id);
+
+    @ResultMap(value = {"works$competition"})
     @Select("select * from `join` where competition_id = #{id}")
     List<Join> getListByCompetitionId(Page<Join> page, @Param("id") int id);
 
-    @Results(id = "withWorksAndCompetition",
+    @Results(id = "works$competition",
         value = {
                 @Result(column = "id", property = "id"),
                 @Result(column = "works_id", property = "works",
                         one = @One(select = "cadc.mapper.WorksMapper.getById")),
                 @Result(column = "competition_id", property = "competition",
-                        one = @One(select = "cadc.mapper.CompetitionMapper.getById")),
+                        one = @One(select = "cadc.mapper.CompetitionMapper.getWithPersonInChargeById")),
                 @Result(column = "teacher_id1", property = "teacherId1"),
                 @Result(column = "teacher_id2", property = "teacherId2"),
                 @Result(column = "apply_state", property = "applyState"),
@@ -69,19 +76,19 @@ public interface JoinMapper extends BaseMapper<Join> {
     @Select("select * from `join` where competition_id = #{id}")
     List<Join> getListByCompetitionId(@Param("id") int id);
 
-    @ResultMap( value = "withWorksAndCompetition")
+    @ResultMap( value = "works$competition")
     @Select("SELECT * FROM `join` JOIN join_in_progress ON join_in_progress.progress_id = #{progressId} WHERE competition_id = #{competitionId}")
     List<Join> getListByCompetitionIdProgressId(@Param("competitionId") int competitionId, @Param( "progressId" ) int progressId);
 
-    @ResultMap(value = {"withWorksAndCompetition"})
+    @ResultMap(value = {"works$competition"})
     @Select("SELECT * FROM `join` WHERE teacher_id1 = #{id} or teacher_id2 = #{id}")
     List<Join> getListByTeacherId(Page<Join> page, @Param("id") int id);
 
-    @ResultMap(value = {"withWorksAndCompetition"})
+    @ResultMap(value = {"works$competition"})
     @Select("SELECT * FROM `join` WHERE teacher_id1 = #{id} or teacher_id2 = #{id}")
     List<Join> searchListByTeacherId(Page<Join> page, @Param("id") int id);
 
-    @ResultMap(value = {"withWorksAndCompetition"})
+    @ResultMap(value = {"works$competition"})
     @Select("SELECT * FROM `join` WHERE works_id = #{worksId} or competition_id = #{competitionId} or group_id = #{groupId} and teacher_id1 = #{id} or teacher_id2 = #{id}")
     List<Join> searchListByOtherId(Page<Join> page,
                                    @Param("worksId") int worksId,
@@ -89,7 +96,7 @@ public interface JoinMapper extends BaseMapper<Join> {
                                    @Param("groupId") int groupId,
                                    @Param("id") int teacherId);
 
-    @Results(id = "withCompetition",
+    @Results(id = "competition",
             value = {
                     @Result(column = "id", property = "id"),
                     @Result(column = "id", property = "id"),
@@ -110,7 +117,7 @@ public interface JoinMapper extends BaseMapper<Join> {
             @Result(column = "works_id", property = "works",
                     one = @One(select = "cadc.mapper.WorksMapper.getById")),
             @Result(column = "competition_id", property = "competition",
-                    one = @One(select = "cadc.mapper.CompetitionMapper.getById")),
+                    one = @One(select = "cadc.mapper.CompetitionMapper.getWithPersonInChargeById")),
             @Result(column = "teacher_id1", property = "teacherId1"),
             @Result(column = "teacher_id2", property = "teacherId2"),
             @Result(column = "apply_state", property = "applyState"),
