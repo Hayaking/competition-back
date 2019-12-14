@@ -38,9 +38,9 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
         // 拿注册时间当盐
         Date signTime = new Date();
         student.setSignTime( signTime );
-        ByteSource salt = ByteSource.Util.bytes( Long.toString( signTime.getTime()  ) );
-        SimpleHash result = new SimpleHash( "MD5", student.getPassword(), salt, 10 );
-        student.setPassword( result.toHex() );
+//        ByteSource salt = ByteSource.Util.bytes( Long.toString( signTime.getTime()  ) );
+//        SimpleHash result = new SimpleHash( "MD5", student.getPassword(), salt, 10 );
+        student.setPassword( encryptPassword( signTime, student.getPassword() ) );
         student.insert();
         return roleStudentMapper.insert( new RoleStudent() {{
             setRoleId( 5 );
@@ -49,9 +49,9 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
     }
 
     @Override
-    public  String encryptPassword(Date signtime, String password) {
-        ByteSource salt   = ByteSource.Util.bytes(Long.toString(signtime.getTime()));
-        SimpleHash result = new SimpleHash("MD5", password, salt, 10);
+    public String encryptPassword(Date signtime, String password) {
+        ByteSource salt = ByteSource.Util.bytes( Long.toString( signtime.getTime() ) );
+        SimpleHash result = new SimpleHash( "MD5", password, salt, 10 );
         return result.toHex();
     }
 
@@ -114,7 +114,6 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
     public List<Student> getPriceTop5() {
         QueryWrapper<Student> wrapper = new QueryWrapper<>();
         wrapper.orderByDesc( "price_num" ).last( "limit 5" );
-        List<Student> list = studentMapper.selectList( wrapper );
-        return list;
+        return studentMapper.selectList( wrapper );
     }
 }
