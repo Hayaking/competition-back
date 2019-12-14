@@ -35,6 +35,8 @@ public class Join extends Model<Join> {
     @TableField(exist = false)
     private Works works;
     @TableField(exist = false)
+    private StudentGroup group;
+    @TableField(exist = false)
     private Competition competition;
     @TableField(exist = false)
     private Teacher teacher1;

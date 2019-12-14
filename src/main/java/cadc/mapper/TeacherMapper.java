@@ -2,6 +2,7 @@ package cadc.mapper;
 
 import cadc.entity.Teacher;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -41,4 +42,7 @@ public interface TeacherMapper extends BaseMapper<Teacher> {
     Teacher getById(int id);
 
 
+    @ResultMap(value = "withoutPassword")
+    @Select( "SELECT * FROM teacher JOIN role_teacher on teacher.id = role_teacher.teacher_id WHERE role_teacher.role_id =#{roleId}" )
+    List<Teacher> getListByRoleId(Page<Teacher> page, @Param( "roleId" ) Integer roleId);
 }

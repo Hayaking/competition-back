@@ -21,4 +21,6 @@ public interface JoinInProgressService extends IService<JoinInProgress> {
     boolean setEnterState(int inProgressId, Integer flag);
 
     Page<JoinInProgress>getResultListByProgressId(Page<JoinInProgress> page, int progressId);
+
+    boolean reviewResult(JoinInProgress jip, Integer reviewState, Boolean editState);
 }

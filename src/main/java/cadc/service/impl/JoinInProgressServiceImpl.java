@@ -1,9 +1,7 @@
 package cadc.service.impl;
 
-import cadc.entity.JoinInProgress;
-import cadc.entity.Progress;
-import cadc.mapper.JoinInProgressMapper;
-import cadc.mapper.ProgressMapper;
+import cadc.entity.*;
+import cadc.mapper.*;
 import cadc.service.JoinInProgressService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,6 +20,12 @@ public class JoinInProgressServiceImpl extends ServiceImpl<JoinInProgressMapper,
     private JoinInProgressMapper joinInProgressMapper;
     @Resource
     private ProgressMapper progressMapper;
+    @Resource
+    private JoinMapper joinMapper;
+    @Resource
+    private StudentMapper studentMapper;
+    @Resource
+    private StudentInGroupMapper studentInGroupMapper;
 
     @Override
     public Boolean promotion(Integer joinInProgressId, Boolean flag) {
@@ -79,4 +83,39 @@ public class JoinInProgressServiceImpl extends ServiceImpl<JoinInProgressMapper,
         page.setRecords( list );
         return page;
     }
+
+    @Override
+    public boolean reviewResult(JoinInProgress jip, Integer reviewState, Boolean editState) {
+        // 1.设置状态
+        jip.setReviewState( reviewState );
+        jip.setIsEditable( editState );
+        //得奖了
+        if (reviewState == 1) {
+            // 2.获得比赛阶段
+            int progressId = jip.getProgressId();
+            Progress progress = progressMapper.selectById( progressId );
+            Boolean isSingle = progress.getIsSingle();
+            // 2.获得参赛人员
+            int joinId = jip.getJoinId();
+            Join join = joinMapper.selectById( joinId );
+            //单人赛
+            if (isSingle) {
+                Integer creatorId = join.getCreatorId();
+                Student student = studentMapper.selectById( creatorId );
+                // 获奖数+1
+                student.setPriceNum( student.getPriceNum() + 1 );
+                student.insertOrUpdate();
+            } else {
+                Integer groupId = join.getGroupId();
+                List<StudentInGroup> sigList = studentInGroupMapper.getStudentInGroupByGroupId( groupId );
+                for (StudentInGroup item : sigList) {
+                    Student student = item.getStudent();
+                    student.setPriceNum( student.getPriceNum() + 1 );
+                    student.insertOrUpdate();
+                }
+            }
+        }
+        return true;
+    }
+
 }

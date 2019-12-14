@@ -1,5 +1,6 @@
 package cadc.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
@@ -16,4 +17,7 @@ public class WorkLoad extends Model<WorkLoad> {
     private Double val;
     private int joinId;
     private int teacherId;
+
+    @TableField(exist = false)
+    private Join join;
 }

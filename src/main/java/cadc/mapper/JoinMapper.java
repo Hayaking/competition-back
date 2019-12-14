@@ -17,9 +17,10 @@ public interface JoinMapper extends BaseMapper<Join> {
     @Select(value = "select * from `join` where id =#{id}")
     Join getById(int id);
 
-    @ResultMap( value = "competition")
+    @ResultMap( value = "works$competition")
     @Select(value = "select * from `join` where id =#{id}")
     Join getWithCompetitionById(int id);
+
 
     @Results(id="works$Teacher1$Teacher2",value = {
             @Result(column = "id", property = "id"),
@@ -70,6 +71,7 @@ public interface JoinMapper extends BaseMapper<Join> {
                 @Result(column = "teacher_id1", property = "teacherId1"),
                 @Result(column = "teacher_id2", property = "teacherId2"),
                 @Result(column = "apply_state", property = "applyState"),
+                @Result(column = "group_id", property = "groupId"),
                 @Result(column = "creator_id", property = "creatorId"),
                 @Result(column = "creator_id", property = "creator", one = @One(select = "cadc.mapper.StudentMapper.getStudentById"))
         })

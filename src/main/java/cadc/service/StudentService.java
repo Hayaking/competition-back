@@ -50,4 +50,5 @@ public interface StudentService extends IService<Student> {
      */
     boolean isExistByAccount(String account);
 
+    List<Student> getPriceTop5();
 }

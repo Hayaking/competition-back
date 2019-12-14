@@ -78,7 +78,7 @@ public class LoginController {
         boolean isExist = studentService.isExistByAccount( student.getAccount() );
         if (!isExist) {
             boolean flag = studentService.sign( student );
-            return MessageFactory.message( flag, flag ? "登录成功" : "登录失败" );
+            return MessageFactory.message( flag, flag ? "注册成功" : "注册失败" );
         } else {
             return MessageFactory.message( false, "帐号已存在" );
         }

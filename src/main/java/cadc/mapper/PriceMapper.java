@@ -16,7 +16,7 @@ public interface PriceMapper extends BaseMapper<Price> {
     @Select(value = "select * from price where id = #{id}")
     Price getById(int id);
 
-    @Results(value = {
+    @Results(id = "type$join",value = {
             @Result(column = "id", property = "id"),
             @Result(column = "price_state", property = "priceState"),
             @Result(column = "price_time", property = "priceTime"),
@@ -29,4 +29,8 @@ public interface PriceMapper extends BaseMapper<Price> {
     })
     @SelectProvider(type = PriceModel.class, method = "getPriceByStudent")
     List<Price> getPageByStudent(Page<Price> page, @Param("joinList") List<Join> joinList);
+
+    @ResultMap(value = "type$join")
+    @Select("select * from price order by id desc limit 5")
+    List<Price> getRecentLyPrice();
 }

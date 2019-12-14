@@ -1,17 +1,18 @@
 package cadc.controller;
 
 import cadc.bean.message.MessageFactory;
-import cadc.bean.message.STATE;
 import cadc.entity.Role;
+import cadc.entity.Teacher;
 import cadc.service.RoleService;
+import cadc.service.StudentService;
+import cadc.service.TeacherService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +26,10 @@ import static cadc.bean.message.STATE.SUCCESS;
 public class RoleController {
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private StudentService studentService;
+    @Autowired
+    private TeacherService teacherService;
 
     @RequestMapping(value = "/role/list", method = RequestMethod.GET)
     public Object getAll() {
@@ -36,5 +41,14 @@ public class RoleController {
         Subject subject = SecurityUtils.getSubject();
         List<Role> res = roleService.getSelfRoleList( subject );
         return MessageFactory.message( res );
+    }
+
+    @GetMapping(value = "/role/{id}/user/{pageNum}/{pageSize}")
+    public Object getUserPageByRole(@PathVariable Integer id, @PathVariable Integer pageNum, @PathVariable Integer pageSize) {
+        if (id == 5) {
+            return MessageFactory.message( studentService.findAll( new Page<>( pageNum, pageSize ) ) );
+        }
+        IPage<Teacher> res = teacherService.getPageByRole( new Page<>( pageNum, pageSize ), id );
+        return MessageFactory.message(res);
     }
 }

@@ -31,6 +31,7 @@ public class Student extends Model<Student> implements Serializable {
     private String stuBankCardNo;
     private int picId;
     private Date signTime;
+    private int priceNum;
 
     public Student() {
     }

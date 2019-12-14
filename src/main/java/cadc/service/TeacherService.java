@@ -2,6 +2,7 @@ package cadc.service;
 
 import cadc.entity.Teacher;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -31,4 +32,6 @@ public interface TeacherService extends IService<Teacher> {
     IPage<Teacher> find(IPage<Teacher> page, String key);
 
     List<Teacher> getByRole(int roleId);
+
+    IPage<Teacher> getPageByRole(Page<Teacher> page, Integer id);
 }

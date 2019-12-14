@@ -92,6 +92,7 @@ public class JoinController {
     @PostMapping(value = "/join/progress/review/{id}/{reviewState}/{editState}")
     public Object reviewJoinInProgress(@PathVariable Integer reviewState, @PathVariable int id, @PathVariable Boolean editState) {
         JoinInProgress jip = joinInProgressService.getById( id );
+        joinInProgressService.reviewResult( jip, reviewState, editState );
         // 设置审核状态
         jip.setReviewState( reviewState );
         // 设置可编辑状态

@@ -5,6 +5,7 @@ import cadc.bean.message.MessageFactory;
 import cadc.entity.Competition;
 import cadc.entity.Teacher;
 import cadc.service.CompetitionService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.log4j.Log4j2;
@@ -81,6 +82,14 @@ public class CompetitionController {
     public Object get5ByType(@PathVariable int typeId) {
         List<Competition> res = competitionService.get5ByType( typeId );
         return MessageFactory.message( SUCCESS, res );
+    }
+
+    @GetMapping(value = "/competition/home")
+    public Object getList() {
+        QueryWrapper<Competition> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc( "id" ).last( "limit 5" );
+        List<Competition> list = competitionService.list( wrapper );
+        return MessageFactory.message( list );
     }
 
     /**

@@ -140,4 +140,9 @@ public class StudentController {
     }
 
 
+    @GetMapping(value = "/student/price/top5")
+    public Object getTopPrice() {
+        List<Student> list = studentService.getPriceTop5();
+        return MessageFactory.message( list );
+    }
 }

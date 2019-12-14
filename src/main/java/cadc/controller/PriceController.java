@@ -13,7 +13,7 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import static cadc.bean.message.STATE.STATE_APPLYING;
+import java.util.List;
 
 /**
  * @author haya
@@ -50,4 +50,12 @@ public class PriceController {
         IPage<Price> res = priceService.getStudentPricePage( new Page<>( pageNum, pageSize ), student.getId() );
         return MessageFactory.message( res );
     }
+
+    @GetMapping(value = "/price/recently")
+    public Object getRecentlyPrice() {
+        List<Price> res = priceService.getRecentlyPrice();
+        return MessageFactory.message( res );
+    }
+
+
 }

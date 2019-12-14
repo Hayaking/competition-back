@@ -1,6 +1,8 @@
 package cadc.service.impl;
 
+import cadc.entity.RoleStudent;
 import cadc.entity.Student;
+import cadc.mapper.RoleStudentMapper;
 import cadc.mapper.StudentMapper;
 import cadc.service.StudentService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -28,6 +30,9 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
     @Resource
     private StudentMapper studentMapper;
 
+    @Resource
+    private RoleStudentMapper roleStudentMapper;
+
     @Override
     public boolean sign(Student student) {
         // 拿注册时间当盐
@@ -36,7 +41,11 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
         ByteSource salt = ByteSource.Util.bytes( Long.toString( signTime.getTime()  ) );
         SimpleHash result = new SimpleHash( "MD5", student.getPassword(), salt, 10 );
         student.setPassword( result.toHex() );
-        return student.insert();
+        student.insert();
+        return roleStudentMapper.insert( new RoleStudent() {{
+            setRoleId( 5 );
+            setStuId( student.getId() );
+        }} ) > 0;
     }
 
     @Override
@@ -92,5 +101,13 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
         wrapper.eq( "account", account );
         Student student = studentMapper.selectOne( wrapper );
         return student != null;
+    }
+
+    @Override
+    public List<Student> getPriceTop5() {
+        QueryWrapper<Student> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc( "price_num" ).last( "limit 5" );
+        List<Student> list = studentMapper.selectList( wrapper );
+        return list;
     }
 }

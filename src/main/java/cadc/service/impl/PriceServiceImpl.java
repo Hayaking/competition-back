@@ -73,4 +73,12 @@ public class PriceServiceImpl extends ServiceImpl<PriceMapper, Price> implements
         return page;
 //        return priceMapper.selectPage( page, wrapper );
     }
+
+    @Override
+    public List<Price> getRecentlyPrice() {
+        List<Price> list = priceMapper.getRecentLyPrice();
+
+        return list;
+    }
+
 }
