@@ -49,6 +49,13 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
     }
 
     @Override
+    public  String encryptPassword(Date signtime, String password) {
+        ByteSource salt   = ByteSource.Util.bytes(Long.toString(signtime.getTime()));
+        SimpleHash result = new SimpleHash("MD5", password, salt, 10);
+        return result.toHex();
+    }
+
+    @Override
     public Student find(String account, String password) {
         return studentMapper.find( account, password );
     }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,6 +33,8 @@ public interface StudentService extends IService<Student> {
      * @return
      */
     boolean insert(Student student);
+
+    String encryptPassword(Date signtime, String password);
 
     /**
      * 分页获取所有学生

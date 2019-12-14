@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * @author haya
+ * 认证器
  */
 @Log4j2
 public class UserModularRealmAuthenticator extends ModularRealmAuthenticator {

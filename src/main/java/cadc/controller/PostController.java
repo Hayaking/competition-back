@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * @Author nobugexist
+ * @Author syh
  * @Date 2019/11/7
  */
 @Log4j2
@@ -19,7 +19,7 @@ public class PostController {
     PostServiceImpl postServiceimpl;
 
     @RequestMapping(value = "/post/{id}" ,method = RequestMethod.GET)
-    public Object getByid(@PathVariable int  id){
+    public Object getById(@PathVariable int  id){
         Post post = postServiceimpl.getById(id);
         return MessageFactory.message(post);
     }

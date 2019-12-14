@@ -10,6 +10,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 
 /**
  * @author haya
+ * 授权器
  */
 @Log4j2
 public class UserModularRealmAuthorizer extends ModularRealmAuthorizer {
