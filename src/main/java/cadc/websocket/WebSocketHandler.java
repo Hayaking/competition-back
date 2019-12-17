@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 
 /**
  * @author haya
+ * @author syh
  */
 @Log4j2
 @Component
@@ -29,67 +30,114 @@ public class WebSocketHandler {
     @Autowired
     private SocketIOServer socketIOServer;
     @Autowired
-    private Map<UUID, Serializable> uuidPoll;
+    private Map<UUID, Serializable> uuidPool;
     @Autowired
-    private Map<Serializable, UUID> idPoll;
+    private Map<Serializable, UUID> idPool;
     @Autowired
     private MessageService messageService;
     private ExecutorService threadPool = Executors.newCachedThreadPool();
 
+    /**
+     * 客户端发起连接时调用
+     */
     @OnConnect
     public void onConnect(SocketIOClient client) {
-        log.info( "客户端:" + client.getSessionId() + "已连接" );
-    }
-
-    @OnDisconnect
-    public void onDisconnect(SocketIOClient client) {
-        log.info( "客户端:" + client.getSessionId() + "断开连接" );
-    }
-
-    public boolean isOnLine(Serializable id) {
-        return idPoll.containsKey( String.valueOf( id ) );
-    }
-
-
-    public void send(String event, Message message, Serializable id) {
-        UUID uuid = idPoll.get( String.valueOf( id ) );
-        SocketIOClient client = socketIOServer.getClient( uuid );
-        client.sendEvent( event, message );
-    }
-
-    public void send(String event, Message message) {
-        UUID uuid = idPoll.get( message.getTo() );
-        SocketIOClient client = socketIOServer.getClient( uuid );
-        client.sendEvent( event, message );
-        boolean insert = message.insert();
+        if (client != null) {
+            String userId    = client.getHandshakeData().getSingleUrlParam("userId");
+            UUID   sessionId = client.getSessionId();
+            threadPool.execute(() -> {
+                uuidPool.put(sessionId, userId);
+                idPool.put(userId, sessionId);
+//                client.joinRoom(String.valueOf(sessionId));
+            });
+//        List<Message> systemMessageList = messageService.getSystemMessageList(userId);
+//        String        json              = JSONObject.toJSONString(systemMessageList);
+//        client.sendEvent("systemMessage", new Message(json));
+//        // 3.邀请消息
+//        List<Message> inviteMessageList = messageService.getInviteMessageList(userId);
+//        json = JSONObject.toJSONString(inviteMessageList);
+//        client.sendEvent("inviteMessage", new Message(json));
+            log.info("客户端:" + client.getSessionId() + "已连接");
+        } else {
+            log.info("客户端为空");
+        }
     }
 
     /**
+     * 客户端断开连接时调用，刷新客户端信息
+     */
+    @OnDisconnect
+    public void onDisconnect(SocketIOClient client) {
+        String userId    = client.getHandshakeData().getSingleUrlParam("userId");
+        UUID   sessionId = client.getSessionId();
+        threadPool.execute(() -> {
+            if (uuidPool.containsKey(sessionId)) uuidPool.remove(sessionId);
+            if (idPool.containsKey(userId)) idPool.remove(userId);
+        });
+        log.info("客户端:" + client.getSessionId() + "断开连接");
+    }
+
+    public boolean isOnLine(Serializable id) {
+        return idPool.containsKey(String.valueOf(id));
+    }
+
+    /**
+     * 定向给某人发送信息
+     *
+     * @param event   事件名称
+     * @param message 事件内容
+     * @param id      目标的userid
+     */
+    public void send(String event, Message message, Serializable id) {
+        UUID           uuid   = idPool.get(String.valueOf(id));
+        SocketIOClient client = socketIOServer.getClient(uuid);
+        client.sendEvent(event, message);
+    }
+
+    /**
+     * 广播
+     *
+     * @param event   事件名称
+     * @param message 事件内容
+     */
+    public void send(String event, Message message) {
+        UUID           uuid   = idPool.get(message.getTo());
+        SocketIOClient client = socketIOServer.getClient(uuid);
+        client.sendEvent(event, message);
+        boolean insert = message.insert();
+    }
+
+//    @OnEvent(value = "broadcast")
+//    public void broadcast(SocketIOServer server, AckRequest request, Message message) {
+//        server.getBroadcastOperations().sendEvent("broadmessage",message);
+//    }
+
+    /**
      * @param client  客户端
-     * @param request
+     * @param request 请求信息
      * @param message 包含uid的消息体
      */
     @OnEvent(value = "logined")
     public void logined(SocketIOClient client, AckRequest request, Message message) {
-        threadPool.execute( () ->{
+        threadPool.execute(() -> {
             // 1.uuid与session映射
             String userId = message.getBody();
-            uuidPoll.put( client.getSessionId(), userId );
-            idPoll.put( userId, client.getSessionId() );
+            uuidPool.put(client.getSessionId(), userId);
+            idPool.put(userId, client.getSessionId());
             // 2.查询系统消息消息
-            List<Message> systemMessageList = messageService.getSystemMessageList( userId );
-            String json = JSONObject.toJSONString( systemMessageList );
-            client.sendEvent( "systemMessage", new Message(json) );
+            List<Message> systemMessageList = messageService.getSystemMessageList(userId);
+            String        json              = JSONObject.toJSONString(systemMessageList);
+            client.sendEvent("systemMessage", new Message(json));
             // 3.邀请消息
-            List<Message> inviteMessageList = messageService.getInviteMessageList( userId );
-            json = JSONObject.toJSONString( inviteMessageList );
-            client.sendEvent( "inviteMessage", new Message( json ) );
-        } );
+            List<Message> inviteMessageList = messageService.getInviteMessageList(userId);
+            json = JSONObject.toJSONString(inviteMessageList);
+            client.sendEvent("inviteMessage", new Message(json));
+        });
     }
 
     @OnEvent(value = "logouted")
     public void logouted(SocketIOClient client, AckRequest request, Message message) {
-        idPoll.remove( uuidPoll.get( client.getSessionId() ) );
-        uuidPoll.remove( client.getSessionId() );
+        idPool.remove(uuidPool.get(client.getSessionId()));
+        uuidPool.remove(client.getSessionId());
     }
 }
