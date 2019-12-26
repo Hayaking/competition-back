@@ -1,15 +1,18 @@
 package cadc.util;
 
+import cadc.bean.holder.ResultSummaryHolder;
+import cadc.bean.word.BudgetPolicy;
+import cadc.bean.word.CompetitionApplyPolicy;
+import cadc.bean.word.CostPolicy;
+import cadc.bean.word.ProcessPolicy;
 import cadc.entity.Budget;
 import cadc.entity.Competition;
+import cadc.entity.Process;
 import cadc.entity.Progress;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
+import com.deepoove.poi.XWPFTemplate;
+import com.deepoove.poi.config.Configure;
 import freemarker.template.TemplateException;
-import freemarker.template.Version;
-
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -31,103 +34,100 @@ public class WordUtils {
      * @throws IOException
      * @throws TemplateException
      */
-    public static FileInputStream generateWord(String root, String fileName, Map<String, Object> map) throws IOException, TemplateException {
-        File file = new File( root + "word/" + fileName );
-        if (!file.exists()) {
-            Configuration configuration = new Configuration( new Version( "2.3.0" ) ) {{
-                setDefaultEncoding( "utf-8" );
-                setDirectoryForTemplateLoading( new File( root + "template/" ) );
-            }};
-            Template template = configuration.getTemplate( "word.ftl" );
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-            Writer writer = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file ), StandardCharsets.UTF_8 ), 10240 );
-            template.process( map, writer );
-            writer.close();
-        }
-        return new FileInputStream( file );
+    public static FileInputStream generateCompetitionWord(String root, String fileName, Map<String, Object> map) throws IOException, TemplateException {
+        String outPath = root + "static/competition/" + fileName + ".docx";
+        XWPFTemplate
+                .compile(root + "template/competition.docx", Configure
+                        .newBuilder()
+                        .customPolicy("progress", new CompetitionApplyPolicy())
+                        .build())
+                .render(map)
+                .writeToFile(outPath);
+        return new FileInputStream(new File(outPath));
     }
 
+    /**
+     * 生成竞赛经费预算表
+     *
+     * @param root
+     * @param fileName
+     * @param map
+     * @return
+     * @throws IOException
+     * @throws TemplateException
+     */
     public static FileInputStream generateBugetWord(String root, String fileName, Map<String, Object> map) throws IOException, TemplateException {
-        File file = new File( root + "word/" + fileName );
-        if (!file.exists()) {
-            Configuration configuration = new Configuration( new Version( "2.3.0" ) ) {{
-                setDefaultEncoding( "utf-8" );
-                setDirectoryForTemplateLoading( new File( root + "template/" ) );
-            }};
-            Template template = configuration.getTemplate( "budget.ftl" );
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-            Writer writer = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file ), StandardCharsets.UTF_8 ), 10240 );
-            template.process( map, writer );
-            writer.close();
-        }
-        return new FileInputStream( file );
+        String outPath = root + "static/budget/" + fileName + ".docx";
+        XWPFTemplate
+                .compile(root + "template/budget.docx", Configure
+                        .newBuilder()
+                        .customPolicy("budget", new BudgetPolicy())
+                        .build())
+                .render(map)
+                .writeToFile(outPath);
+        return new FileInputStream(new File(outPath));
+    }
+
+    /**
+     * 生成竞赛结果总结表
+     *
+     * @param root
+     * @param fileName
+     * @param map
+     * @return
+     * @throws IOException
+     * @throws TemplateException
+     */
+    public static FileInputStream generateResultWord(String root, String fileName, Map<String, Object> map) throws IOException, TemplateException {
+        String outPath = root + "static/result/" + fileName + ".docx";
+        XWPFTemplate
+                .compile(root + "template/result.docx", Configure
+                        .newBuilder()
+                        .customPolicy("costList", new CostPolicy(((List<Process>) map.get("processList")).size() - 1))
+                        .customPolicy("processList", new ProcessPolicy())
+                        .build())
+                .render(map)
+                .writeToFile(outPath);
+        return new FileInputStream(outPath);
     }
 
     public static Map<String, Object> competitionMapToWord(Competition competition) {
         HashMap<String, Object> map = new HashMap<>();
-        map.put( "name", competition.getName() );
-        map.put( "personIncharge", competition.getPersonInCharge().getTeacherName() );
-        map.put( "phone", competition.getPersonInCharge().getTeacherPhone() );
-        map.put( "groupNum", String.valueOf( competition.getExGroupNum() ) );
-        map.put( "stuNum", String.valueOf( competition.getExStuNum() ) );
-        map.put( "exRes", competition.getExRes() );
-        map.put( "intro", competition.getIntro() );
-        map.put( "process", competition.getProcess() );
-        map.put( "exCondition", competition.getExCondition() );
-        map.put( "createDate", new SimpleDateFormat( "yyyy年MM月dd日" ).format( competition.getCreateTime() ) );
+        map.put("name", competition.getName());
+        map.put("personIncharge", competition.getPersonInCharge().getTeacherName());
+        map.put("phone", competition.getPersonInCharge().getTeacherPhone());
+        map.put("groupNum", String.valueOf(competition.getExGroupNum()));
+        map.put("stuNum", String.valueOf(competition.getExStuNum()));
+        map.put("exRes", competition.getExRes());
+        map.put("intro", competition.getIntro());
+        map.put("process", competition.getProcess());
+        map.put("exCondition", competition.getExCondition());
+        map.put("createDate", new SimpleDateFormat("yyyy年MM月dd日").format(competition.getCreateTime()));
         List<Progress> progressList = competition.getProgressList();
-        map.put( "progress", progressList );
-        Progress highestLevel = progressList.get( progressList.size() - 1 );
-        map.put( "highestLevel", String.valueOf( highestLevel.getType().getTypeName() ) );
+        map.put("progress", progressList);
+        Progress highestLevel = progressList.get(progressList.size() - 1);
+        map.put("highestLevel", String.valueOf(highestLevel.getType().getTypeName()));
         return map;
     }
+
     public static Map<String, Object> budgetMapToWord(Competition competition) {
         HashMap<String, Object> map = new HashMap<>();
-        map.put( "competitionName", competition.getName() );
-        List<Progress> progressList = competition.getProgressList();
-        List<Budget> budgetList = progressList.stream().map( Progress::getBudget ).collect( Collectors.toList() );
-        double cEnter = 0, cTravel = 0, cThing = 0, cOther = 0, cSum = 0;
-        for (int i = 1; i <= 3; i++) {
-            if (i > progressList.size()) {
-                map.put( "p" + i + "Name", "" );
-                map.put( "p" + i + "Type", "" );
-                map.put( "p" + i + "Enter", "" );
-                map.put( "p" + i + "Travel", "" );
-                map.put( "p" + i + "Thing", "" );
-                map.put( "p" + i + "Other", "" );
-                map.put( "p" + i + "Reason", "" );
-                map.put( "p" + i + "RowSum", "" );
-            }
-            else {
-                Budget budget = budgetList.get( i -1);
-                Progress progress = progressList.get( i-1 );
-                map.put( "p" + i + "Name", progress.getName() );
-                map.put( "p" + i + "Type", progress.getType().getTypeName() );
-                map.put( "p" + i + "Enter", budget.getEnter() );
-                map.put( "p" + i + "Travel", budget.getTravel() );
-                map.put( "p" + i + "Thing", budget.getThing() );
-                map.put( "p" + i + "Other", budget.getOther() );
-                map.put( "p" + i + "Reason", budget.getReason() );
-                double sum = budget.getEnter() + budget.getTravel() + budget.getThing() + budget.getOther();
-                map.put( "p" + i + "RowSum", sum );
-                cEnter += budget.getEnter();
-                cThing += budget.getThing();
-                cTravel += budget.getTravel();
-                cOther += budget.getOther();
-                cSum += sum;
-            }
-        }
-        map.put( "cEnter", cEnter );
-        map.put( "cThing", cThing );
-        map.put( "cTravel", cTravel );
-        map.put( "cOther", cOther );
-        map.put( "cSum", cSum );
+        map.put("name", competition.getName());
+        map.put("budget", competition.getProgressList());
+        return map;
+    }
+
+    public static Map<String, Object> resultMapToWord(Progress progress, ResultSummaryHolder holder) {
+        HashMap<String, Object> map = new HashMap<>();
+        SimpleDateFormat        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        map.put("name", progress.getCompetition().getName());
+        map.put("personInCharge", progress.getCompetition().getPersonInCharge().getTeacherName());
+        map.put("phone", progress.getCompetition().getPersonInCharge().getTeacherPhone());
+        map.put("startDate", sdf.format(progress.getStartTime()));
+        map.put("endDate", sdf.format(progress.getEndTime()));
+        map.put("summary", holder.getSummary());
+        map.put("costList", holder.getCostList());
+        map.put("processList", holder.getProcessList());
         return map;
     }
 }

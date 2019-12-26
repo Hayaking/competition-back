@@ -246,14 +246,19 @@ public class JoinServiceImpl extends ServiceImpl<JoinMapper, Join> implements Jo
         page.setRecords( list );
         return page;
     }
-
+    //根据当前老师是第几个老师更新指导老师的状态
     @Override
     public Boolean setApplyState(Boolean flag, int joinId, int teacherId) {
         Join join = joinMapper.selectById( joinId );
-        UpdateWrapper<Join> wrapper = new UpdateWrapper<>();
-        wrapper.set( "apply_state", flag ? STATE_AGREE.toString() : STATE_REFUSE.toString() );
-        return joinMapper.update( join, wrapper ) > 0;
+        String applyState = flag ? STATE_AGREE.toString() : STATE_REFUSE.toString();
+        if (teacherId == join.getTeacherId1()) {
+            join.setApplyState(applyState);
+        }else{
+            join.setApplyState2(applyState);
+        }
+        return join.insertOrUpdate();
     }
+
 
     @Override
     public String generateEnterListExcel(int competitionId, int progressId) {

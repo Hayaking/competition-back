@@ -3,16 +3,17 @@ package cadc.controller;
 import cadc.bean.TEACHER_TYPE;
 import cadc.bean.message.MessageFactory;
 import cadc.entity.Role;
-import cadc.entity.Student;
 import cadc.entity.Teacher;
 import cadc.service.RoleService;
 import cadc.service.TeacherService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.log4j.Log4j2;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 import static cadc.bean.message.STATE.*;
@@ -28,7 +29,6 @@ public class TeacherController {
     private TeacherService teacherService;
     @Autowired
     private RoleService roleService;
-
     /**
      * 获取所有教师
      * @return
@@ -102,5 +102,28 @@ public class TeacherController {
     public Object getAll(@PathVariable String key, @PathVariable int pageNum, @PathVariable int pageSize) {
         IPage<Teacher> res = teacherService.find( new Page<>( pageNum, pageSize ), key );
         return MessageFactory.message( SUCCESS, res );
+    }
+
+    @RequestMapping(value = "/teacher/info", method = RequestMethod.POST)
+    public Object updateInfo(@RequestBody Teacher teacher) {
+        Object principal = SecurityUtils.getSubject().getPrincipal();
+        Teacher tch = (Teacher) principal;
+        tch.setTeacherName(teacher.getTeacherName());
+//        tch.setStuClass(teacher.getT());
+        tch.setTeacherSex( teacher.getTeacherSex());
+        System.out.println("----------------\n------------------------\n-----------------\n----------------------\n");
+        boolean flag = tch.insertOrUpdate();
+        return MessageFactory.message( flag );
+    }
+
+    @RequestMapping(value = "/teacher/securityinfo", method = RequestMethod.POST)
+    public Object updateSecurityInfo(@RequestBody Teacher teacher){
+        Object principal = SecurityUtils.getSubject().getPrincipal();
+        Teacher tch = (Teacher) principal;
+        tch.setPassword(teacherService.encryptPassword(teacher.getSignTime(), teacher.getPassword()));
+        tch.setTeacherBankCardNo(teacher.getTeacherBankCardNo());
+        tch.setTeacherPhone(teacher.getTeacherPhone());
+        boolean flag = tch.insertOrUpdate();
+        return MessageFactory.message(flag);
     }
 }

@@ -1,5 +1,6 @@
 package cadc.controller;
 
+import cadc.bean.holder.ResultSummaryHolder;
 import cadc.service.DownLoadService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,29 @@ public class DownLoadController {
     }
 
     /**
+     * 下载比赛结果
+     * @param progressId
+     * @return
+     * @throws IOException
+     */
+    @PostMapping(value = "/download/result/{progressId}")
+    public ResponseEntity<byte[]> getResult( @PathVariable int progressId) throws IOException {
+        ResponseEntity<byte[]> response;
+        try (
+                FileInputStream fis = downLoadService.getResultApplyWord(progressId);
+                FileChannel channel = fis.getChannel()
+        ) {
+            ByteBuffer body = ByteBuffer.allocate( fis.available() );
+            channel.read( body );
+            HttpHeaders headers = new HttpHeaders();
+            headers.add( "Access-Control-Expose-Headers", "Content-Disposition" );
+            headers.add( "Content-Disposition", "attachment;filename=" + progressId + ".docx" );
+            response = new ResponseEntity<>( body.array(), headers, HttpStatus.OK );
+        }
+        return response;
+    }
+
+    /**
      * 下载报名列表
      * @param competitionId
      * @param progressId
@@ -89,29 +113,6 @@ public class DownLoadController {
             HttpHeaders headers = new HttpHeaders();
             headers.add( "Access-Control-Expose-Headers", "Content-Disposition" );
             headers.add( "Content-Disposition", "attachment;filename=" + progressId + ".xlsx" );
-            response = new ResponseEntity<>( body.array(), headers, HttpStatus.OK );
-        }
-        return response;
-    }
-
-    /**
-     * 下载比赛结果
-     * @param progressId
-     * @return
-     * @throws IOException
-     */
-    @PostMapping(value = "/download/result/{progressId}")
-    public ResponseEntity<byte[]> getResult( @PathVariable int progressId) throws IOException {
-        ResponseEntity<byte[]> response;
-        try (
-                FileInputStream fis = downLoadService.getProgressResult(progressId);
-                FileChannel channel = fis.getChannel()
-        ) {
-            ByteBuffer body = ByteBuffer.allocate( fis.available() );
-            channel.read( body );
-            HttpHeaders headers = new HttpHeaders();
-            headers.add( "Access-Control-Expose-Headers", "Content-Disposition" );
-            headers.add( "Content-Disposition", "attachment;filename=" + progressId + ".docx" );
             response = new ResponseEntity<>( body.array(), headers, HttpStatus.OK );
         }
         return response;

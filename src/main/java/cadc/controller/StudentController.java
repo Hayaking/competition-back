@@ -71,7 +71,6 @@ public class StudentController {
     public Object updateSecurityInfo(@RequestBody Student student){
         Object principal = SecurityUtils.getSubject().getPrincipal();
         Student stu = (Student) principal;
-        System.out.printf(student.getPassword() + student.getStuBankCardNo()+student.getStuPhone());
         stu.setPassword(studentService.encryptPassword(student.getSignTime(), student.getPassword()));
         stu.setStuBankCardNo(student.getStuBankCardNo());
         stu.setStuPhone(student.getStuPhone());

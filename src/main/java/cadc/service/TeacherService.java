@@ -4,7 +4,10 @@ import cadc.entity.Teacher;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.ByteSource;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,4 +37,7 @@ public interface TeacherService extends IService<Teacher> {
     List<Teacher> getByRole(int roleId);
 
     IPage<Teacher> getPageByRole(Page<Teacher> page, Integer id);
+
+    String encryptPassword(Date signtime, String password);
+
 }

@@ -1,5 +1,7 @@
 package cadc.service;
 
+import cadc.bean.holder.ResultSummaryHolder;
+
 import java.io.FileInputStream;
 
 /**
@@ -10,7 +12,9 @@ public interface DownLoadService {
 
     FileInputStream getBudgetApplyWord(int competitionId);
 
-    FileInputStream getProgressResult(int progressId);
+    FileInputStream generateResultApplyWord(int progressId, ResultSummaryHolder holder);
+
+    FileInputStream getResultApplyWord(int progressId);
 
     FileInputStream getEnterListExcel(int competitionId, int progressId);
 }

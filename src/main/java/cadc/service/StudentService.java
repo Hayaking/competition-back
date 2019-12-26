@@ -34,6 +34,12 @@ public interface StudentService extends IService<Student> {
      */
     boolean insert(Student student);
 
+    /**
+     * 更改密码
+     * @param signtime
+     * @param password
+     * @return
+     */
     String encryptPassword(Date signtime, String password);
 
     /**

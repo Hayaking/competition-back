@@ -11,12 +11,14 @@ import cadc.mapper.JoinInProgressMapper;
 import cadc.mapper.ProgressMapper;
 import cadc.mapper.WorkLoadMapper;
 import cadc.service.ProgressService;
+import cadc.util.WordUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.deepoove.poi.XWPFTemplate;
 import com.deepoove.poi.config.Configure;
+import freemarker.template.TemplateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ClassUtils;
@@ -114,42 +116,7 @@ public class ProgressServiceImpl extends ServiceImpl<ProgressMapper, Progress> i
         return progressMapper.getNeedReviewById( id );
     }
 
-    @Override
-    public boolean generateResultWord(Integer progressId, ResultSummaryHolder holder) {
-        Progress progress = progressMapper.getNeedReviewById( progressId );
-        String root = ClassUtils.getDefaultClassLoader().getResource( "" ).getPath();
-        String outPath = root + "static/result/" + progressId + ".docx";
-        File outFile = new File( outPath );
-        try {
-            if (!outFile.getParentFile().exists()) {
-                outFile.getParentFile().mkdirs();
-            }
-            Map<String, Object> props = new HashMap<String, Object>() {{
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss" );
-                put( "name", progress.getCompetition().getName() );
-                put( "personInCharge", progress.getCompetition().getPersonInCharge().getTeacherName() );
-                put( "phone", progress.getCompetition().getPersonInCharge().getTeacherPhone() );
-                put( "startDate", sdf.format( progress.getStartTime() ) );
-                put( "endDate", sdf.format( progress.getEndTime() ) );
 
-                put( "summary", holder.getSummary() );
-                put( "costList", holder.getCostList() );
-                put( "processList", holder.getProcessList() );
-            }};
-            XWPFTemplate
-                    .compile( root + "template/result.docx", Configure
-                            .newBuilder()
-                            .customPolicy( "costList", new CostPolicy(((List<Process>)props.get( "processList" )).size() -1) )
-                            .customPolicy( "processList", new ProcessPolicy() )
-                            .build() )
-                    .render( props )
-                    .writeToFile( outPath );
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public boolean endProgress(int progressId) {
