@@ -38,7 +38,6 @@ public class CadcApplicationTests {
     public Menu2Mapper menu2Mapper;
     @Autowired
     public JoinService joinService;
-
     @Test
     public void contextLoads() {
     }
@@ -48,19 +47,19 @@ public class CadcApplicationTests {
         // 写法1D
         List<Demo> list = new LinkedList<>();
         for (int i = 0; i < 100; i++) {
-            list.add( new Demo( i + "", i, (double) i ) );
+            list.add(new Demo(i + "", i, (double) i));
         }
-        ExcelUtils.generateExcel( "haya", "", list, Demo.class );
+        ExcelUtils.generateExcel("haya", "", list, Demo.class);
 
     }
 
     @Test
     public void getMenu() {
-        List<RoleMenu> roleMenus = roleMenuService.getListByRoleId( 1 );
-        List<Menu1> menu1s = new LinkedList<>();
+        List<RoleMenu> roleMenus = roleMenuService.getListByRoleId(1);
+        List<Menu1>    menu1s    = new LinkedList<>();
         System.out.println(roleMenus);
         for (RoleMenu item : roleMenus) {
-            menu1s.add( menu1Service.getById( item.getMenu1Id() ) );
+            menu1s.add(menu1Service.getById(item.getMenu1Id()));
         }
         System.out.println(menu1s);
     }
@@ -76,12 +75,12 @@ public class CadcApplicationTests {
 
     @Test
     public void getEnterList() {
-        IPage<Join> enterList = joinService.getEnterList( new Page<>( 1, 12 ), 82, 2 );
-        log.warn( enterList );
+        IPage<Join> enterList = joinService.getEnterList(new Page<>(1, 12), 82, 2);
+        log.warn(enterList);
     }
     @Test
     public void getPricePage() {
-        IPage<Price> res = priceService.getStudentPricePage( new Page<>( 1, 12 ), 15 );
-        log.warn( res.getRecords() );
+        IPage<Price> res = priceService.getStudentPricePage(new Page<>(1, 12), 15);
+        log.warn(res.getRecords());
     }
 }

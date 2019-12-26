@@ -35,4 +35,11 @@ public class PostServiceImpl extends ServiceImpl<PostMapper,Post> implements Pos
         wrapper.eq("id", id);
         return postMapper.delete(wrapper) > 0;
     }
+
+    @Override
+    public List<Post> getPostTop3() {
+        QueryWrapper<Post> qw = new QueryWrapper<>();
+        qw.orderByDesc("create_time").last("limit 3");
+        return postMapper.selectList(qw);
+    }
 }

@@ -16,4 +16,5 @@ public interface PostService extends IService<Post> {
 
     boolean deletePostById(int id);
 
+    List<Post> getPostTop3();
 }
